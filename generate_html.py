@@ -788,23 +788,23 @@ def build_adr_register(folder_path: Path) -> str:
 
 def run():
     parser = argparse.ArgumentParser(description="Agri Telemetry HTML Generator")
-    parser.add_argument("--all", action="store_true", help="Force regeneration across all folders 1–11 (overwriting bespoke 1–6 HTML)")
+    parser.add_argument("--all", action="store_true", help="Force regeneration across all folders (overwriting bespoke early HTML)")
     args = parser.parse_args()
 
     base_dir = Path(__file__).parent.resolve()
-    print(f"[generate_html] Scanning workspace at {base_dir} (mode: {'ALL (1-11)' if args.all else 'NEW DOCS ONLY (7-11), 1-6 PROTECTED'})...")
+    print(f"[generate_html] Scanning workspace at {base_dir} (mode: {'ALL' if args.all else 'NEW DOCS ONLY, BESPOKE PROTECTED'})...")
     
     doc_registry = [
-        ("01", "1. Project Charter", "Project Charter", "Charter", True),
-        ("02", "2. Research Feasibility", "Research Feasibility", "Research", True),
-        ("04", "4. Product Requirements Doc", "Product Requirements Document", "Product", True),
-        ("05", "5. Data & Scientific Spec", "Data & Scientific Specification", "Scientific Spec", True),
-        ("06", "6. Data Forecast Design", "Data & Forecast Design", "Forecasting", True),
-        ("07", "7. Technical Spec", "System Architecture & Technical Specification", "Architecture", False),
-        ("08", "8. ADRs", "Architecture Decision Records", "Decisions", False),
-        ("09", "9. Event & Telemetry Contract", "Event & Telemetry Interface Contract", "Contracts", False),
-        ("10", "10. Implementation Plan", "Implementation Plan", "Implementation", False),
-        ("11", "11. Evidence & Validation", "Evidence & Validation Framework", "Evidence", False),
+        ("01", "Project Charter", "Project Charter", "Charter", True),
+        ("02", "Research Feasibility", "Research Feasibility", "Research", True),
+        ("03", "Product Requirements Doc", "Product Requirements Document", "Product", True),
+        ("04", "Data & Scientific Spec", "Data & Scientific Specification", "Scientific Spec", True),
+        ("05", "Data Forecast Design", "Data & Forecast Design", "Forecasting", True),
+        ("06", "Technical Spec", "System Architecture & Technical Specification", "Architecture", False),
+        ("07", "ADRs", "Architecture Decision Records", "Decisions", False),
+        ("08", "Event & Telemetry Contract", "Event & Telemetry Interface Contract", "Contracts", False),
+        ("09", "Implementation Plan", "Implementation Plan", "Implementation", False),
+        ("10", "Evidence & Validation", "Evidence & Validation Framework", "Evidence", False),
     ]
 
     generated_count = 0
@@ -818,7 +818,7 @@ def run():
             continue
 
         # Special handling for ADR folder
-        if folder_name == "8. ADRs":
+        if folder_name == "ADRs":
             print(f"[RENDER] {folder_name}/ADR_INDEX.md (+ ADR-001..005) -> ADR_INDEX.html")
             full_adr_md = build_adr_register(folder_path)
             html_output = render_markdown_to_ca_eng(full_adr_md, doc_num, doc_title, doc_category)
@@ -835,7 +835,7 @@ def run():
 
         primary_md = md_files[0]
         for f in md_files:
-            if "INDEX" in f.name.upper() or folder_name.split(". ")[-1].lower() in f.name.lower():
+            if "INDEX" in f.name.upper() or folder_name.lower() in f.name.lower():
                 primary_md = f
                 break
 

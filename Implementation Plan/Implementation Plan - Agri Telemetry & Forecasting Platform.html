@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agri Telemetry &amp; Forecasting — Evidence & Validation Framework</title>
+    <title>Agri Telemetry &amp; Forecasting — Implementation Plan</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -458,120 +458,143 @@ a:hover { opacity: 0.8; }
         <div class="brand">CA-ENG // Master Record</div>
         <div class="sidebar-meta">
             Agri Telemetry &amp; Forecasting<br>
-            11 / Evidence<br>
-            Status: <span class="badge badge-open">ACTIVE</span>
+            09 / Implementation<br>
+            Status: <span class="badge badge-decided">DECIDED</span>
         </div>
         <nav aria-label="Document navigation">
-            <a href="#document-authority-scientific-integrity" class="nav-item">01. Document Authority & Scientific Integrity</a>
-            <a href="#evidence-classification-framework" class="nav-item">02. Evidence Classification Framework</a>
-            <a href="#master-evidence-validation-matrix" class="nav-item">03. Master Evidence & Validation Matrix</a>
-            <a href="#experiment-decision-ledger" class="nav-item">04. Experiment & Decision Ledger</a>
+            <a href="#plan-purpose-execution-philosophy" class="nav-item">01. Plan Purpose & Execution Philosophy</a>
+            <a href="#phased-build-scope" class="nav-item">02. Phased Build Scope</a>
+            <a href="#detailed-component-plan-16-modules" class="nav-item">03. Detailed Component Plan (16 Modules)</a>
+            <a href="#implementation-dependency-graph-build-order" class="nav-item">04. Implementation Dependency Graph & Build Order</a>
         </nav>
     </aside>
 
     <main class="main">
         <div class="top-meta">
             <span>Agri Telemetry &amp; Forecasting Platform</span>
-            <span>Last Edited: September 30, 2026 &nbsp; / &nbsp; Status: ACTIVE</span>
+            <span>Last Edited: September 30, 2026 &nbsp; / &nbsp; Status: DECIDED</span>
         </div>
 
         <header class="hero">
-            <div class="eyebrow">11 / Evidence</div>
-            <h1>Evidence & Validation Framework</h1>
+            <div class="eyebrow">09 / Implementation</div>
+            <h1>Implementation Plan</h1>
             <p class="hero-description">Canonical engineering document for the Agri Telemetry &amp; Forecasting Platform.</p>
         </header>
 
-<p><strong>Status:</strong> ACTIVE</p>
+<p><strong>Status:</strong> DECIDED</p>
 <p><strong>Last Updated:</strong> September 30, 2026</p>
-<p><strong>Document:</strong> <code>09_evidence/VALIDATION_MATRIX.md</code> / <code>11. Evidence & Validation/Evidence & Validation - Agri Telemetry & Forecasting Platform.md</code></p>
+<p><strong>Document:</strong> <code>08_implementation/IMPLEMENTATION_PLAN.md</code> / <code>10. Implementation Plan/Implementation Plan - Agri Telemetry & Forecasting Platform.md</code></p>
 
-        <section id="document-authority-scientific-integrity" class="section">
+        <section id="plan-purpose-execution-philosophy" class="section">
             <div class="section-header">
                 <div class="section-number">01</div>
-                <h2>Document Authority & Scientific Integrity</h2>
+                <h2>Plan Purpose & Execution Philosophy</h2>
             </div>
-<p>This document is the official ledger of empirical findings, software test outcomes, data-quality verifications, and scientific validation results for the <strong>Agri Telemetry & Forecasting Platform</strong>.</p>
-<h3>Non-Negotiable Rules of Evidence:</h3>
-<ol><li><strong>Never fabricate evidence:</strong> No metric, test result, calibration score, or operational finding may be entered without actual code execution and verifiable data artifacts.</li><li><strong>Software Tests $\neq$ Scientific Validation:</strong> Passing a unit or integration test confirms code implementation correctness; it does <strong>not</strong> validate a scientific hypothesis or agronomic threshold.</li><li><strong>Status Honesty:</strong> Status values must reflect true empirical progress:</li></ol>
-<ul><li><code>OPEN</code>: Not yet evaluated.</li><li><code>ASSUMPTION</code>: Believed, but lacks empirical verification.</li><li><code>RESEARCHING</code>: Literature review or benchmark experiment actively running.</li><li><code>DECIDED</code>: Architectural/design choice documented via ADR, awaiting build.</li><li><code>IMPLEMENTED</code>: Code exists.</li><li><code>TESTED</code>: Code passed programmatic test suites.</li><li><code>VALIDATED</code>: Supported by rigorous, out-of-sample empirical evidence.</li><li><code>REJECTED</code>: Disproven or discarded based on experimental evidence.</li></ul>
+<p>This document outlines the concrete, execution-oriented roadmap for building the <strong>Agri Telemetry & Forecasting Platform</strong>.</p>
+<p>In strict adherence to <strong>Rule #18</strong> (*"Keep the simplest architecture that satisfies demonstrated requirements"*) and <strong>Rule #29</strong> (*"Do not optimise for impressive architecture. Optimise for evidence, reproducibility, and demonstrated decision value"*), this plan focuses on delivering a verified, leak-free <strong>Minimum Reproducible Vertical Slice</strong> first, before introducing any optional infrastructure.</p>
 </section>
 
-        <section id="evidence-classification-framework" class="section">
+        <section id="phased-build-scope" class="section">
             <div class="section-header">
                 <div class="section-number">02</div>
-                <h2>Evidence Classification Framework</h2>
+                <h2>Phased Build Scope</h2>
             </div>
-<p>The platform organizes evidence across 9 distinct tiers:</p>
 <div class="mermaid">
 flowchart TD
-    subgraph Software & Engineering Verification
-        E1[1. Implementation Evidence] --> E2[2. Unit & Integration Test Evidence]
-        E2 --> E3[3. Event-Processing & Idempotency Evidence]
-        E3 --> E4[4. Reproducibility Evidence]
+    subgraph Phase 1: MUST BUILD NOW
+        A1[Historical Station Ingestion & Clean Data Pipeline] --> A2[Event Validation & Synthetic Fault Injector]
+        A2 --> A3[State Estimation & Persistence Baseline Engine]
+        A3 --> A4[Walk-Forward Chronological Evaluator]
+        A4 --> A5[Three-Tier Anomaly & Advisory Generator]
     end
 
-    subgraph Data & Signal Quality
-        D1[5. Data-Quality & QC Evidence] --> D2[6. Anomaly Isolation Evidence]
+    subgraph Phase 2: SUPPORTING
+        B1[FastAPI Telemetry Ingress & Query Endpoints] --> B2[Local Redis / Stream Queue Buffer]
+        B2 --> B3[Conditional Linear / GBDT Model Benchmark]
     end
 
-    subgraph Scientific & Forecasting Validation
-        S1[7. Forecast Evaluation Evidence] --> S2[8. Uncertainty Calibration Evidence]
-        S2 --> S3[9. Threshold & Lead-Time Evidence]
+    subgraph Phase 3: DEFERRED
+        C1[Distributed Kafka / RabbitMQ Clusters]
+        C2[Deep Learning Sequence Models LSTM/Transformers]
+        C3[Autonomous Irrigation Actuation Hooks]
     end
+
+    Phase 1 --> Phase 2
+    Phase 2 -.-> Phase 3
 </div>
-<ol><li><strong>Implementation Evidence:</strong> Verifies module existence, package installability, and interface compliance.</li><li><strong>Unit & Integration Test Evidence:</strong> Code execution assertions, boundary checks, and error handling.</li><li><strong>Event-Processing & Idempotency Evidence:</strong> Deduplication over duplicate streams, clock-drift handling, out-of-order event routing.</li><li><strong>Reproducibility Evidence:</strong> Deterministic replay runs with fixed seeds producing identical evaluation metrics.</li><li><strong>Data-Quality & QC Evidence:</strong> Audit of real in-situ station data (missingness, physical bounds, sensor flatlines).</li><li><strong>Anomaly Isolation Evidence:</strong> Proof that synthetic data-quality faults are quarantined and <strong>never</strong> trigger false-positive agronomic stress alerts.</li><li><strong>Forecast Evaluation Evidence:</strong> Walk-forward out-of-sample benchmark of persistence baseline vs. alternative models (MAE, RMSE).</li><li><strong>Uncertainty Calibration Evidence:</strong> Empirical prediction interval coverage probability (PICP) vs nominal coverage ($80\%$).</li><li><strong>Threshold & Lead-Time Evidence:</strong> Verification of actionable warning lead time before Management Allowable Depletion (MAD) breaches.</li></ol>
+<h3>2.1 Category Breakdown</h3>
+<ul><li><strong>MUST BUILD NOW (Phase 1):</strong> The core Python package, deterministic station parser, schema validators, synthetic fault injector, state estimator, walk-forward persistence baseline, probabilistic quantile calculator, and test harness.</li><li><strong>SUPPORTING (Phase 2):</strong> Local SQLite / DuckDB persistence, lightweight FastAPI event receiver, and Docker Compose definition.</li><li><strong>DEFERRED (Phase 3):</strong> Kubernetes orchestration, distributed message brokers (Kafka/RabbitMQ), cloud data lakes, deep-learning frameworks (PyTorch/TensorFlow), and external proprietary farm APIs.</li></ul>
 </section>
 
-        <section id="master-evidence-validation-matrix" class="section">
+        <section id="detailed-component-plan-16-modules" class="section">
             <div class="section-header">
                 <div class="section-number">03</div>
-                <h2>Master Evidence & Validation Matrix</h2>
+                <h2>Detailed Component Plan (16 Modules)</h2>
             </div>
-<div class="table-wrap">
-<table>
-    <thead>
-        <tr><th>Evidence ID</th><th>Claim / Question / Hypothesis</th><th>Dataset / Source</th><th>Time Period</th><th>Method / Experiment Config</th><th>Primary Metric</th><th>Target / Criterion</th><th>Actual Result</th><th>Interpretation</th><th>Status</th><th>Artefact / Test Reference</th><th>Known Limitations</th></tr>
-    </thead>
-    <tbody>
-<tr><td><strong>EVD-001</strong></td><td>Telemetry JSON schema strictly enforces required provenance and sensor units.</td><td>Synthetic test payloads</td><td>N/A</td><td>Schema validation test suite</td><td>Schema validation pass rate</td><td>100% pass on valid; 100% fail on invalid</td><td>To be executed in initial test run</td><td>Schema contract compliance</td><td><strong>IMPLEMENTED</strong></td><td><code>tests/test_schemas.py</code></td><td>Schema syntax only</td></tr>
-<tr><td><strong>EVD-002</strong></td><td>Duplicate incoming events are deduplicated idempotently without state corruption.</td><td>Injected duplicate stream</td><td>Replay</td><td>SHA256 key matching in-memory cache</td><td>Duplicate suppression rate</td><td>100% duplicate suppression</td><td>To be executed in initial test run</td><td>Safe at-least-once ingestion</td><td><strong>IMPLEMENTED</strong></td><td><code>tests/test_idempotency.py</code></td><td>In-memory scope</td></tr>
-<tr><td><strong>EVD-003</strong></td><td>Injected synthetic sensor spikes are isolated at Tier 1 and never trigger Tier 3 Agronomic Alerts.</td><td>Synthetic fault generator</td><td>Replay</td><td>Injected $0.30\text{ m}^3/\text{m}^3$ single-step spike</td><td>Alert classification rate</td><td>0% false agronomic alerts; 100% QC flag capture</td><td>To be executed in initial test run</td><td>Strict anomaly boundary preserved</td><td><strong>IMPLEMENTED</strong></td><td><code>tests/test_anomaly_isolation.py</code></td><td>Synthetic fault patterns</td></tr>
-<tr><td><strong>EVD-004</strong></td><td>Feature construction strictly prevents future-data leakage during walk-forward backtest.</td><td>Historical station data</td><td>2024–2025</td><td>Walk-forward timestamp assertion</td><td>Feature timestamp leakage rate</td><td>Exactly 0 leaked future timestamps</td><td>To be executed in initial test run</td><td>Temporal causality guaranteed</td><td><strong>IMPLEMENTED</strong></td><td><code>tests/test_leakage.py</code></td><td>In-situ point sensor</td></tr>
-<tr><td><strong>EVD-005</strong></td><td>Persistence baseline establishes a valid benchmark for 1h to 168h soil moisture forecast.</td><td>USCRN Station records</td><td>Historical sample</td><td>Walk-forward evaluation ($h=1\dots 168\text{h}$)</td><td>Out-of-sample MAE / RMSE</td><td>Establish empirical baseline benchmark</td><td>Awaiting empirical execution run</td><td>Baseline reference for all future models</td><td><strong>RESEARCHING</strong></td><td><code>agri_telemetry/forecasting/</code></td><td>Station-specific soil texture</td></tr>
-<tr><td><strong>EVD-006</strong></td><td>80% prediction intervals achieve empirical coverage between 75% and 85% on out-of-sample test.</td><td>USCRN Station records</td><td>Historical sample</td><td>Residual quantile estimation ($q_{10}$ to $q_{90}$)</td><td>Prediction Interval Coverage (PICP)</td><td>$75\% \le \text{PICP} \le 85\%$</td><td>Awaiting empirical execution run</td><td>Uncertainty calibration check</td><td><strong>RESEARCHING</strong></td><td><code>agri_telemetry/forecasting/</code></td><td>Station sample size</td></tr>
-<tr><td><strong>EVD-007</strong></td><td>Pipeline execution produces bitwise identical results given the same config and random seed.</td><td>Replay dataset</td><td>Fixed window</td><td>Dual-run execution with seed=42</td><td>Output diff hash</td><td>Hash match (0 byte delta)</td><td>To be executed in initial test run</td><td>Fully reproducible MLOps pipeline</td><td><strong>IMPLEMENTED</strong></td><td><code>tests/test_reproducibility.py</code></td><td>Local execution env</td></tr>
-    </tbody>
-</table>
-</div>
+<h3>3.1 Repository & Package Structure</h3>
+<ul><li>Root package: <code>agri_telemetry/</code></li><li><code>agri_telemetry/domain/</code>: Domain entities, value objects, scientific constants.</li><li><code>agri_telemetry/contracts/</code>: JSON schema loaders, Pydantic/dataclass event models.</li><li><code>agri_telemetry/ingestion/</code>: USCRN / SCAN parsers, replay iterator, timestamp normalizers.</li><li><code>agri_telemetry/qc/</code>: Range checkers, spike filters, stuck-sensor detectors, fault labellers.</li><li><code>agri_telemetry/state/</code>: Volumetric water content to root-zone depletion & available water fraction.</li><li><code>agri_telemetry/forecasting/</code>: Persistence baseline, walk-forward backtester, metrics (MAE, RMSE, Pinball loss).</li><li><code>agri_telemetry/alerts/</code>: 3-tier anomaly router (QC, Physical Residual, Agronomic MAD Risk).</li><li><code>agri_telemetry/simulation/</code>: Fault injector (spikes, dropouts, frozen sensors).</li><li><code>tests/</code>: Unit tests, integration tests, contract compliance tests, leakage tests.</li></ul>
+<h3>3.2 Environment & Runtime</h3>
+<ul><li>Python 3.10+ virtual environment.</li><li>Core dependencies: <code>pydantic&gt;=2.0</code>, <code>jsonschema&gt;=4.0</code>, <code>pandas&gt;=2.0</code>, <code>numpy&gt;=1.24</code>, <code>scipy&gt;=1.10</code>, <code>pytest&gt;=7.4</code>.</li><li>Strict lockfile reproducibility via <code>requirements.txt</code> / <code>pyproject.toml</code>.</li></ul>
+<h3>3.3 Data Acquisition</h3>
+<ul><li>Download and cache verified public station records (e.g. USCRN Nebraska/Kansas agricultural research stations).</li><li>Local cache path: <code>data/raw/</code> with immutable checksum verification (<code>SHA256</code>).</li></ul>
+<h3>3.4 Ingestion & Timestamp Normalization</h3>
+<ul><li>Parse sub-hourly / hourly station records into canonical <code>TelemetryEvent</code> structures.</li><li>Enforce UTC ISO 8601 formatting.</li><li>Explicitly split <code>event_time</code> (station reading time) from <code>ingest_time</code> (clock time at ingest).</li></ul>
+<h3>3.5 Event Validation & Ingress QC</h3>
+<ul><li>Validate every raw dictionary against <code>telemetry-event.schema.json</code>.</li><li>Apply rule-based QC filters:</li><li>VWC valid range: $[0.0, 0.65]\text{ m}^3/\text{m}^3$.</li><li>Soil Temperature range: $[-20.0, 50.0]^\circ\text{C}$.</li><li>Step-change $\Delta$ threshold: flag jumps $> 0.15\text{ m}^3/\text{m}^3\text{/hr}$ without precipitation.</li><li>Tag events with <code>qc_flag</code> (<code>VALID</code>, <code>SUSPECT_SPIKE</code>, <code>SUSPECT_STUCK</code>, <code>OUT_OF_RANGE</code>).</li></ul>
+<h3>3.6 Persistence & Deduplication State</h3>
+<ul><li>In-memory / lightweight SQLite key-value store indexing <code>event_id</code> and compound natural keys (<code>source_id + event_time</code>).</li><li>Idempotent ingestion: reject or ignore duplicate records without mutating state.</li></ul>
+<h3>3.7 Feature Generation & Lag Construction</h3>
+<ul><li>Construct temporal feature vectors strictly from $t \le t_{\text{origin}}$.</li><li>Generate rolling lag windows ($t-1\text{h}, t-24\text{h}, t-168\text{h}$).</li><li>Enforce strict time-travel leakage prevention assertions.</li></ul>
+<h3>3.8 Forecasting Baseline (Persistence Benchmark)</h3>
+<ul><li>Implement <code>PersistenceBaseline</code>:</li></ul>
+<div class="math-block">$$\hat{Y}_{t+h|t} = Y_t \quad \forall h \in [1, 168\text{ hours}]$$</div>
+<ul><li>Implement <code>DiurnalPersistenceBaseline</code> for atmospheric demand.</li><li>Baseline must be beaten on out-of-sample data before any ML candidate is approved.</li></ul>
+<h3>3.9 Uncertainty & Quantile Estimation</h3>
+<ul><li>Compute empirical historical residual distributions across forecast horizons $h \in \{6, 12, 24, 48, 72, 168\}\text{ hours}$.</li><li>Generate calibrated quantiles ($q_{10}, q_{25}, q_{50}, q_{75}, q_{90}$) and $80\%$ prediction intervals.</li></ul>
+<h3>3.10 Deviation & Agronomic Risk Logic</h3>
+<ul><li>Compute site-specific Management Allowable Depletion ($D_{\text{MAD}}$) exceedance probability:</li></ul>
+<div class="math-block">$$P(\text{Depletion}_{t+h} > D_{\text{MAD}} \mid \mathcal{F}_t)$$</div>
+<ul><li>Emit <code>AlertEvent</code> if $P > \tau_{\text{threshold}}$ (e.g. $\tau = 0.75$).</li><li>Preserve non-actuating advisory status (<code>is_autonomous_actuation: false</code>).</li></ul>
+<h3>3.11 Synthetic Telemetry & Fault Injection</h3>
+<ul><li>Module to inject controlled, labeled synthetic anomalies into replay stream:</li><li><code>VALUE_SPIKE</code>: inject unphysical sensor jump.</li><li><code>SENSOR_STUCK</code>: repeat static float for $N$ timesteps.</li><li><code>CLOCK_DRIFT</code>: shift <code>event_time</code> backward/forward.</li><li><code>PACKET_DROP</code>: omit observations over a multi-hour window.</li><li>Verify that injected faults are caught by Tier 1 QC and NEVER trigger Tier 3 Agronomic alerts.</li></ul>
+<h3>3.12 Evaluation Engine</h3>
+<ul><li>Walk-forward backtesting loop.</li><li>Metrics calculated per horizon $h$:</li><li>Mean Absolute Error ($\text{MAE}$)</li><li>Root Mean Squared Error ($\text{RMSE}$)</li><li>Continuous Ranked Probability Score ($\text{CRPS}$) / Quantile Pinball Loss</li><li>Prediction Interval Coverage Probability ($\text{PICP}$) for $80\%$ nominal coverage.</li></ul>
+<h3>3.13 Observability & Structured Logging</h3>
+<ul><li>Structured JSON logging to stdout / file:</li><li>Fields: <code>timestamp</code>, <code>level</code>, <code>component</code>, <code>event_id</code>, <code>station_id</code>, <code>message</code>.</li><li>Event counters: <code>events_ingested_total</code>, <code>events_qc_failed_total</code>, <code>forecasts_generated_total</code>, <code>alerts_emitted_total</code>.</li></ul>
+<h3>3.14 Testing Suite</h3>
+<ul><li><code>test_schemas.py</code>: Schema validation against valid/invalid JSON payloads.</li><li><code>test_qc_rules.py</code>: Verification of spike, range, and stuck-sensor detection.</li><li><code>test_leakage.py</code>: Temporal assertion tests guaranteeing no future data leaks into features or forecasts.</li><li><code>test_idempotency.py</code>: Verification that duplicate events do not corrupt state.</li><li><code>test_persistence.py</code>: Correct mathematical output of persistence baseline.</li><li><code>test_anomaly_isolation.py</code>: Verification that Tier 1 sensor faults do not trigger Tier 3 agronomic alerts.</li></ul>
+<h3>3.15 Reproducibility Harness</h3>
+<ul><li>Single CLI entrypoint: <code>python -m agri_telemetry.cli run-pipeline --config config/sample_run.json</code>.</li><li>Deterministic seed configuration.</li><li>Markdown summary output written to <code>11. Evidence & Validation/</code>.</li></ul>
+<h3>3.16 Documentation & Evidence Updates</h3>
+<ul><li>Record experiment runs in <code>11. Evidence & Validation/Evidence & Validation - Agri Telemetry & Forecasting Platform.md</code>.</li><li>Transition statuses honestly (<code>DECIDED</code> $\to$ <code>IMPLEMENTED</code> $\to$ <code>TESTED</code> $\to$ <code>VALIDATED</code>).</li></ul>
 </section>
 
-        <section id="experiment-decision-ledger" class="section">
+        <section id="implementation-dependency-graph-build-order" class="section">
             <div class="section-header">
                 <div class="section-number">04</div>
-                <h2>Experiment & Decision Ledger</h2>
+                <h2>Implementation Dependency Graph & Build Order</h2>
             </div>
-<h3>4.1 Experiment Registry Template</h3>
-<pre><code>Experiment ID: EXP-[YYYYMMDD]-[SEQ]
-Date: YYYY-MM-DD
-Investigator / Agent: Antigravity
-Objective: [Specific hypothesis being tested]
-Dataset Source & Version: [e.g. USCRN Lincoln 11 SW, 2024-2025 hourly]
-Splitting Strategy: Chronological Walk-Forward (Train: Jan-Jun, Val: Jul-Aug, Test: Sep-Oct)
-Model / Configuration: [Model class, hyperparameters, feature set]
-Baseline Comparison: PersistenceBaseline
-Observed Metrics:
-  - MAE (h=24): [Value]
-  - RMSE (h=24): [Value]
-  - PICP (80% CI): [Value]
-Decision / Conclusion: [ACCEPTED / REJECTED / NEEDS_FURTHER_STUDY]
-Artefact Path: data/experiments/[EXP_ID]/</code></pre>
-<h3>4.2 Status Transition Log</h3>
-<ul><li><strong>2026-09-30:</strong> Initialized evidence framework. Schemas, contract, implementation plan, and baseline architecture defined under <code>DECIDED</code> and <code>IMPLEMENTED</code> statuses. Zero empirical claims marked as <code>VALIDATED</code> prior to verifiable test execution.</li></ul>
+<pre><code>Step 1: Contracts & JSON Schemas (Done)
+   │
+   ▼
+Step 2: Core Domain Entities & QC Engine
+   │
+   ▼
+Step 3: Station Ingestion & Synthetic Fault Simulator
+   │
+   ▼
+Step 4: Persistence Baseline & Walk-Forward Evaluator
+   │
+   ▼
+Step 5: Three-Tier Alert & Risk Evaluator
+   │
+   ▼
+Step 6: Comprehensive Test Harness & Evidence Capture</code></pre>
 </section>
 
         <footer class="footer">
             CA-ENG // Agri Telemetry &amp; Forecasting Platform<br>
-            Evidence & Validation Framework &nbsp;&bull;&nbsp; Last Edited: September 30, 2026 &nbsp;&bull;&nbsp; Status: ACTIVE
+            Implementation Plan &nbsp;&bull;&nbsp; Last Edited: September 30, 2026 &nbsp;&bull;&nbsp; Status: DECIDED
         </footer>
     </main>
 </body>

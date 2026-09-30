@@ -52,5 +52,13 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
-# Logs
+# Logs & Temporary Files
 *.log
+scratch/
+
+# Agent Guidelines & Internal Reference Scaffolding
+_agy_reference/
+*Agents.md*
+*agents.md*
+3. Agents.md/
+Agents/

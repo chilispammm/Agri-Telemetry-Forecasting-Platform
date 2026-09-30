@@ -4,27 +4,26 @@
 
 ---
 
-## 1. Source of Truth Hierarchy
+## 1. Repository Architecture & Source of Truth
 
-This repository is strictly evidence-driven and governed by the canonical Markdown specifications:
+This repository is strictly evidence-driven and structured into canonical specification and engineering layers:
 
-1. [`1. Project Charter/`](1.%20Project%20Charter) — Project Brief & Feasibility Boundaries
-2. [`2. Research Feasibility/`](2.%20Research%20Feasibility) — In-Situ Soil Moisture & Telemetry Feasibility
-3. [`3. Agents.md/`](3.%20Agents.md) — Engineering Constitution & Non-Negotiable Scientific Rules
-4. [`4. Product Requirements Doc/`](4.%20Product%20Requirements%20Doc) — Product Requirements Document (PRD)
-5. [`5. Data & Scientific Spec/`](5.%20Data%20%26%20Scientific%20Spec) — Scientific Meaning, Units & State Representation
-6. [`6. Data Forecast Design/`](6.%20Data%20Forecast%20Design) — Horizon Targets, Persistence Benchmark & Uncertainty
-7. [`7. Technical Spec/`](7.%20Technical%20Spec) — Subsystem Architecture & Ingress Pipeline
-8. [`8. ADRs/`](8.%20ADRs) — Architecture Decision Records (ADR-001 through ADR-005)
-9. [`9. Event & Telemetry Contract/`](9.%20Event%20%26%20Telemetry%20Contract) — Interface Contract & JSON Schemas (`schemas/`)
-10. [`10. Implementation Plan/`](10.%20Implementation%20Plan) — 16-Module Vertical Slice Execution Roadmap
-11. [`11. Evidence & Validation/`](11.%20Evidence%20%26%20Validation) — Master Validation Matrix & Experiment Ledger
+* [`Project Charter/`](Project%20Charter) — Project Charter & Strategic Foundations
+* [`Research Feasibility/`](Research%20Feasibility) — In-Situ Soil Moisture & Telemetry Research Feasibility
+* [`Product Requirements Doc/`](Product%20Requirements%20Doc) — Product Requirements Document (PRD)
+* [`Data & Scientific Spec/`](Data%20%26%20Scientific%20Spec) — Scientific Meaning, Physical Units & State Representation
+* [`Data Forecast Design/`](Data%20Forecast%20Design) — Horizon Targets, Persistence Benchmark & Uncertainty Framework
+* [`Technical Spec/`](Technical%20Spec) — Subsystem Architecture, Ingress Pipeline & Component Topology
+* [`ADRs/`](ADRs) — Architecture Decision Records (ADR-001 through ADR-005 + Master Register)
+* [`Event & Telemetry Contract/`](Event%20%26%20Telemetry%20Contract) — Interface Contract & Strict JSON Schemas (`schemas/`)
+* [`Implementation Plan/`](Implementation%20Plan) — 16-Module Vertical Slice Execution Roadmap
+* [`Evidence & Validation/`](Evidence%20%26%20Validation) — Master Validation Matrix & Empirical Verification Ledger
 
 ---
 
 ## 2. Generating HTML Presentation Views
 
-The HTML files across this repository are compiled presentation layers of the canonical Markdown files.
+The HTML files across this repository are compiled presentation layers of the canonical Markdown files, featuring embedded MathJax LaTeX rendering and Mermaid SVG flowcharts.
 
 To regenerate all HTML presentation documents after updating any Markdown source, run:
 
