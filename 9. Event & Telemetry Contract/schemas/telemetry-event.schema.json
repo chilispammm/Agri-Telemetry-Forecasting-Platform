@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agri-telemetry.io/schemas/telemetry-event.schema.json",
+  "title": "TelemetryEvent",
+  "description": "Standard schema for agricultural telemetry events including in-situ sensor observations, reanalysis records, simulated replay, and labelled synthetic faults.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "event_id",
+    "source_id",
+    "site_id",
+    "event_time",
+    "ingest_time",
+    "provenance",
+    "measurements"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantic versioning of the schema (e.g., 1.0.0)"
+    },
+    "event_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this telemetry event instance"
+    },
+    "source_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for the reporting station or device"
+    },
+    "site_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for the field zone or agricultural site"
+    },
+    "event_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC ISO 8601 timestamp when the physical measurement occurred"
+    },
+    "ingest_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC ISO 8601 timestamp when the event was ingested by the platform"
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "data_class",
+        "network"
+      ],
+      "properties": {
+        "data_class": {
+          "type": "string",
+          "enum": [
+            "OBSERVED",
+            "MODELLED_REANALYSIS",
+            "SIMULATED_REPLAY",
+            "SYNTHETIC_FAULT"
+          ],
+          "description": "Explicit provenance classification"
+        },
+        "network": {
+          "type": "string",
+          "description": "Originating monitoring network (e.g., USCRN, SCAN, ISMN, ON_FARM_IOT)"
+        },
+        "dataset_version": {
+          "type": "string",
+          "description": "Version or release tag of the underlying dataset"
+        },
+        "replay_session_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Session ID if generated during historical replay simulation"
+        },
+        "synthetic_fault_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "VALUE_SPIKE",
+            "SENSOR_STUCK",
+            "CLOCK_DRIFT",
+            "PACKET_DROP",
+            "NON_PHYSICAL_RANGE",
+            null
+          ],
+          "description": "Label indicating the specific injected synthetic fault, or null for clean data"
+        }
+      },
+      "additionalProperties": false
+    },
+    "measurements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "sensor_id",
+          "variable_name",
+          "depth_cm",
+          "value",
+          "unit",
+          "qc_flag"
+        ],
+        "properties": {
+          "sensor_id": {
+            "type": "string",
+            "description": "Specific sensor or channel identifier"
+          },
+          "variable_name": {
+            "type": "string",
+            "enum": [
+              "volumetric_water_content",
+              "soil_temperature",
+              "air_temperature",
+              "relative_humidity",
+              "precipitation",
+              "solar_radiation",
+              "wind_speed",
+              "atmospheric_pressure",
+              "vapor_pressure_deficit"
+            ],
+            "description": "Standardized scientific variable name"
+          },
+          "depth_cm": {
+            "type": "number",
+            "minimum": 0.0,
+            "description": "Burial depth in centimeters (0.0 for atmospheric sensors)"
+          },
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Measured numeric value, or null if sensor packet dropped/missing"
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "m3/m3",
+              "degC",
+              "mm",
+              "W/m2",
+              "m/s",
+              "kPa",
+              "percent",
+              "fraction"
+            ],
+            "description": "Standard scientific unit"
+          },
+          "qc_flag": {
+            "type": "string",
+            "enum": [
+              "VALID",
+              "SUSPECT_SPIKE",
+              "SUSPECT_STUCK",
+              "OUT_OF_RANGE",
+              "MISSING",
+              "SYNTHETIC_CORRUPTED"
+            ],
+            "description": "Ingress quality control evaluation flag"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "qc_summary": {
+      "type": "object",
+      "properties": {
+        "all_valid": {
+          "type": "boolean"
+        },
+        "flag_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "quarantined": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

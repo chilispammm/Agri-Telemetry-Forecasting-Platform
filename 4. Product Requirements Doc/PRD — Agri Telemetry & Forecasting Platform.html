@@ -1,0 +1,2127 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Agri Telemetry & Forecasting — Product Requirements Document</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #f4f1ea;
+            --surface: #faf8f3;
+            --ink: #151515;
+            --muted: #62605a;
+            --border: #d3cec0;
+            --dark: #151515;
+            --dark-border: #333;
+            --blue: #2563eb;
+            --amber: #b7791f;
+            --grey: #777;
+            --green: #34785a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 2rem;
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background: var(--bg);
+            font-family: "Inter", sans-serif;
+            line-height: 1.65;
+        }
+
+        /* Sidebar */
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 270px;
+            height: 100vh;
+            padding: 2.5rem 1.75rem;
+            border-right: 1px solid var(--border);
+            background: var(--bg);
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .brand {
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--ink);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-meta {
+            margin-bottom: 2.5rem;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.7;
+            text-transform: uppercase;
+            letter-spacing: .7px;
+        }
+
+        .nav-item {
+            display: block;
+            margin-bottom: .9rem;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: .45px;
+            text-transform: uppercase;
+            transition: color .2s ease;
+        }
+
+        .nav-item:hover {
+            color: var(--ink);
+        }
+
+        /* Main */
+
+        .main {
+            width: calc(100% - 270px);
+            max-width: 1200px;
+            margin-left: 270px;
+            padding: 4rem 5rem 7rem;
+        }
+
+        .top-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 2rem;
+            padding-bottom: 1rem;
+            margin-bottom: 4rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .hero {
+            max-width: 900px;
+            margin-bottom: 5rem;
+        }
+
+        .eyebrow {
+            margin-bottom: 1rem;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            max-width: 900px;
+            margin: 0 0 1.5rem;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            line-height: 1.02;
+            letter-spacing: -.055em;
+            font-weight: 600;
+        }
+
+        .hero-description {
+            max-width: 780px;
+            color: var(--muted);
+            font-size: 16px;
+        }
+
+        /* Principle */
+
+        .principle {
+            padding: 2rem 2.25rem;
+            margin: 2rem 0 3rem;
+            background: var(--dark);
+            color: white;
+        }
+
+        .principle-label {
+            margin-bottom: .75rem;
+            color: #999;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .principle strong {
+            display: block;
+            margin-bottom: 1.25rem;
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .workflow {
+            color: #ddd;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 12px;
+            letter-spacing: .2px;
+            line-height: 2;
+            overflow-wrap: anywhere;
+        }
+
+        .lead {
+            max-width: 850px;
+            font-size: 15px;
+        }
+
+        /* Sections */
+
+        .section {
+            margin-top: 5rem;
+            scroll-margin-top: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            padding-top: 1rem;
+            margin-bottom: 2rem;
+            border-top: 1px solid var(--ink);
+        }
+
+        .section-number {
+            min-width: 30px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.65rem;
+            line-height: 1.2;
+            letter-spacing: -.025em;
+            font-weight: 600;
+        }
+
+        h3 {
+            margin: 2.5rem 0 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        h4 {
+            margin: 1.75rem 0 .75rem;
+            font-size: .9rem;
+            font-weight: 700;
+        }
+
+        p {
+            max-width: 850px;
+        }
+
+        .note {
+            color: var(--muted);
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        /* Tables */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0 2rem;
+            border-top: 1px solid var(--ink);
+            font-size: 13px;
+        }
+
+        th,
+        td {
+            padding: 1.1rem .9rem;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .7px;
+            text-transform: uppercase;
+        }
+
+        .key {
+            width: 28%;
+            border-right: 1px solid var(--border);
+            font-weight: 600;
+        }
+
+        /* Requirement cards */
+
+        .requirement {
+            padding: 1.5rem 1.75rem;
+            margin: 1.5rem 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-top: 2px solid var(--ink);
+            break-inside: avoid;
+        }
+
+        .requirement-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .requirement-heading h3 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .requirement-id {
+            color: var(--muted);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .requirement p {
+            font-size: 13px;
+        }
+
+        .requirement ul {
+            font-size: 13px;
+        }
+
+        /* Status badges */
+
+        .badge {
+            display: inline-block;
+            padding: 3px 7px;
+            border: 1px solid currentColor;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .researching {
+            color: var(--blue);
+        }
+
+        .open {
+            color: var(--amber);
+        }
+
+        .not-started {
+            color: var(--grey);
+        }
+
+        .defined {
+            color: var(--green);
+        }
+
+        /* Flow */
+
+        .flow {
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: rgba(0, 0, 0, .035);
+            border-left: 3px solid var(--ink);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 12px;
+            line-height: 2.1;
+            overflow-x: auto;
+            white-space: pre-line;
+        }
+
+        .flow-horizontal {
+            white-space: normal;
+            line-height: 2;
+        }
+
+        /* Lists */
+
+        ul,
+        ol {
+            max-width: 850px;
+            padding-left: 1.4rem;
+        }
+
+        li {
+            margin-bottom: .65rem;
+        }
+
+        .open-questions {
+            columns: 2;
+            column-gap: 4rem;
+        }
+
+        .open-questions li {
+            break-inside: avoid;
+            margin-bottom: 1rem;
+        }
+
+        /* Callouts */
+
+        .callout {
+            padding: 1.5rem 1.75rem;
+            margin: 2rem 0;
+            border-left: 3px solid var(--ink);
+            background: var(--surface);
+            font-size: 13px;
+        }
+
+        .callout strong {
+            font-weight: 600;
+        }
+
+        .dark-callout {
+            padding: 1.75rem 2rem;
+            margin: 2rem 0;
+            background: var(--dark);
+            color: white;
+        }
+
+        .dark-callout p {
+            color: #ddd;
+            font-size: 14px;
+        }
+
+        .dark-callout strong {
+            color: white;
+        }
+
+        .dark-callout .label {
+            color: #999;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        /* Output cards */
+
+        .output-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .output-card {
+            padding: 1.5rem;
+            background: var(--surface);
+            border-top: 2px solid var(--ink);
+        }
+
+        .output-card .number {
+            display: block;
+            margin-bottom: 1rem;
+            color: var(--muted);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 11px;
+        }
+
+        .output-card h3 {
+            margin: 0 0 .75rem;
+        }
+
+        .output-card p {
+            margin-bottom: 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* Acceptance checklist */
+
+        .checklist {
+            padding: 1.75rem 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+        }
+
+        .checklist ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .checklist li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 1rem;
+            font-size: 13px;
+            break-inside: avoid;
+        }
+
+        .checklist li::before {
+            content: "";
+            position: absolute;
+            top: .3rem;
+            left: 0;
+            width: 13px;
+            height: 13px;
+            border: 1px solid var(--muted);
+            background: transparent;
+        }
+
+        /* Footer */
+
+        .footer {
+            padding-top: 3rem;
+            margin-top: 7rem;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 10px;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+            line-height: 2;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 1100px) {
+            .main {
+                padding: 3rem 3rem 6rem;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                max-height: none;
+                border-right: 0;
+                border-bottom: 1px solid var(--border);
+                padding: 1.5rem;
+            }
+
+            .sidebar-meta {
+                margin-bottom: 1.5rem;
+            }
+
+            .sidebar nav {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: .5rem 1rem;
+            }
+
+            .nav-item {
+                margin-bottom: .4rem;
+            }
+
+            .main {
+                width: 100%;
+                margin-left: 0;
+                padding: 3rem 1.5rem 5rem;
+            }
+
+            .top-meta {
+                flex-direction: column;
+                gap: .5rem;
+            }
+
+            .open-questions {
+                columns: 1;
+            }
+
+            .output-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .sidebar nav {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                gap: .65rem;
+            }
+
+            h2 {
+                font-size: 1.35rem;
+            }
+
+            .requirement {
+                padding: 1.25rem;
+            }
+
+            .flow {
+                font-size: 11px;
+            }
+        }
+
+        /* Print */
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 18mm;
+            }
+
+            body {
+                background: white;
+                color: black;
+                font-size: 10pt;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                width: 100%;
+                max-width: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            .top-meta {
+                margin-bottom: 2rem;
+            }
+
+            .section {
+                margin-top: 3rem;
+            }
+
+            .section-header {
+                break-after: avoid;
+            }
+
+            .requirement,
+            .output-card,
+            .callout,
+            .checklist,
+            table {
+                break-inside: avoid;
+            }
+
+            .principle,
+            .dark-callout {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            a {
+                color: inherit;
+                text-decoration: none;
+            }
+
+            .footer {
+                margin-top: 3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+    <div class="brand">CA-ENG // Master Record</div>
+
+    <div class="sidebar-meta">
+        Agri Telemetry & Forecasting Platform<br>
+        Product Requirements Document<br>
+        September 30, 2026
+    </div>
+
+    <nav aria-label="Document navigation">
+        <a class="nav-item" href="#authority">Document Authority</a>
+        <a class="nav-item" href="#s01">01. Document Purpose</a>
+        <a class="nav-item" href="#s02">02. Product Definition</a>
+        <a class="nav-item" href="#s03">03. Product Problem</a>
+        <a class="nav-item" href="#s04">04. Target User</a>
+        <a class="nav-item" href="#s05">05. User / Operational Job</a>
+        <a class="nav-item" href="#s06">06. Product Objective</a>
+        <a class="nav-item" href="#s07">07. Core Workflow</a>
+        <a class="nav-item" href="#s08">08. Functional Requirements</a>
+        <a class="nav-item" href="#s09">09. Product Outputs</a>
+        <a class="nav-item" href="#s10">10. Non-Functional Requirements</a>
+        <a class="nav-item" href="#s11">11. Success Criteria</a>
+        <a class="nav-item" href="#s12">12. Acceptance Criteria</a>
+        <a class="nav-item" href="#s13">13. Non-Goals</a>
+        <a class="nav-item" href="#s14">14. Product Boundaries</a>
+        <a class="nav-item" href="#s15">15. Open Questions</a>
+        <a class="nav-item" href="#s16">16. Traceability</a>
+        <a class="nav-item" href="#s17">17. Current Status</a>
+        <a class="nav-item" href="#s18">18. Next Decision Gate</a>
+    </nav>
+
+</aside>
+
+
+<main class="main">
+
+    <div class="top-meta">
+        <span>Agri Telemetry & Forecasting Platform</span>
+        <span>Last Edited: 30 SEP 2026 &nbsp; / &nbsp; Status: Researching</span>
+    </div>
+
+
+    <!-- DOCUMENT AUTHORITY -->
+
+    <section class="hero" id="authority">
+
+        <div class="eyebrow">CA-ENG / Product Requirements Document</div>
+
+        <h1>Product Requirements Document</h1>
+
+        <p class="hero-description">
+            Defining the operational behaviour, user context, functional
+            requirements, evaluation criteria, and boundaries of the
+            Agri Telemetry & Forecasting Platform.
+        </p>
+
+        <div class="principle">
+
+            <div class="principle-label">Product Governing Principle</div>
+
+            <strong>
+                Demonstrate decision-relevant value, not merely technical operation.
+            </strong>
+
+            <div class="workflow">
+                TELEMETRY → TEMPORAL STATE → FORECAST → UNCERTAINTY → OPERATIONAL RISK
+            </div>
+
+        </div>
+
+        <p class="lead">
+            This PRD translates project intent and research findings into
+            observable product requirements. It defines what the system must
+            do, who it is intended to support, which decisions it is intended
+            to inform, and how product success will be evaluated.
+        </p>
+
+        <p class="lead">
+            <strong>
+                Product requirements define expected behaviour. They do not
+                prematurely dictate implementation architecture.
+            </strong>
+        </p>
+
+        <div class="callout">
+            <strong>Document:</strong> 02_product/PRD.md<br>
+            <strong>Status:</strong> <span class="badge researching">Researching</span><br>
+            <strong>Last Updated:</strong> September 30, 2026
+        </div>
+
+    </section>
+
+
+    <!-- 01 -->
+
+    <section class="section" id="s01">
+
+        <div class="section-header">
+            <span class="section-number">01</span>
+            <h2>Document Purpose</h2>
+        </div>
+
+        <p class="lead">
+            This Product Requirements Document defines what the Agri Telemetry
+            & Forecasting Platform must do, who it is intended to support,
+            what decisions it is intended to inform, and how product success
+            will be evaluated.
+        </p>
+
+        <p>
+            It translates the project intent and research findings into
+            observable product requirements.
+        </p>
+
+        <p>
+            This document does <strong>not</strong> prescribe the final dataset,
+            forecasting model, transport protocol, message broker,
+            infrastructure, or implementation architecture.
+        </p>
+
+        <div class="callout">
+            <strong>Downstream authorities:</strong>
+            Data/Scientific Specification, Forecast Design, Technical
+            Specification, and Architecture Decision Records (ADRs).
+        </div>
+
+    </section>
+
+
+    <!-- 02 -->
+
+    <section class="section" id="s02">
+
+        <div class="section-header">
+            <span class="section-number">02</span>
+            <h2>Product Definition</h2>
+        </div>
+
+        <table>
+            <tr>
+                <td class="key">Product Name</td>
+                <td>Agri Telemetry & Forecasting Platform</td>
+            </tr>
+            <tr>
+                <td class="key">Product Type</td>
+                <td>Operational agricultural time-series intelligence system.</td>
+            </tr>
+            <tr>
+                <td class="key">Core Product Function</td>
+                <td>
+                    Transform incoming agricultural telemetry into a
+                    trustworthy representation of soil-water state,
+                    forecast its near-term trajectory with quantified
+                    uncertainty, and identify potential management-threshold
+                    risks early enough to support an operational decision.
+                </td>
+            </tr>
+        </table>
+
+        <h3>The Product Is Not Simply a...</h3>
+
+        <ul>
+            <li>Sensor dashboard.</li>
+            <li>Soil-moisture predictor.</li>
+            <li>Anomaly detector.</li>
+            <li>Weather-monitoring system.</li>
+            <li>Generic IoT pipeline.</li>
+        </ul>
+
+        <div class="dark-callout">
+            <div class="label">Core Product Value Chain</div>
+            <p>
+                <strong>
+                    Telemetry → Temporal State → Forecast → Uncertainty → Operational Risk
+                </strong>
+            </p>
+            <p>
+                Product value depends on connecting these stages into a
+                coherent decision-support process.
+            </p>
+        </div>
+
+    </section>
+
+
+    <!-- 03 -->
+
+    <section class="section" id="s03">
+
+        <div class="section-header">
+            <span class="section-number">03</span>
+            <h2>Product Problem</h2>
+        </div>
+
+        <p class="lead">
+            Agricultural telemetry can provide frequent observations of
+            environmental and soil conditions, but raw sensor changes are
+            not inherently actionable.
+        </p>
+
+        <p>
+            A decrease in measured soil moisture may reflect normal drying,
+            weather conditions, irrigation history, sensor behaviour, or a
+            genuine developing water-status risk. Likewise, a statistical
+            anomaly does not automatically constitute crop stress.
+        </p>
+
+        <h3>Required Distinctions</h3>
+
+        <table>
+            <tr>
+                <td class="key">01. Data-Quality Problems</td>
+                <td>The telemetry itself may be unreliable.</td>
+            </tr>
+            <tr>
+                <td class="key">02. Physical / Environmental Deviations</td>
+                <td>Observed conditions differ from expected temporal behaviour.</td>
+            </tr>
+            <tr>
+                <td class="key">03. Forecasted State Risk</td>
+                <td>The projected trajectory approaches a relevant management threshold.</td>
+            </tr>
+            <tr>
+                <td class="key">04. Operational Risk</td>
+                <td>The projected condition may require attention within the available decision window.</td>
+            </tr>
+        </table>
+
+        <div class="callout">
+            <strong>Product requirement:</strong>
+            These distinctions must be preserved rather than collapsed
+            into a single generic alert.
+        </div>
+
+    </section>
+
+
+    <!-- 04 -->
+
+    <section class="section" id="s04">
+
+        <div class="section-header">
+            <span class="section-number">04</span>
+            <h2>Target User</h2>
+        </div>
+
+        <p>
+            <span class="badge open">Open — Product Research</span>
+        </p>
+
+        <table>
+            <tr>
+                <td class="key">Primary User</td>
+                <td>To be resolved through product research.</td>
+            </tr>
+            <tr>
+                <td class="key">Candidate Users</td>
+                <td>
+                    <ul>
+                        <li>Farm managers</li>
+                        <li>Irrigation managers</li>
+                        <li>Agronomists</li>
+                        <li>Agricultural operations teams</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td class="key">Initial Effective Operator</td>
+                <td>
+                    A technical/research user may operate the initial
+                    implementation because the system is a portfolio-scale
+                    prototype rather than a deployed commercial product.
+                </td>
+            </tr>
+        </table>
+
+        <p class="note">
+            The final user definition must be established before product-level
+            workflow and interface requirements are frozen.
+        </p>
+
+    </section>
+
+
+    <!-- 05 -->
+
+    <section class="section" id="s05">
+
+        <div class="section-header">
+            <span class="section-number">05</span>
+            <h2>User / Operational Job</h2>
+        </div>
+
+        <div class="dark-callout">
+            <div class="label">Primary Operational Question</div>
+            <p>
+                <strong>
+                    What is the current soil-water state, how is it changing,
+                    where is it expected to go, and is there enough lead time
+                    to act if the trajectory approaches a relevant management threshold?
+                </strong>
+            </p>
+        </div>
+
+        <h3>Supporting User Tasks</h3>
+
+        <ul>
+            <li>Determine whether observed drying is expected.</li>
+            <li>Identify unusual wetting or drying.</li>
+            <li>Assess whether a sensor or telemetry stream is behaving abnormally.</li>
+            <li>Estimate where the soil-water state is heading.</li>
+            <li>Quantify uncertainty around that forecast.</li>
+            <li>Identify potential threshold-crossing risk.</li>
+            <li>Understand the available lead time.</li>
+            <li>
+                Distinguish an alert requiring investigation from one that
+                may require an agronomic or operational response.
+            </li>
+        </ul>
+
+        <div class="callout">
+            <strong>Product classification:</strong>
+            The system is a decision-support tool, not an autonomous irrigation controller.
+        </div>
+
+    </section>
+
+
+    <!-- 06 -->
+
+    <section class="section" id="s06">
+
+        <div class="section-header">
+            <span class="section-number">06</span>
+            <h2>Product Objective</h2>
+        </div>
+
+        <p class="lead">
+            The product must demonstrate that an agricultural telemetry
+            system can:
+        </p>
+
+        <ol>
+            <li>Receive and preserve time-stamped observations.</li>
+            <li>Maintain trustworthy temporal state.</li>
+            <li>Detect relevant data-quality and physical deviations.</li>
+            <li>Produce reproducible near-term forecasts.</li>
+            <li>Quantify forecast uncertainty.</li>
+            <li>Identify potential management-threshold risk.</li>
+            <li>
+                Communicate sufficient evidence and context for an operator
+                to assess the result.
+            </li>
+        </ol>
+
+    </section>
+
+
+    <!-- 07 -->
+
+    <section class="section" id="s07">
+
+        <div class="section-header">
+            <span class="section-number">07</span>
+            <h2>Core Product Workflow</h2>
+        </div>
+
+        <p class="note">
+            This is a product reasoning flow, not a commitment to a
+            particular technical architecture.
+        </p>
+
+        <div class="flow">
+Telemetry
+    ↓
+Data / Event Integrity
+    ↓
+State Reconstruction
+    ↓
+Forecast
+    ↓
+Predictive Uncertainty
+    ↓
+Deviation / Threshold Assessment
+    ↓
+Operational Risk
+        </div>
+
+    </section>
+
+
+    <!-- 08 -->
+
+    <section class="section" id="s08">
+
+        <div class="section-header">
+            <span class="section-number">08</span>
+            <h2>Functional Requirements</h2>
+        </div>
+
+        <p class="lead">
+            The following requirements define observable system behaviour.
+            Implementation mechanisms remain subject to downstream
+            specifications and empirical evidence.
+        </p>
+
+
+        <!-- FR-01 -->
+
+        <div class="requirement" id="fr01">
+
+            <div class="requirement-heading">
+                <h3>Telemetry Ingestion</h3>
+                <span class="requirement-id">FR-01</span>
+            </div>
+
+            <p>
+                The system shall accept time-stamped agricultural telemetry
+                from the selected data source or simulated telemetry source.
+            </p>
+
+            <p><strong>Preserved information, where applicable:</strong></p>
+
+            <ul>
+                <li>Source/station/device identifier.</li>
+                <li>Sensor identifier.</li>
+                <li>Field/site identifier.</li>
+                <li>Event timestamp.</li>
+                <li>Ingestion timestamp.</li>
+                <li>Measurement.</li>
+                <li>Unit.</li>
+                <li>Quality status.</li>
+                <li>Provenance.</li>
+                <li>Schema/version information.</li>
+            </ul>
+
+            <p class="note">
+                The final transport mechanism remains an open technical decision.
+            </p>
+
+        </div>
+
+
+        <!-- FR-02 -->
+
+        <div class="requirement" id="fr02">
+
+            <div class="requirement-heading">
+                <h3>Provenance Preservation</h3>
+                <span class="requirement-id">FR-02</span>
+            </div>
+
+            <p>The system shall distinguish between:</p>
+
+            <ul>
+                <li>Observed measurements.</li>
+                <li>Derived variables.</li>
+                <li>Simulated telemetry.</li>
+                <li>Synthetic faults.</li>
+                <li>Modelled/reanalysis data.</li>
+                <li>Forecast values.</li>
+            </ul>
+
+            <p>
+                A downstream user shall be able to determine the provenance
+                and transformation history of a value used by the system.
+            </p>
+
+        </div>
+
+
+        <!-- FR-03 -->
+
+        <div class="requirement" id="fr03">
+
+            <div class="requirement-heading">
+                <h3>Data-Quality Assessment</h3>
+                <span class="requirement-id">FR-03</span>
+            </div>
+
+            <p>
+                The system shall identify or expose relevant telemetry-quality
+                problems, including where applicable:
+            </p>
+
+            <ul>
+                <li>Missing observations.</li>
+                <li>Malformed values.</li>
+                <li>Duplicate events.</li>
+                <li>Delayed events.</li>
+                <li>Out-of-order events.</li>
+                <li>Implausible values.</li>
+                <li>Communication gaps.</li>
+                <li>Sensor drift or abnormal behaviour.</li>
+            </ul>
+
+            <p>
+                Data-quality anomalies shall not automatically be classified
+                as physical or agronomic events.
+            </p>
+
+        </div>
+
+
+        <!-- FR-04 -->
+
+        <div class="requirement" id="fr04">
+
+            <div class="requirement-heading">
+                <h3>Temporal State Reconstruction</h3>
+                <span class="requirement-id">FR-04</span>
+            </div>
+
+            <p>
+                The system shall construct the temporal representation required
+                by the forecasting and risk-assessment process from incoming
+                observations.
+            </p>
+
+            <p>The representation must retain sufficient temporal and provenance information to distinguish:</p>
+
+            <ul>
+                <li>What was observed.</li>
+                <li>When it occurred.</li>
+                <li>When it was received.</li>
+                <li>What was derived from it.</li>
+            </ul>
+
+            <p class="note">
+                The final state representation remains subject to the
+                Data/Scientific Specification.
+            </p>
+
+        </div>
+
+
+        <!-- FR-05 -->
+
+        <div class="requirement" id="fr05">
+
+            <div class="requirement-heading">
+                <h3>Near-Term Forecasting</h3>
+                <span class="requirement-id">FR-05</span>
+            </div>
+
+            <p>
+                The system shall generate forecasts of the selected soil-water
+                state or trajectory over explicitly defined future horizons.
+            </p>
+
+            <p><strong>Forecasts shall:</strong></p>
+
+            <ul>
+                <li>Use only information available at the forecast origin.</li>
+                <li>Prevent temporal leakage.</li>
+                <li>Include Persistence as a mandatory baseline.</li>
+                <li>Be evaluated using chronological/walk-forward methodology.</li>
+                <li>Report performance by forecast horizon.</li>
+            </ul>
+
+            <p class="note">
+                The final forecast horizons are not yet fixed.
+            </p>
+
+        </div>
+
+
+        <!-- FR-06 -->
+
+        <div class="requirement" id="fr06">
+
+            <div class="requirement-heading">
+                <h3>Probabilistic Forecasting</h3>
+                <span class="requirement-id">FR-06</span>
+            </div>
+
+            <p>
+                Where the product makes uncertainty claims, it shall provide
+                an explicitly defined representation of predictive uncertainty.
+            </p>
+
+            <p><strong>Candidate representations:</strong></p>
+
+            <ul>
+                <li>Prediction intervals.</li>
+                <li>Predictive quantiles.</li>
+                <li>Predictive distributions.</li>
+                <li>Another scientifically justified method.</li>
+            </ul>
+
+            <p>
+                The selected method shall be defined in the Forecast Design
+                and evaluated empirically.
+            </p>
+
+            <p>
+                A prediction interval shall not be described as a confidence
+                interval unless it is specifically a confidence interval.
+            </p>
+
+        </div>
+
+
+        <!-- FR-07 -->
+
+        <div class="requirement" id="fr07">
+
+            <div class="requirement-heading">
+                <h3>Deviation Detection</h3>
+                <span class="requirement-id">FR-07</span>
+            </div>
+
+            <p>
+                The system shall identify meaningful deviations between
+                observed behaviour and the expected temporal baseline where
+                the available evidence supports such detection.
+            </p>
+
+            <p><strong>Deviation detection shall distinguish, where possible:</strong></p>
+
+            <ul>
+                <li>Telemetry/data-quality deviation.</li>
+                <li>Physical/environmental deviation.</li>
+                <li>Model/forecast deviation.</li>
+            </ul>
+
+            <p>
+                A deviation shall not automatically be interpreted as crop stress.
+            </p>
+
+        </div>
+
+
+        <!-- FR-08 -->
+
+        <div class="requirement" id="fr08">
+
+            <div class="requirement-heading">
+                <h3>Threshold-Risk Assessment</h3>
+                <span class="requirement-id">FR-08</span>
+            </div>
+
+            <p>
+                The system shall support assessment of whether the forecast
+                trajectory approaches or crosses a relevant management threshold.
+            </p>
+
+            <p><strong>The threshold:</strong></p>
+
+            <ul>
+                <li>Must be explicitly defined.</li>
+                <li>Must have documented scientific/project justification.</li>
+                <li>Must not be a universal hard-coded value.</li>
+                <li>Must account for the selected state representation.</li>
+            </ul>
+
+            <p>
+                The system shall distinguish <strong>threshold risk</strong>
+                from confirmed crop stress.
+            </p>
+
+        </div>
+
+
+        <!-- FR-09 -->
+
+        <div class="requirement" id="fr09">
+
+            <div class="requirement-heading">
+                <h3>Alert Persistence / Confirmation</h3>
+                <span class="requirement-id">FR-09</span>
+            </div>
+
+            <p>
+                Where alerts are generated from sequential observations or
+                forecasts, the system shall support an explicit persistence/
+                confirmation rule where justified.
+            </p>
+
+            <p>
+                The rule shall be evaluated empirically rather than assuming
+                that consecutive observations are statistically independent.
+            </p>
+
+            <p class="note">The final alert rule remains open.</p>
+
+        </div>
+
+
+        <!-- FR-10 -->
+
+        <div class="requirement" id="fr10">
+
+            <div class="requirement-heading">
+                <h3>Alert Context</h3>
+                <span class="requirement-id">FR-10</span>
+            </div>
+
+            <p>
+                A risk alert shall provide sufficient context for an operator
+                to understand why it was generated.
+            </p>
+
+            <p><strong>Where applicable, this should include:</strong></p>
+
+            <ul>
+                <li>Affected site/device/sensor.</li>
+                <li>Event or forecast time.</li>
+                <li>Observed state.</li>
+                <li>Expected state.</li>
+                <li>Forecast trajectory.</li>
+                <li>Uncertainty.</li>
+                <li>Relevant threshold.</li>
+                <li>Estimated lead time.</li>
+                <li>Alert classification.</li>
+                <li>Relevant data-quality status.</li>
+                <li>Provenance.</li>
+            </ul>
+
+            <p class="note">
+                The final presentation mechanism is not prescribed by this PRD.
+            </p>
+
+        </div>
+
+
+        <!-- FR-11 -->
+
+        <div class="requirement" id="fr11">
+
+            <div class="requirement-heading">
+                <h3>Historical Evaluation</h3>
+                <span class="requirement-id">FR-11</span>
+            </div>
+
+            <p>
+                The system shall support reproducible evaluation against
+                historical data.
+            </p>
+
+            <p><strong>Evaluation shall preserve:</strong></p>
+
+            <ul>
+                <li>Chronological ordering.</li>
+                <li>Defined training/validation/test periods.</li>
+                <li>An untouched final test period.</li>
+                <li>Explicit forecast horizons.</li>
+                <li>Baseline comparisons.</li>
+                <li>Model/configuration versions.</li>
+                <li>Evaluation metrics.</li>
+                <li>Relevant assumptions and limitations.</li>
+            </ul>
+
+        </div>
+
+
+        <!-- FR-12 -->
+
+        <div class="requirement" id="fr12">
+
+            <div class="requirement-heading">
+                <h3>Synthetic Telemetry</h3>
+                <span class="requirement-id">FR-12</span>
+            </div>
+
+            <p>
+                The system may generate a controlled telemetry stream from
+                historical observations for event-processing experiments.
+            </p>
+
+            <p>
+                Synthetic telemetry shall remain distinguishable from the
+                underlying observed data.
+            </p>
+
+            <p><strong>Controlled faults may include:</strong></p>
+
+            <ul>
+                <li>Packet loss.</li>
+                <li>Duplicate events.</li>
+                <li>Delayed delivery.</li>
+                <li>Out-of-order delivery.</li>
+                <li>Reconnects.</li>
+                <li>Abnormal readings.</li>
+                <li>Other explicitly defined fault conditions.</li>
+            </ul>
+
+            <p>
+                Synthetic faults must be labelled and traceable.
+            </p>
+
+        </div>
+
+
+        <!-- FR-13 -->
+
+        <div class="requirement" id="fr13">
+
+            <div class="requirement-heading">
+                <h3>Event Integrity</h3>
+                <span class="requirement-id">FR-13</span>
+            </div>
+
+            <p>
+                Where the system processes event streams, it shall preserve
+                enough information to distinguish event chronology from
+                ingestion or processing order.
+            </p>
+
+            <p><strong>The system shall be capable of handling:</strong></p>
+
+            <ul>
+                <li>Duplicate delivery.</li>
+                <li>Delayed delivery.</li>
+                <li>Out-of-order events.</li>
+                <li>Reconnects.</li>
+                <li>Consumer interruption.</li>
+            </ul>
+
+            <p>
+                Downstream processing shall be idempotent where duplicate
+                delivery is possible.
+            </p>
+
+        </div>
+
+
+        <!-- FR-14 -->
+
+        <div class="requirement" id="fr14">
+
+            <div class="requirement-heading">
+                <h3>Reproducible Experiments</h3>
+                <span class="requirement-id">FR-14</span>
+            </div>
+
+            <p>
+                The system shall support reproducible experiments with
+                sufficient metadata to reconstruct:
+            </p>
+
+            <ul>
+                <li>Dataset/source and version.</li>
+                <li>Retrieval date or snapshot.</li>
+                <li>Time period.</li>
+                <li>Target definition.</li>
+                <li>Features.</li>
+                <li>Preprocessing.</li>
+                <li>Missing-data policy.</li>
+                <li>Quality-control policy.</li>
+                <li>Train/validation/test methodology.</li>
+                <li>Forecast horizon.</li>
+                <li>Model/baseline.</li>
+                <li>Hyperparameters.</li>
+                <li>Random seed where applicable.</li>
+                <li>Metrics.</li>
+                <li>Code/configuration version.</li>
+                <li>Assumptions.</li>
+                <li>Results.</li>
+                <li>Limitations.</li>
+            </ul>
+
+        </div>
+
+    </section>
+
+
+    <!-- 09 -->
+
+    <section class="section" id="s09">
+
+        <div class="section-header">
+            <span class="section-number">09</span>
+            <h2>Product Output Requirements</h2>
+        </div>
+
+        <p class="lead">
+            The product should ultimately produce three related classes
+            of output.
+        </p>
+
+        <div class="output-grid">
+
+            <div class="output-card">
+                <span class="number">OUTPUT / 01</span>
+                <h3>State Output</h3>
+                <p>
+                    A trustworthy representation of the current/recent
+                    soil-water state.
+                </p>
+            </div>
+
+            <div class="output-card">
+                <span class="number">OUTPUT / 02</span>
+                <h3>Forecast Output</h3>
+                <p>
+                    A near-term trajectory with an explicit representation
+                    of uncertainty.
+                </p>
+            </div>
+
+            <div class="output-card">
+                <span class="number">OUTPUT / 03</span>
+                <h3>Risk Output</h3>
+                <p>
+                    A classification or alert indicating potential deviation
+                    or threshold-crossing risk, accompanied by sufficient
+                    context to evaluate the signal.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="dark-callout">
+            <div class="label">Output Integrity</div>
+            <p><strong>These outputs must remain distinguishable.</strong></p>
+            <p>A forecast is not an observation.</p>
+            <p>An anomaly is not automatically a risk.</p>
+            <p>A risk signal is not confirmation of crop stress.</p>
+        </div>
+
+    </section>
+
+
+    <!-- 10 -->
+
+    <section class="section" id="s10">
+
+        <div class="section-header">
+            <span class="section-number">10</span>
+            <h2>Non-Functional Requirements</h2>
+        </div>
+
+
+        <div class="requirement">
+            <div class="requirement-heading">
+                <h3>Reproducibility</h3>
+                <span class="requirement-id">NFR-01</span>
+            </div>
+            <p>
+                The complete experimental pipeline must be reproducible
+                within the defined local environment.
+            </p>
+        </div>
+
+
+        <div class="requirement">
+            <div class="requirement-heading">
+                <h3>Traceability</h3>
+                <span class="requirement-id">NFR-02</span>
+            </div>
+            <p>A reported result must be traceable to its:</p>
+            <div class="flow flow-horizontal">
+                Source → Transformation → Experiment → Model → Evaluation → Result
+            </div>
+        </div>
+
+
+        <div class="requirement">
+            <div class="requirement-heading">
+                <h3>Temporal Integrity</h3>
+                <span class="requirement-id">NFR-03</span>
+            </div>
+            <p>
+                No future information may enter a historical forecast
+                experiment through:
+            </p>
+            <ul>
+                <li>Features.</li>
+                <li>Preprocessing.</li>
+                <li>Aggregation.</li>
+                <li>Scaling.</li>
+                <li>Imputation.</li>
+                <li>Model selection.</li>
+                <li>Threshold selection.</li>
+                <li>Evaluation.</li>
+            </ul>
+        </div>
+
+
+        <div class="requirement">
+            <div class="requirement-heading">
+                <h3>Scientific Integrity</h3>
+                <span class="requirement-id">NFR-04</span>
+            </div>
+            <p>The system must not represent:</p>
+            <ul>
+                <li>Simulated data as observations.</li>
+                <li>Reanalysis as field telemetry.</li>
+                <li>Statistical deviation as crop stress.</li>
+                <li>
+                    Model performance as generalised performance without
+                    appropriate validation.
+                </li>
+            </ul>
+        </div>
+
+
+        <div class="requirement">
+            <div class="requirement-heading">
+                <h3>Operational Simplicity</h3>
+                <span class="requirement-id">NFR-05</span>
+            </div>
+            <p>
+                The product should minimise infrastructure and operational
+                complexity unless additional complexity is justified by
+                demonstrated requirements.
+            </p>
+        </div>
+
+
+        <div class="requirement">
+            <div class="requirement-heading">
+                <h3>Testability</h3>
+                <span class="requirement-id">NFR-06</span>
+            </div>
+            <p>
+                Core product behaviour shall be testable independently,
+                including where applicable:
+            </p>
+            <ul>
+                <li>Event validation.</li>
+                <li>Provenance.</li>
+                <li>Temporal ordering.</li>
+                <li>Duplicate handling.</li>
+                <li>Idempotency.</li>
+                <li>Forecasting.</li>
+                <li>Uncertainty.</li>
+                <li>Threshold assessment.</li>
+                <li>Alert persistence.</li>
+            </ul>
+        </div>
+
+
+        <div class="requirement">
+            <div class="requirement-heading">
+                <h3>Observability</h3>
+                <span class="requirement-id">NFR-07</span>
+            </div>
+            <p>
+                The system should expose sufficient information to determine:
+            </p>
+            <ul>
+                <li>Whether telemetry is arriving.</li>
+                <li>Whether data quality is degrading.</li>
+                <li>Whether processing is delayed.</li>
+                <li>Whether forecasts are being generated.</li>
+                <li>
+                    Whether model outputs remain within expected operating
+                    conditions.
+                </li>
+            </ul>
+            <p class="note">
+                The exact observability implementation remains a technical decision.
+            </p>
+        </div>
+
+    </section>
+
+
+    <!-- 11 -->
+
+    <section class="section" id="s11">
+
+        <div class="section-header">
+            <span class="section-number">11</span>
+            <h2>Product Success Criteria</h2>
+        </div>
+
+        <p class="lead">
+            The product is successful only if it demonstrates
+            <strong>decision-relevant value</strong>, not merely technical operation.
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Criterion</th>
+                    <th>Required Evidence</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="key">A. Process</td>
+                    <td>
+                        Reliably ingest and process the selected telemetry
+                        representation while preserving provenance and
+                        temporal integrity.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="key">B. Forecast</td>
+                    <td>
+                        Produce reproducible forecasts evaluated against
+                        Persistence and other justified baselines.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="key">C. Quantify Uncertainty</td>
+                    <td>
+                        Produce uncertainty estimates whose empirical
+                        performance is measured rather than assumed.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="key">D. Detect</td>
+                    <td>
+                        Identify predefined deviations or threshold-crossing
+                        events out-of-sample where the data supports such evaluation.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="key">E. Provide Lead Time</td>
+                    <td>
+                        Quantify how early relevant events can be detected
+                        before the defined operational threshold or event.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="key">F. Control False Alerts</td>
+                    <td>
+                        Measure the false-alert burden rather than optimising
+                        solely for sensitivity.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="key">G. Reproduce</td>
+                    <td>
+                        Allow the complete experiment to be rerun from a
+                        documented environment, configuration, dataset/source,
+                        and code revision.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="key">H. Explain</td>
+                    <td>
+                        Provide sufficient context to distinguish a data-quality
+                        issue, physical deviation, forecast uncertainty, and
+                        agronomic/operational risk.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </section>
+
+
+    <!-- 12 -->
+
+    <section class="section" id="s12">
+
+        <div class="section-header">
+            <span class="section-number">12</span>
+            <h2>Product-Level Acceptance Criteria</h2>
+        </div>
+
+        <p class="lead">
+            The initial product prototype should not be considered complete
+            unless it can demonstrate the following with project evidence.
+        </p>
+
+        <div class="checklist">
+            <ul>
+                <li>A defined and documented user/decision context.</li>
+                <li>A documented telemetry source and provenance model.</li>
+                <li>Validated handling of relevant telemetry-quality conditions.</li>
+                <li>A reproducible temporal forecasting experiment.</li>
+                <li>Persistence benchmark results.</li>
+                <li>Chronological/walk-forward evaluation.</li>
+                <li>An untouched final test period.</li>
+                <li>Explicit uncertainty evaluation where probabilistic forecasts are used.</li>
+                <li>A documented deviation/threshold-risk definition.</li>
+                <li>
+                    Quantified alert performance, including lead time and
+                    false-alert burden where applicable.
+                </li>
+                <li>Reproducible event-processing behaviour under defined synthetic faults.</li>
+                <li>Idempotent downstream processing where duplicate delivery is possible.</li>
+                <li>Traceable experiment and model metadata.</li>
+                <li>Documentation that accurately reflects the evidence obtained.</li>
+            </ul>
+        </div>
+
+        <p class="note">
+            Checklist items represent acceptance requirements, not claims
+            that the requirements have already been satisfied.
+        </p>
+
+    </section>
+
+
+    <!-- 13 -->
+
+    <section class="section" id="s13">
+
+        <div class="section-header">
+            <span class="section-number">13</span>
+            <h2>Explicit Non-Goals</h2>
+        </div>
+
+        <p class="lead">
+            The initial product will not attempt to:
+        </p>
+
+        <ul>
+            <li>Physically deploy agricultural hardware.</li>
+            <li>Control irrigation equipment automatically.</li>
+            <li>Provide universal irrigation recommendations.</li>
+            <li>
+                Claim field-wide conditions from a single point sensor
+                without supporting evidence.
+            </li>
+            <li>
+                Provide crop-stress diagnosis solely from telemetry anomalies.
+            </li>
+            <li>Perform seasonal or multi-month drought forecasting.</li>
+            <li>Provide a full commercial farm-management platform.</li>
+            <li>Integrate proprietary farm-management APIs.</li>
+            <li>Build a production-scale cloud platform.</li>
+            <li>Introduce deep learning solely for portfolio signalling.</li>
+            <li>
+                Introduce complex streaming infrastructure solely to
+                demonstrate technology.
+            </li>
+            <li>
+                Provide a full-scale dashboard before the underlying data,
+                forecasting, and API behaviour are proven.
+            </li>
+        </ul>
+
+    </section>
+
+
+    <!-- 14 -->
+
+    <section class="section" id="s14">
+
+        <div class="section-header">
+            <span class="section-number">14</span>
+            <h2>Product Boundaries</h2>
+        </div>
+
+        <div class="dark-callout">
+            <div class="label">Product Entry Boundary</div>
+            <p>
+                <strong>
+                    Reliable agricultural telemetry becoming available to the system.
+                </strong>
+            </p>
+        </div>
+
+        <div class="dark-callout">
+            <div class="label">Product Exit Boundary</div>
+            <p>
+                <strong>
+                    A reproducible, uncertainty-aware assessment of temporal
+                    state and potential operational risk.
+                </strong>
+            </p>
+        </div>
+
+        <h3>Outside Product Responsibility</h3>
+
+        <ul>
+            <li>Physical sensor installation.</li>
+            <li>Irrigation execution.</li>
+            <li>Agronomic diagnosis.</li>
+            <li>
+                Farm-wide representativeness beyond the validated
+                observation context.
+            </li>
+            <li>The correctness of external weather forecasts.</li>
+            <li>Operational decisions made by a human user.</li>
+        </ul>
+
+    </section>
+
+
+    <!-- 15 -->
+
+    <section class="section" id="s15">
+
+        <div class="section-header">
+            <span class="section-number">15</span>
+            <h2>Open Product Questions</h2>
+        </div>
+
+        <p class="note">
+            These questions must be answered before the relevant downstream
+            specifications are frozen.
+        </p>
+
+        <ol class="open-questions">
+            <li>Who is the primary decision-maker?</li>
+            <li>What specific operational decision is being supported?</li>
+            <li>What is the final soil-water state representation?</li>
+            <li>What constitutes a meaningful deviation?</li>
+            <li>What constitutes an actionable threshold risk?</li>
+            <li>What forecast horizons have sufficient decision value?</li>
+            <li>What information is available to the operator at forecast time?</li>
+            <li>How should uncertainty be communicated?</li>
+            <li>What constitutes an acceptable false-alert burden?</li>
+            <li>What lead time is operationally useful?</li>
+            <li>
+                How should irrigation information be represented when
+                observed irrigation data is unavailable?
+            </li>
+            <li>What level of spatial/site generalisation is required?</li>
+            <li>
+                What is the minimum product interface required to
+                demonstrate decision value?
+            </li>
+        </ol>
+
+        <div class="callout">
+            <strong>Resolution principle:</strong>
+            These questions should be resolved through the appropriate
+            downstream specification or empirical experiment rather than
+            assumed in the PRD.
+        </div>
+
+    </section>
+
+
+    <!-- 16 -->
+
+    <section class="section" id="s16">
+
+        <div class="section-header">
+            <span class="section-number">16</span>
+            <h2>Traceability</h2>
+        </div>
+
+        <p class="lead">
+            Each requirement area is governed by its corresponding
+            project authority document.
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Requirement Area</th>
+                    <th>Primary Authority</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="key">Project purpose and boundaries</td>
+                    <td><code>00_project/PROJECT_CHARTER.md</code></td>
+                </tr>
+                <tr>
+                    <td class="key">Feasibility and research evidence</td>
+                    <td><code>01_research/RESEARCH_FEASIBILITY.md</code></td>
+                </tr>
+                <tr>
+                    <td class="key">User and product requirements</td>
+                    <td><code>02_product/PRD.md</code></td>
+                </tr>
+                <tr>
+                    <td class="key">Scientific state/feature definitions</td>
+                    <td><code>03_scientific/DATA_SCIENTIFIC_SPEC.md</code></td>
+                </tr>
+                <tr>
+                    <td class="key">Forecast methodology and evaluation</td>
+                    <td><code>04_forecasting/DATA_FORECAST_DESIGN.md</code></td>
+                </tr>
+                <tr>
+                    <td class="key">Technical architecture</td>
+                    <td><code>05_architecture/TECHNICAL_SPEC.md</code></td>
+                </tr>
+                <tr>
+                    <td class="key">Architectural decisions</td>
+                    <td><code>06_decisions/ADR_INDEX.md</code></td>
+                </tr>
+                <tr>
+                    <td class="key">Event and telemetry contracts</td>
+                    <td><code>07_contracts/EVENT_TELEMETRY_CONTRACT.md</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+    </section>
+
+
+    <!-- 17 -->
+
+    <section class="section" id="s17">
+
+        <div class="section-header">
+            <span class="section-number">17</span>
+            <h2>Current Product Status</h2>
+        </div>
+
+        <div class="status-callout callout">
+
+            <p>
+                <strong>Overall Status:</strong>
+                <span class="badge researching">Researching</span>
+            </p>
+
+            <p>
+                <strong>Current Evidence Position:</strong>
+            </p>
+
+            <p>
+                The research supports the feasibility of the underlying
+                operational problem and identifies a credible product
+                direction around telemetry, soil-water state, forecasting,
+                uncertainty, and threshold-risk assessment.
+            </p>
+
+        </div>
+
+        <h3>Unresolved Product-Defining Elements</h3>
+
+        <ul>
+            <li>Primary user.</li>
+            <li>Exact operational decision.</li>
+            <li>Final state representation.</li>
+            <li>Threshold semantics.</li>
+            <li>Forecast horizons.</li>
+            <li>Alert behaviour.</li>
+            <li>Acceptable performance.</li>
+            <li>Operational context.</li>
+        </ul>
+
+        <p>
+            These must be resolved before treating the product definition
+            as final.
+        </p>
+
+    </section>
+
+
+    <!-- 18 -->
+
+    <section class="section" id="s18">
+
+        <div class="section-header">
+            <span class="section-number">18</span>
+            <h2>Next Decision Gate</h2>
+        </div>
+
+        <div class="dark-callout">
+
+            <div class="label">Next Product Decision Gate</div>
+
+            <p>
+                <strong>
+                    Establish the product's primary user, operational
+                    decision, and minimum useful product behaviour.
+                </strong>
+            </p>
+
+        </div>
+
+        <p>
+            After this PRD is accepted, the next specification should define
+            the scientific representation required to support that product.
+        </p>
+
+        <div class="callout">
+            <strong>Next Document:</strong><br>
+            <code>03_scientific/DATA_SCIENTIFIC_SPEC.md</code>
+        </div>
+
+        <p>
+            That document should establish the data variables, physical
+            meaning, transformations, state representation, assumptions,
+            and scientific constraints without prematurely dictating
+            the software architecture.
+        </p>
+
+    </section>
+
+
+    <footer class="footer">
+
+        CA-ENG // Agri Telemetry & Forecasting Platform<br>
+        Product Requirements Document<br>
+        Status: Researching // Last Updated: September 30, 2026<br>
+        Document Authority: 02_product/PRD.md
+
+    </footer>
+
+</main>
+
+</body>
+</html>

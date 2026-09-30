@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agri-telemetry.io/schemas/forecast-event.schema.json",
+  "title": "ForecastEvent",
+  "description": "Standard schema for soil-water state forecast events, including point predictions, uncertainty quantiles, prediction intervals, and rigorous model provenance.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "forecast_id",
+    "source_id",
+    "site_id",
+    "forecast_origin_time",
+    "generated_at",
+    "target_variable",
+    "model_metadata",
+    "predictions"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantic versioning of the schema (e.g., 1.0.0)"
+    },
+    "forecast_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this forecast emission"
+    },
+    "source_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for reporting station/sensor location"
+    },
+    "site_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Agronomic management zone or field identifier"
+    },
+    "forecast_origin_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC ISO 8601 cutoff timestamp (time t). No telemetry after this timestamp was accessible during forecasting."
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC ISO 8601 execution timestamp when inference was computed"
+    },
+    "target_variable": {
+      "type": "string",
+      "enum": [
+        "volumetric_water_content",
+        "root_zone_depletion_fraction",
+        "fraction_of_available_water",
+        "root_zone_storage_mm"
+      ],
+      "description": "Predicted soil-water state quantity"
+    },
+    "target_depth_range_cm": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": 0.0
+      },
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "[top_depth_cm, bottom_depth_cm] of root-zone or sensor layer"
+    },
+    "model_metadata": {
+      "type": "object",
+      "required": [
+        "model_name",
+        "model_version"
+      ],
+      "properties": {
+        "model_name": {
+          "type": "string",
+          "description": "Model identifier (e.g., PERSISTENCE_BASELINE, ARIMA_CONDITIONAL, HIST_GRADIENT_BOOST)"
+        },
+        "model_version": {
+          "type": "string",
+          "description": "Version string of the model code or artifact"
+        },
+        "training_cutoff_time": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time",
+          "description": "Latest timestamp included in the model training split"
+        },
+        "random_seed": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Deterministic random seed used during inference or bootstrap"
+        },
+        "feature_lineage": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_id": {
+                "type": "string"
+              },
+              "variable": {
+                "type": "string"
+              },
+              "lag_steps": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            },
+            "required": [
+              "source_id",
+              "variable"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "predictions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "horizon_hours",
+          "valid_time",
+          "point_forecast",
+          "unit"
+        ],
+        "properties": {
+          "horizon_hours": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Lead time in hours relative to forecast_origin_time"
+          },
+          "valid_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "UTC ISO 8601 timestamp for the target prediction step (forecast_origin_time + horizon_hours)"
+          },
+          "point_forecast": {
+            "type": "number",
+            "description": "Expected conditional mean or median point estimate"
+          },
+          "quantiles": {
+            "type": "object",
+            "properties": {
+              "q10": {
+                "type": "number"
+              },
+              "q25": {
+                "type": "number"
+              },
+              "q50": {
+                "type": "number"
+              },
+              "q75": {
+                "type": "number"
+              },
+              "q90": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false,
+            "description": "Parametric or empirical predictive distribution quantiles"
+          },
+          "prediction_interval_80": {
+            "type": "object",
+            "properties": {
+              "lower": {
+                "type": "number"
+              },
+              "upper": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "lower",
+              "upper"
+            ],
+            "additionalProperties": false,
+            "description": "80% coverage prediction interval [q10, q90]"
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "m3/m3",
+              "fraction",
+              "mm",
+              "percent"
+            ],
+            "description": "Unit of measurement matching target_variable"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,2183 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data &amp; Forecast Design — Agri Telemetry &amp; Forecasting Platform</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+
+        :root {
+            --bg: #f4f1ea;
+            --surface: #faf8f3;
+            --ink: #151515;
+            --muted: #62605a;
+            --border: #d3cec0;
+            --dark: #151515;
+            --dark-border: #333;
+            --blue: #2563eb;
+            --amber: #b7791f;
+            --grey: #777;
+            --green: #34785a;
+            --red: #991b1b;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 2rem;
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background: var(--bg);
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.65;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 270px;
+            height: 100vh;
+            padding: 2.5rem 1.75rem;
+            border-right: 1px solid var(--border);
+            background: var(--bg);
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .brand {
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--ink);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-meta {
+            margin-bottom: 2.5rem;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.7;
+            text-transform: uppercase;
+            letter-spacing: .7px;
+        }
+
+        .status {
+            display: inline-block;
+            margin-bottom: 2rem;
+            padding: 3px 8px;
+            border: 1px solid var(--blue);
+            color: var(--blue);
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+        }
+
+        nav a {
+            display: flex;
+            align-items: baseline;
+            gap: .6rem;
+            margin-bottom: .85rem;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: .45px;
+            text-transform: uppercase;
+            transition: color .2s ease;
+        }
+
+        nav a:hover {
+            color: var(--ink);
+        }
+
+        nav a span, .nav-item span {
+            color: var(--grey);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 9px;
+        }
+
+        /* Main Content */
+        .main {
+            width: calc(100% - 270px);
+            max-width: 1200px;
+            margin-left: 270px;
+            padding: 4rem 5rem 7rem;
+        }
+
+        .top-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 2rem;
+            padding-bottom: 1rem;
+            margin-bottom: 4rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .hero {
+            max-width: 900px;
+            margin-bottom: 5rem;
+        }
+
+        .kicker, .eyebrow {
+            margin-bottom: 1rem;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            max-width: 900px;
+            margin: 0 0 1.5rem;
+            font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+            line-height: 1.05;
+            letter-spacing: -.045em;
+            font-weight: 600;
+        }
+
+        .hero p, .hero-description {
+            max-width: 780px;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* Sections */
+        .section {
+            margin-top: 5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--ink);
+            scroll-margin-top: 2rem;
+        }
+
+        .section-head, .section-header {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .num, .section-number {
+            min-width: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: "IBM Plex Mono", monospace;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.65rem;
+            line-height: 1.2;
+            letter-spacing: -.025em;
+            font-weight: 600;
+        }
+
+        h3 {
+            margin: 2.5rem 0 1rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        h4 {
+            margin: 1.75rem 0 .75rem;
+            font-size: .9rem;
+            font-weight: 700;
+        }
+
+        p {
+            max-width: 850px;
+            font-size: 14px;
+        }
+
+        /* Lists */
+        ul, ol {
+            max-width: 850px;
+            padding-left: 1.4rem;
+            font-size: 13.5px;
+        }
+
+        li {
+            margin-bottom: .6rem;
+        }
+
+        /* Tables */
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            margin: 1.5rem 0 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-top: 1px solid var(--ink);
+            font-size: 13px;
+        }
+
+        th, td {
+            padding: 1.1rem .9rem;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .7px;
+            text-transform: uppercase;
+        }
+
+        .key {
+            width: 28%;
+            border-right: 1px solid var(--border);
+            font-weight: 600;
+        }
+
+        /* Callouts */
+        .callout {
+            padding: 1.5rem 1.75rem;
+            margin: 2rem 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--ink);
+            font-size: 13px;
+        }
+
+        .callout.warning {
+            border-left-color: var(--amber);
+        }
+
+        .callout.dark {
+            background: var(--dark);
+            color: white;
+            border-left-color: var(--ink);
+        }
+
+        .callout.dark p, .callout.dark blockquote {
+            color: #ddd;
+        }
+
+        .callout.dark strong, .callout.dark h3 {
+            color: white;
+        }
+
+        /* Flow & Formula */
+        .flow, .formula {
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: var(--dark);
+            color: #eee;
+            border-left: 3px solid var(--ink);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 12px;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+
+        .formula {
+            background: var(--surface);
+            color: var(--ink);
+            border-left-color: var(--blue);
+        }
+
+        /* Monospace Code */
+        code {
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 12px;
+            background: #eae5d9;
+            padding: 2px 6px;
+        }
+
+        pre {
+            background: var(--dark);
+            color: #eee;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            margin: 1.5rem 0;
+        }
+
+        pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 2px 7px;
+            border: 1px solid currentColor;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            background: transparent;
+        }
+
+        .badge.supported, .badge.defined, .badge-decided, .badge-validated, .badge-tested {
+            color: var(--green);
+            border-color: var(--green);
+        }
+
+        .badge.researching, .badge-researching {
+            color: var(--blue);
+            border-color: var(--blue);
+        }
+
+        .badge.open, .badge.requires-test, .badge-assumption {
+            color: var(--amber);
+            border-color: var(--amber);
+        }
+
+        .badge.not-started, .badge-configurable {
+            color: var(--grey);
+            border-color: var(--grey);
+        }
+
+        .badge.rejected, .badge-rejected {
+            color: var(--red);
+            border-color: var(--red);
+        }
+
+        /* Source & Experiment Cards */
+        .source-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .source-card, .experiment {
+            padding: 1.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-top: 2px solid var(--ink);
+        }
+
+        .source-type, .experiment-title {
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: .75rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .experiment-output {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        a {
+            color: var(--ink);
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .footer {
+            padding-top: 3rem;
+            margin-top: 7rem;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 10px;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+            line-height: 2;
+        }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .main { padding: 3rem 3rem 6rem; }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                border-right: 0;
+                border-bottom: 1px solid var(--border);
+                padding: 1.5rem;
+            }
+            .main { width: 100%; margin-left: 0; padding: 3rem 1.5rem 5rem; }
+            .top-meta { flex-direction: column; gap: .5rem; }
+        }
+
+        @media print {
+            @page { size: A4; margin: 18mm; }
+            body { background: white; color: black; font-size: 10pt; }
+            .sidebar { display: none; }
+            .main { width: 100%; max-width: none; margin: 0; padding: 0; }
+            .section { break-inside: avoid; }
+        }
+    
+
+        /* LaTeX Math & Mermaid Flowcharts */
+        .math-block {
+            margin: 1.5rem 0;
+            padding: 1.25rem 1.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--blue);
+            overflow-x: auto;
+            font-size: 1.05rem;
+        }
+
+        .mermaid {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-top: 2px solid var(--ink);
+            padding: 2rem 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        mjx-container[jax="CHTML"][display="true"] {
+            margin: 0.5rem 0 !important;
+        }
+
+</style>
+
+
+    <!-- MathJax for LaTeX mathematical formula rendering -->
+    <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Mermaid for Flowcharts and Diagrams -->
+    <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'neutral',
+        themeVariables: {
+            fontFamily: 'Inter, -apple-system, sans-serif',
+            primaryColor: '#faf8f3',
+            primaryBorderColor: '#151515',
+            primaryTextColor: '#151515',
+            lineColor: '#151515',
+            secondaryColor: '#f4f1ea',
+            tertiaryColor: '#faf8f3',
+            edgeLabelBackground: '#ffffff'
+        }
+    });
+    </script>
+
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+    <div class="brand">CA-ENG // Master Record</div>
+
+    <div class="sidebar-meta">
+        Agri Telemetry &amp; Forecasting Platform<br>
+        Data &amp; Forecast Design<br>
+        September 30, 2026
+    </div>
+
+    <nav aria-label="Document navigation">
+        <a class="nav-item" href="#authority">Document Authority</a>
+        <a class="nav-item" href="#s1">01. Document Authority</a>
+        <a class="nav-item" href="#s2">02. Governing Principle</a>
+        <a class="nav-item" href="#s3">03. Forecasting Objective</a>
+        <a class="nav-item" href="#s4">04. Forecast Target</a>
+        <a class="nav-item" href="#s5">05. Forecast Origin</a>
+        <a class="nav-item" href="#s6">06. Information Availability</a>
+        <a class="nav-item" href="#s7">07. Forecast Scenarios</a>
+        <a class="nav-item" href="#s8">08. Forecast Horizons</a>
+        <a class="nav-item" href="#s9">09. Forecast Types</a>
+        <a class="nav-item" href="#s10">10. Required Baselines</a>
+        <a class="nav-item" href="#s11">11. Candidate ML Models</a>
+        <a class="nav-item" href="#s12">12. Deep Learning</a>
+        <a class="nav-item" href="#s13">13. Feature Design</a>
+        <a class="nav-item" href="#s14">14. Feature Availability</a>
+        <a class="nav-item" href="#s15">15. Leakage Prevention</a>
+        <a class="nav-item" href="#s16">16. Dataset Splitting</a>
+        <a class="nav-item" href="#s17">17. Walk-Forward</a>
+        <a class="nav-item" href="#s18">18. Event-Aware Validation</a>
+        <a class="nav-item" href="#s19">19. Multi-Site Validation</a>
+        <a class="nav-item" href="#s20">20. Point Metrics</a>
+        <a class="nav-item" href="#s21">21. Metric Cautions</a>
+        <a class="nav-item" href="#s22">22. Probabilistic Evaluation</a>
+        <a class="nav-item" href="#s23">23. Threshold/Event Metrics</a>
+        <a class="nav-item" href="#s24">24. Lead Time</a>
+        <a class="nav-item" href="#s25">25. False-Alert Burden</a>
+        <a class="nav-item" href="#s26">26. Forecast Residuals</a>
+        <a class="nav-item" href="#s27">27. Sequential Alerts</a>
+        <a class="nav-item" href="#s28">28. Forecasting Ladder</a>
+        <a class="nav-item" href="#s29">29. Escalation Criteria</a>
+        <a class="nav-item" href="#s30">30. Rejection Criteria</a>
+        <a class="nav-item" href="#s31">31. Ablation</a>
+        <a class="nav-item" href="#s32">32. Uncertainty by Horizon</a>
+        <a class="nav-item" href="#s33">33. Forecast Output</a>
+        <a class="nav-item" href="#s34">34. Reproducibility</a>
+        <a class="nav-item" href="#s35">35. Final Test Protection</a>
+        <a class="nav-item" href="#s36">36. Experiment Matrix</a>
+        <a class="nav-item" href="#s37">37. Validation Evidence</a>
+        <a class="nav-item" href="#s38">38. Interpretation</a>
+        <a class="nav-item" href="#s39">39. Open Decisions</a>
+        <a class="nav-item" href="#s40">40. Status</a>
+        <a class="nav-item" href="#s41">41. Traceability</a>
+        <a class="nav-item" href="#s42">42. Next Gate</a>
+    </nav>
+
+</aside>
+
+<main class="main">
+
+    <div class="top-meta">
+        <span>Agri Telemetry &amp; Forecasting Platform</span>
+        <span>Last Edited: 30 SEP 2026 &nbsp; / &nbsp; Status: RESEARCHING</span>
+    </div>
+
+    <!-- DOCUMENT AUTHORITY -->
+
+    <section class="hero" id="authority">
+
+        <div class="eyebrow">CA-ENG / Data &amp; Forecast Design</div>
+
+        <h1>Data &amp; Forecast Design</h1>
+
+        <p class="hero-description">
+            A reproducible specification for defining the forecasting target,
+            information available at forecast origin, candidate horizons,
+            baselines, uncertainty, validation, and operational decision criteria.
+        </p>
+
+        <div class="principle">
+
+            <div class="principle-label">Forecasting Governing Principle</div>
+
+            <strong>Persistence is the mandatory benchmark. Demonstrate skill before escalating complexity.</strong>
+
+            <div class="workflow">
+                OBSERVATION &rarr; TARGET &rarr; INFORMATION AT T &rarr; HORIZON &rarr; BASELINE &rarr; FORECAST &rarr; UNCERTAINTY &rarr; OPERATIONAL RISK
+            </div>
+
+        </div>
+
+        <div class="callout">
+            <strong>Document status:</strong>
+            <span class="badge researching">Researching</span>
+            <br><br>
+            <strong>Last updated:</strong> September 30, 2026<br>
+            <strong>Document:</strong> <code>04_forecasting/DATA_FORECAST_DESIGN.md</code>
+        </div>
+
+        <p class="lead">
+            Defines the forecasting problem and evaluation framework without
+            prematurely locking the final target, model, architecture, or
+            operational alert implementation.
+        </p>
+
+    </section>
+
+    <!-- 01 -->
+
+    <section class="section" id="s1">
+    <div class="section-header">
+        <span class="section-number">01</span>
+        <h2>Document Authority</h2>
+    </div>
+
+    <p>
+        This document defines the forecasting problem, target construction,
+        forecast horizons, information availability, baselines, candidate model
+        classes, validation methodology, uncertainty evaluation, and decision
+        criteria for the Agri Telemetry &amp; Forecasting Platform.
+    </p>
+
+    <p>
+        It translates the scientific representation defined in
+        <code>00_project/PROJECT_CHARTER.md</code>,
+        <code>01_research/RESEARCH_FEASIBILITY.md</code>,
+        <code>02_product/PRD.md</code>, and
+        <code>03_scientific/DATA_SCIENTIFIC_SPEC.md</code>
+        into a reproducible forecasting specification.
+    </p>
+
+    <p>
+        It does not permanently select a specific forecasting model,
+        machine-learning library, production serving architecture,
+        message broker, database, or MLOps platform.
+        Those choices remain subject to empirical evidence and, where
+        architectural, ADRs.
+    </p>
+</section>
+
+<section class="section" id="s2">
+    <div class="section-header">
+        <span class="section-number">02</span>
+        <h2>Governing Forecasting Principle</h2>
+    </div>
+
+    <div class="callout dark quote">
+        Persistence must earn its defeat.
+    </div>
+
+    <p>
+        The system must first establish how difficult the forecasting problem
+        actually is. A more complex model is justified only when it produces
+        a meaningful and reproducible improvement over appropriate simpler
+        baselines under a leakage-safe evaluation.
+    </p>
+
+    <p>
+        The objective is not to build the most sophisticated forecasting model.
+        It is to determine whether additional modelling complexity produces
+        useful predictive and operational value beyond what the temporal
+        structure already provides.
+    </p>
+</section>
+
+<section class="section" id="s3">
+    <div class="section-header">
+        <span class="section-number">03</span>
+        <h2>Forecasting Objective</h2>
+    </div>
+
+    <p>
+        Estimate the future trajectory of the selected soil-water state from
+        information available at a defined forecast origin.
+    </p>
+
+    <div class="math-block">$$\hat{Y}_{t+h|t}$$</div>
+
+    <p>
+        Where Y is the selected soil-water state, t is forecast origin,
+        h is forecast horizon, and Ŷ is the forecast made at t for t+h.
+    </p>
+
+    <p>
+        Where probabilistic forecasting is used, the system should estimate
+        a conditional distribution rather than only a point estimate:
+    </p>
+
+    <div class="math-block">$$P(Y_{t+h} \mid X_{\le t})$$</div>
+
+    <p>
+        The final target remains dependent on the Scientific Specification
+        and empirical target-selection experiments.
+    </p>
+</section>
+
+<section class="section" id="s4">
+    <div class="section-header">
+        <span class="section-number">04</span>
+        <h2>Forecast Target</h2>
+    </div>
+
+    <h3>4.1 Candidate Targets</h3>
+
+    <ol>
+        <li>Volumetric soil moisture.</li>
+        <li>Normalised available-water state.</li>
+        <li>Root-zone storage.</li>
+        <li>Root-zone depletion.</li>
+        <li>Another scientifically justified state representation.</li>
+    </ol>
+
+    <p>
+        Selection must consider physical interpretability, data availability,
+        measurement quality, temporal stability, forecastability, threshold
+        compatibility, and operational relevance.
+    </p>
+
+    <div class="callout">
+        <strong>The final target is not yet frozen.</strong>
+        <span class="badge researching">Researching</span>
+        <p>
+            It must be selected through evidence rather than convenience.
+        </p>
+    </div>
+
+    <h3>4.2 Required Target Definition</h3>
+
+    <p>Once selected, define:</p>
+
+    <ul>
+        <li>variable name;</li>
+        <li>physical meaning;</li>
+        <li>unit;</li>
+        <li>sensor depth or root-zone definition;</li>
+        <li>aggregation;</li>
+        <li>transformation;</li>
+        <li>missing-data policy;</li>
+        <li>source and quality-control policy.</li>
+    </ul>
+
+    <pre>Target: soil_water_state
+
+Definition: [to be determined]
+Unit: [to be determined]
+Depth: [to be determined]
+Cadence: [to be determined]
+Transformation: [to be determined]</pre> </section>
+
+<section class="section" id="s5">
+    <div class="section-header">
+        <span class="section-number">05</span>
+        <h2>Forecast Origin</h2>
+    </div>
+
+    <p>
+        Every forecast must have an explicit origin time. At origin t,
+        the model may only use information available at or before t.
+    </p>
+
+    <p>This may include:</p>
+
+    <ul>
+        <li>historical target values;</li>
+        <li>previously observed weather;</li>
+        <li>previously derived variables;</li>
+        <li>known static or contextual information;</li>
+        <li>genuinely available weather forecasts;</li>
+        <li>scientifically legitimate known-future information.</li>
+    </ul>
+
+    <p>
+        Future realised observations must not enter an operational forecast.
+    </p>
+</section>
+
+<section class="section" id="s6">
+    <div class="section-header">
+        <span class="section-number">06</span>
+        <h2>Information Availability</h2>
+    </div>
+
+    <p>
+        Each feature must have an explicit availability status at forecast origin.
+    </p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Information</th>
+                    <th>Available at Origin?</th>
+                    <th>Permitted?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Historical soil moisture</td>
+                    <td>Yes</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>Historical rainfall</td>
+                    <td>Yes</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>Historical ET0 / VPD</td>
+                    <td>Yes</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>Future observed soil moisture</td>
+                    <td>No</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>Future realised rainfall</td>
+                    <td>No</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td>Weather forecast issued at origin</td>
+                    <td>Potentially</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>Static soil properties</td>
+                    <td>Yes</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>Crop stage known at origin</td>
+                    <td>Potentially</td>
+                    <td>Yes</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="callout warning">
+        <strong>Critical distinction.</strong>
+        <p>
+            Future realised weather may be used in an oracle explanatory
+            experiment, but its performance must never be presented as
+            operational forecasting performance.
+        </p>
+    </div>
+</section>
+
+<section class="section" id="s7">
+    <div class="section-header">
+        <span class="section-number">07</span>
+        <h2>Forecast Scenarios</h2>
+    </div>
+
+    <div class="source-grid">
+
+        <div class="source-card">
+            <div class="source-type">Scenario A</div>
+            <h3>Autoregressive Only</h3>
+            <p>
+                Uses historical target information to establish temporal
+                predictability and determine how much signal exists in the
+                target itself.
+            </p>
+            <span class="badge supported">Required Baseline</span>
+        </div>
+
+        <div class="source-card">
+            <div class="source-type">Scenario B</div>
+            <h3>Oracle Exogenous</h3>
+            <p>
+                Uses future realised explanatory variables. Diagnostic only;
+                not an operational forecast.
+            </p>
+            <span class="badge requires-test">Explanatory</span>
+        </div>
+
+        <div class="source-card">
+            <div class="source-type">Scenario C</div>
+            <h3>Operational Exogenous</h3>
+            <p>
+                Uses only information genuinely available at forecast origin,
+                including legitimate weather forecasts where available.
+            </p>
+            <span class="badge open">Open</span>
+        </div>
+
+    </div>
+
+    <p>
+        Scenario C is the basis for operational claims.
+        Scenario B performance must never be presented as Scenario C.
+    </p>
+</section>
+
+<section class="section" id="s8">
+    <div class="section-header">
+        <span class="section-number">08</span>
+        <h2>Forecast Horizons</h2>
+    </div>
+
+    <p>Candidate horizons include:</p>
+
+    <ul>
+        <li>native observation interval;</li>
+        <li>1 hour;</li>
+        <li>6 hours;</li>
+        <li>12 hours;</li>
+        <li>24 hours;</li>
+        <li>72 hours;</li>
+        <li>168 hours / 7 days.</li>
+    </ul>
+
+    <p>
+        These are candidates rather than validated requirements.
+        The final set depends on source cadence, target dynamics,
+        persistence skill, forecast degradation, operational decision
+        window, and future exogenous information availability.
+    </p>
+
+    <p>
+        Evaluate each horizon separately.
+    </p>
+
+    <span class="badge researching">Researching</span>
+</section>
+
+<section class="section" id="s9">
+    <div class="section-header">
+        <span class="section-number">09</span>
+        <h2>Forecast Types</h2>
+    </div>
+
+    <h3>9.1 Point Forecast</h3>
+
+    <p>
+        A single expected or central estimate used for error benchmarking,
+        trajectory visualisation, and baseline comparison.
+    </p>
+
+    <h3>9.2 Probabilistic Forecast</h3>
+
+    <p>
+        Represents uncertainty using prediction intervals, quantile forecasts,
+        or predictive distributions. The final method remains open.
+    </p>
+
+    <h3>9.3 Trajectory Forecast</h3>
+
+    <p>
+        A sequence of predictions across multiple future horizons. This is
+        important because the operational objective concerns trajectory and
+        potential threshold crossing rather than one isolated future value.
+    </p>
+</section>
+
+<section class="section" id="s10">
+    <div class="section-header">
+        <span class="section-number">10</span>
+        <h2>Required Baselines</h2>
+    </div>
+
+    <h3>10.1 Persistence</h3>
+
+    <div class="math-block">$$\hat{Y}_{t+h|t} = Y_t$$</div>
+
+    <p>
+        Persistence is mandatory. For highly autocorrelated environmental
+        signals, it can be difficult to beat at short horizons.
+    </p>
+
+    <span class="badge supported">Decided</span>
+
+    <h3>10.2 Seasonal / Climatological Baseline</h3>
+
+    <p>
+        Where sufficient history exists, a historical mean, median,
+        quantile, or comparable-period baseline may be evaluated.
+    </p>
+
+    <h3>10.3 Rolling / EWMA Baseline</h3>
+
+    <p>
+        Rolling or exponentially weighted recent-history baselines may be
+        evaluated where relevant.
+    </p>
+
+    <h3>10.4 Statistical Baselines</h3>
+
+    <p>
+        Candidate statistical models include ETS, ARIMA, SARIMA,
+        and SARIMAX / dynamic regression.
+    </p>
+</section>
+
+<section class="section" id="s11">
+    <div class="section-header">
+        <span class="section-number">11</span>
+        <h2>Candidate Machine-Learning Models</h2>
+    </div>
+
+    <p>Potential candidates include:</p>
+
+    <ul>
+        <li>linear or regularised regression;</li>
+        <li>quantile regression;</li>
+        <li>random forest;</li>
+        <li>gradient-boosted trees;</li>
+        <li>quantile random forest;</li>
+        <li>other tree-based probabilistic approaches.</li>
+    </ul>
+
+    <p>
+        Model selection remains empirical. Lower complexity is preferred
+        where it provides equivalent scientific and operational value.
+    </p>
+
+    <span class="badge open">Model Selection Open</span>
+</section>
+
+<section class="section" id="s12">
+    <div class="section-header">
+        <span class="section-number">12</span>
+        <h2>Deep Learning</h2>
+    </div>
+
+    <p>
+        Potential sequence models include LSTM, GRU, temporal convolutional
+        models, and transformer-based temporal models.
+    </p>
+
+    <div class="callout">
+        <strong>Deferred.</strong>
+        <p>
+            Introduce deep learning only if simpler models leave material,
+            reproducible predictive structure unexplained and the additional
+            complexity produces meaningful value.
+        </p>
+        <span class="badge not-started">Deferred</span>
+    </div>
+
+    <p>
+        Deep learning must not be included merely to demonstrate AI/ML breadth.
+    </p>
+</section>
+
+<section class="section" id="s13">
+    <div class="section-header">
+        <span class="section-number">13</span>
+        <h2>Feature Design</h2>
+    </div>
+
+    <h3>Target History</h3>
+    <p>
+        Lagged target, rolling statistics, rate of change, and recent
+        drying/wetting trend.
+    </p>
+
+    <h3>Precipitation</h3>
+    <p>
+        Recent rainfall, cumulative rainfall, time since rainfall,
+        and rainfall intensity where supported.
+    </p>
+
+    <h3>Atmospheric State</h3>
+    <p>
+        Temperature, relative humidity, VPD, ET0, wind, and radiation.
+    </p>
+
+    <h3>Temporal Features</h3>
+    <p>
+        Hour, day of year, season, and cyclic representations where justified.
+    </p>
+
+    <h3>Contextual Variables</h3>
+    <p>
+        Soil properties, sensor depth, and crop/growth-stage information
+        where available.
+    </p>
+
+    <p>
+        Features must earn inclusion through scientific relevance,
+        availability at forecast origin, data quality, and out-of-sample value.
+    </p>
+</section>
+
+<section class="section" id="s14">
+    <div class="section-header">
+        <span class="section-number">14</span>
+        <h2>Feature Availability Contract</h2>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Source</th>
+                    <th>Available at Origin</th>
+                    <th>Lag / Aggregation</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Soil moisture</td>
+                    <td>Observation</td>
+                    <td>Yes</td>
+                    <td>Defined</td>
+                    <td><span class="badge researching">Researching</span></td>
+                </tr>
+                <tr>
+                    <td>Rainfall</td>
+                    <td>Observation</td>
+                    <td>Yes</td>
+                    <td>Defined</td>
+                    <td><span class="badge researching">Researching</span></td>
+                </tr>
+                <tr>
+                    <td>ET0 / VPD</td>
+                    <td>Derived</td>
+                    <td>Historical only</td>
+                    <td>Defined</td>
+                    <td><span class="badge researching">Researching</span></td>
+                </tr>
+                <tr>
+                    <td>Future realised rainfall</td>
+                    <td>Observation</td>
+                    <td>No</td>
+                    <td>N/A</td>
+                    <td><span class="badge rejected">Prohibited</span></td>
+                </tr>
+                <tr>
+                    <td>Weather forecast</td>
+                    <td>Forecast source</td>
+                    <td>Potentially</td>
+                    <td>Defined</td>
+                    <td><span class="badge open">Open</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>
+        Complete this table before operational forecasting evaluation.
+    </p>
+</section>
+
+<section class="section" id="s15">
+    <div class="section-header">
+        <span class="section-number">15</span>
+        <h2>Leakage Prevention</h2>
+    </div>
+
+    <p>
+        Temporal leakage is a first-order scientific risk.
+    </p>
+
+    <ul>
+        <li>Random train/test splitting.</li>
+        <li>Future rolling statistics.</li>
+        <li>Future interpolation or imputation.</li>
+        <li>Scaling fitted on the full dataset.</li>
+        <li>Future-derived features.</li>
+        <li>Threshold selection using the final test.</li>
+        <li>Hyperparameter tuning against the final test.</li>
+        <li>Realised future weather in an operational experiment.</li>
+    </ul>
+
+    <div class="callout warning">
+        <strong>Rule.</strong>
+        Every transformation used for forecasting must respect the temporal
+        information boundary at forecast origin.
+    </div>
+</section>
+
+<section class="section" id="s16">
+    <div class="section-header">
+        <span class="section-number">16</span>
+        <h2>Dataset Splitting</h2>
+    </div>
+
+    <pre>EARLIER HISTORY          VALIDATION          FINAL TEST
+
+──────────────────      ─────────────      ─────────────
+Model development      Model selection    Final evaluation</pre>
+
+    <p>
+        The final test period remains untouched until development and model
+        selection are complete.
+    </p>
+
+    <p>
+        Exact dates depend on the selected dataset and must be documented
+        after the data audit.
+    </p>
+</section>
+
+<section class="section" id="s17">
+    <div class="section-header">
+        <span class="section-number">17</span>
+        <h2>Walk-Forward Evaluation</h2>
+    </div>
+
+    <p>
+        Use rolling-origin or walk-forward procedures where practical.
+        Repeatedly forecast future observations from historically available
+        information.
+    </p>
+
+    <pre>Train ────────► Forecast
+
+Train ───────────────► Forecast
+Train ─────────────────────► Forecast
+Train ─────────────────────────────► Forecast</pre>
+
+    <p>
+        This better reflects deployment than random temporal splits.
+    </p>
+</section>
+
+<section class="section" id="s18">
+    <div class="section-header">
+        <span class="section-number">18</span>
+        <h2>Event-Aware Validation</h2>
+    </div>
+
+    <p>
+        Environmental events can create leakage or overly optimistic
+        evaluation if split incorrectly.
+    </p>
+
+    <p>Examples include:</p>
+
+    <ul>
+        <li>rainfall events;</li>
+        <li>prolonged dry periods;</li>
+        <li>irrigation events;</li>
+        <li>sensor outages;</li>
+        <li>abrupt weather transitions.</li>
+    </ul>
+
+    <p>
+        Where practical, major contiguous events should not be artificially
+        divided between training and test periods in a way that allows
+        the same event structure to appear on both sides.
+    </p>
+</section>
+
+<section class="section" id="s19">
+    <div class="section-header">
+        <span class="section-number">19</span>
+        <h2>Multi-Site Validation</h2>
+    </div>
+
+    <div class="source-grid">
+
+        <div class="source-card">
+            <div class="source-type">Temporal Generalisation</div>
+            <h3>Same Site / Different Period</h3>
+            <p>
+                Train and test on different periods at the same station.
+            </p>
+        </div>
+
+        <div class="source-card">
+            <div class="source-type">Spatial Generalisation</div>
+            <h3>Unseen Site</h3>
+            <p>
+                Train using some sites and evaluate on an unseen site.
+            </p>
+        </div>
+
+    </div>
+
+    <p>
+        Good temporal performance at one station does not establish spatial
+        generalisation to another site, soil, or climate.
+    </p>
+</section>
+
+<section class="section" id="s20">
+    <div class="section-header">
+        <span class="section-number">20</span>
+        <h2>Point-Forecast Metrics</h2>
+    </div>
+
+    <h3>Mean Absolute Error</h3>
+    <div class="math-block">$$\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|$$</div>
+
+    <h3>Root Mean Squared Error</h3>
+    <div class="math-block">$$\text{RMSE} = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}$$</div>
+
+    <h3>Mean Bias Error</h3>
+    <div class="math-block">$$\text{MBE} = \frac{1}{n} \sum_{i=1}^{n} (\hat{y}_i - y_i)$$</div>
+
+    <h3>Skill Relative to Persistence</h3>
+    <div class="math-block">$$\text{Skill} = 1 - \frac{\text{Error}_{\text{model}}}{\text{Error}_{\text{persistence}}}$$</div>
+
+    <p>
+        The exact skill metric and its interpretation must be defined
+        consistently once experiments begin.
+    </p>
+</section>
+
+<section class="section" id="s21">
+    <div class="section-header">
+        <span class="section-number">21</span>
+        <h2>Metrics That Require Caution</h2>
+    </div>
+
+    <h3>R²</h3>
+
+    <p>
+        R² may be reported descriptively but is not sufficient evidence
+        of forecasting usefulness. It can coexist with poor calibration,
+        systematic bias, poor threshold detection, or poor long-horizon
+        performance.
+    </p>
+
+    <p>
+        R² is therefore not a primary acceptance criterion.
+    </p>
+</section>
+
+<section class="section" id="s22">
+    <div class="section-header">
+        <span class="section-number">22</span>
+        <h2>Probabilistic Forecast Evaluation</h2>
+    </div>
+
+    <p>
+        If the system produces prediction intervals or quantiles,
+        they must be evaluated directly.
+    </p>
+
+    <p>Candidate metrics include:</p>
+
+    <ul>
+        <li>empirical coverage;</li>
+        <li>interval width;</li>
+        <li>pinball loss;</li>
+        <li>CRPS;</li>
+        <li>weighted interval score (WIS).</li>
+    </ul>
+
+    <h3>22.1 Coverage</h3>
+
+    <p>
+        For a nominal (1−α) interval, compare empirical coverage with the
+        stated nominal level.
+    </p>
+
+    <h3>22.2 Sharpness</h3>
+
+    <p>
+        Narrow intervals are useful only when appropriately calibrated.
+        The goal is useful sharpness while maintaining acceptable empirical coverage.
+    </p>
+</section>
+
+<section class="section" id="s23">
+    <div class="section-header">
+        <span class="section-number">23</span>
+        <h2>Threshold / Event Metrics</h2>
+    </div>
+
+    <p>
+        Average forecast error is not sufficient when the product objective
+        concerns threshold risk.
+    </p>
+
+    <p>Where a scientifically defensible threshold exists, evaluate:</p>
+
+    <ul>
+        <li>threshold-crossing detection;</li>
+        <li>false alerts;</li>
+        <li>missed events;</li>
+        <li>precision and recall where appropriate;</li>
+        <li>F1 where useful;</li>
+        <li>event lead time;</li>
+        <li>time-to-threshold error;</li>
+        <li>calibration of threshold-crossing probability.</li>
+    </ul>
+</section>
+
+<section class="section" id="s24">
+    <div class="section-header">
+        <span class="section-number">24</span>
+        <h2>Lead Time</h2>
+    </div>
+
+    <p>Lead time is a key operational measure.</p>
+
+    <div class="math-block">$$\text{LeadTime} = t_{\text{threshold}} - t_{\text{alert}}$$</div>
+
+    <p>
+        A forecast with high classification accuracy may still have limited
+        operational value if it arrives too late. Very early warnings may
+        impose excessive false-alert burden.
+    </p>
+</section>
+
+<section class="section" id="s25">
+    <div class="section-header">
+        <span class="section-number">25</span>
+        <h2>False-Alert Burden</h2>
+    </div>
+
+    <p>
+        Do not optimise simply for maximum alert sensitivity.
+    </p>
+
+    <ul>
+        <li>Number of alerts.</li>
+        <li>False-alert rate.</li>
+        <li>Alert duration.</li>
+        <li>Repeated alerts for one event.</li>
+        <li>Lead time.</li>
+        <li>Missed events.</li>
+    </ul>
+
+    <p>
+        The acceptable burden remains a product decision.
+        <span class="badge open">Open</span>
+    </p>
+</section>
+
+<section class="section" id="s26">
+    <div class="section-header">
+        <span class="section-number">26</span>
+        <h2>Forecast Residuals</h2>
+    </div>
+
+    <p>Residuals should be examined for:</p>
+
+    <ul>
+        <li>bias;</li>
+        <li>autocorrelation;</li>
+        <li>changing variance;</li>
+        <li>seasonal structure;</li>
+        <li>systematic underprediction or overprediction;</li>
+        <li>behaviour during rainfall and dry-down;</li>
+        <li>behaviour near thresholds.</li>
+    </ul>
+
+    <p>
+        Residual autocorrelation matters because sequential forecast errors
+        are not necessarily independent.
+    </p>
+</section>
+
+<section class="section" id="s27">
+    <div class="section-header">
+        <span class="section-number">27</span>
+        <h2>Prediction Intervals and Sequential Alerts</h2>
+    </div>
+
+    <p>
+        A sequence of observations outside a prediction interval must not
+        automatically be interpreted using:
+    </p>
+
+    <div class="math-block">$$P(\text{N consecutive breaches}) = \alpha^N$$</div>
+
+    <p>
+        Forecast residuals may be autocorrelated, so the independence
+        assumption may not hold.
+    </p>
+
+    <div class="callout warning">
+        <strong>N-of-M rules are engineering persistence filters.</strong>
+        <p>
+            They are not automatically valid statistical false-alarm
+            probabilities. Any persistence rule must be evaluated empirically.
+        </p>
+    </div>
+</section>
+
+<section class="section" id="s28">
+    <div class="section-header">
+        <span class="section-number">28</span>
+        <h2>Forecasting Ladder</h2>
+    </div>
+
+    <pre>LEVEL 0  Persistence
+
+LEVEL 1  Seasonal / climatological baseline
+
+LEVEL 2  Rolling / EWMA baseline
+
+LEVEL 3  ETS / ARIMA / SARIMA
+
+LEVEL 4  Dynamic regression / SARIMAX
+
+LEVEL 5  Quantile regression / tree-based probabilistic models
+
+LEVEL 6  More complex sequence models
+only if justified</pre>
+
+    <p>
+        Stop climbing the ladder when additional complexity fails to
+        produce material value.
+    </p>
+</section>
+
+<section class="section" id="s29">
+    <div class="section-header">
+        <span class="section-number">29</span>
+        <h2>Model Escalation Criteria</h2>
+    </div>
+
+    <p>
+        Promote complexity only with consistent improvement in meaningful dimensions:
+    </p>
+
+    <ul>
+        <li>lower point error;</li>
+        <li>better persistence skill;</li>
+        <li>threshold-event detection;</li>
+        <li>useful lead time;</li>
+        <li>uncertainty calibration;</li>
+        <li>narrower intervals at comparable coverage;</li>
+        <li>seasonal/site stability;</li>
+        <li>improved residual structure.</li>
+    </ul>
+
+    <p>
+        A small gain in one average metric is not automatically sufficient.
+    </p>
+</section>
+
+<section class="section" id="s30">
+    <div class="section-header">
+        <span class="section-number">30</span>
+        <h2>Model Rejection Criteria</h2>
+    </div>
+
+    <p>
+        Reject or defer when:
+    </p>
+
+    <ul>
+        <li>the model does not consistently beat persistence;</li>
+        <li>gains disappear under leakage-safe evaluation;</li>
+        <li>gains occur only at one horizon;</li>
+        <li>average error improves while threshold detection worsens;</li>
+        <li>uncertainty is poorly calibrated;</li>
+        <li>performance is unstable over time;</li>
+        <li>unavailable operational features are required;</li>
+        <li>complexity increases without decision value;</li>
+        <li>the dataset is insufficient for reliable selection.</li>
+    </ul>
+
+    <span class="badge requires-test">Requires Evidence</span>
+</section>
+
+<section class="section" id="s31">
+    <div class="section-header">
+        <span class="section-number">31</span>
+        <h2>Ablation Experiments</h2>
+    </div>
+
+    <p>
+        Feature groups should be evaluated through controlled comparisons
+        where practical.
+    </p>
+
+    <div class="experiment">
+
+        <div class="experiment-title">
+            <strong>Experiment 1 — Baseline</strong>
+            <span class="badge requires-test">Requires Test</span>
+        </div>
+
+        <p>Target history only.</p>
+
+        <div class="experiment-output">
+            Output → Baseline Forecast Skill
+        </div>
+
+    </div>
+
+    <div class="experiment">
+
+        <div class="experiment-title">
+            <strong>Experiment 2 — Weather</strong>
+            <span class="badge requires-test">Requires Test</span>
+        </div>
+
+        <p>
+            Target history + precipitation + temperature + humidity.
+        </p>
+
+        <div class="experiment-output">
+            Output → Incremental Weather Skill
+        </div>
+
+    </div>
+
+    <div class="experiment">
+
+        <div class="experiment-title">
+            <strong>Experiment 3 — Atmospheric Demand</strong>
+            <span class="badge requires-test">Requires Test</span>
+        </div>
+
+        <p>
+            Previous model + ET0 / VPD.
+        </p>
+
+        <div class="experiment-output">
+            Output → Incremental Demand Skill
+        </div>
+
+    </div>
+
+    <div class="experiment">
+
+        <div class="experiment-title">
+            <strong>Experiment 4 — Context</strong>
+            <span class="badge requires-test">Requires Test</span>
+        </div>
+
+        <p>
+            Previous model + soil / site / crop context.
+        </p>
+
+        <div class="experiment-output">
+            Output → Incremental Context Skill
+        </div>
+
+    </div>
+
+    <p>
+        The purpose is to determine whether additional variables provide
+        measurable out-of-sample value.
+    </p>
+
+    <p>
+        Feature importance alone is not sufficient evidence of operational usefulness.
+    </p>
+</section>
+
+<section class="section" id="s32">
+    <div class="section-header">
+        <span class="section-number">32</span>
+        <h2>Forecast Uncertainty by Horizon</h2>
+    </div>
+
+    <p>
+        Uncertainty is expected to change with forecast horizon,
+        although the exact relationship is data- and model-dependent.
+    </p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Horizon</th>
+                    <th>Point Error</th>
+                    <th>Coverage</th>
+                    <th>Interval Width</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Short</td>
+                    <td>TBD</td>
+                    <td>TBD</td>
+                    <td>TBD</td>
+                </tr>
+                <tr>
+                    <td>24h</td>
+                    <td>TBD</td>
+                    <td>TBD</td>
+                    <td>TBD</td>
+                </tr>
+                <tr>
+                    <td>72h</td>
+                    <td>TBD</td>
+                    <td>TBD</td>
+                    <td>TBD</td>
+                </tr>
+                <tr>
+                    <td>168h</td>
+                    <td>TBD</td>
+                    <td>TBD</td>
+                    <td>TBD</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>
+        No target performance values are assumed in advance.
+    </p>
+</section>
+
+<section class="section" id="s33">
+    <div class="section-header">
+        <span class="section-number">33</span>
+        <h2>Forecast Output Contract</h2>
+    </div>
+
+    <p>
+        A forecast record should conceptually contain:
+    </p>
+
+    <pre>forecast_id
+
+forecast_origin
+target_timestamp
+site_id
+sensor_id / state_id
+target_definition
+horizon
+point_forecast
+lower_quantile / lower_bound
+upper_quantile / upper_bound
+model_version
+training_data_reference
+feature_set_reference
+forecast_scenario
+provenance</pre>
+
+    <p>
+        The machine-readable schema belongs in
+        <code>07_contracts/EVENT_TELEMETRY_CONTRACT.md</code>.
+    </p>
+</section>
+
+<section class="section" id="s34">
+    <div class="section-header">
+        <span class="section-number">34</span>
+        <h2>Reproducibility Requirements</h2>
+    </div>
+
+    <p>
+        Every forecasting experiment must record dataset/source and version,
+        retrieval reference/date, time period, target definition, sensor depth,
+        unit, preprocessing, missing-data/QC policy, feature definitions,
+        horizons, scenario, train/validation/test periods, walk-forward method,
+        model, hyperparameters, random seed where applicable, code version,
+        metrics, uncertainty/event metrics, assumptions, and limitations.
+    </p>
+
+    <div class="callout">
+        <strong>Evidence rule.</strong>
+        <p>
+            A forecast result without its experimental metadata is not
+            considered reproducible evidence.
+        </p>
+    </div>
+</section>
+
+<section class="section" id="s35">
+    <div class="section-header">
+        <span class="section-number">35</span>
+        <h2>Final Test Protection</h2>
+    </div>
+
+    <p>
+        The final test period must not influence feature selection, model selection,
+        hyperparameter tuning, threshold selection, horizon selection, or alert-rule
+        selection.
+    </p>
+
+    <p>
+        The final test exists to provide an independent estimate of performance
+        after development decisions are complete.
+    </p>
+
+    <span class="badge supported">Required</span>
+</section>
+
+<section class="section" id="s36">
+    <div class="section-header">
+        <span class="section-number">36</span>
+        <h2>Forecast Experiment Matrix</h2>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Experiment</th>
+                    <th>Target</th>
+                    <th>Features</th>
+                    <th>Model</th>
+                    <th>Scenario</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>F-001</td>
+                    <td>Selected state</td>
+                    <td>Persistence only</td>
+                    <td>Persistence</td>
+                    <td>A</td>
+                    <td><span class="badge supported">Required</span></td>
+                </tr>
+                <tr>
+                    <td>F-002</td>
+                    <td>Selected state</td>
+                    <td>Historical target</td>
+                    <td>Seasonal baseline</td>
+                    <td>A</td>
+                    <td><span class="badge open">Candidate</span></td>
+                </tr>
+                <tr>
+                    <td>F-003</td>
+                    <td>Selected state</td>
+                    <td>Historical target</td>
+                    <td>ETS / ARIMA</td>
+                    <td>A</td>
+                    <td><span class="badge open">Candidate</span></td>
+                </tr>
+                <tr>
+                    <td>F-004</td>
+                    <td>Selected state</td>
+                    <td>Target + observed covariates</td>
+                    <td>Dynamic regression</td>
+                    <td>B</td>
+                    <td><span class="badge open">Candidate</span></td>
+                </tr>
+                <tr>
+                    <td>F-005</td>
+                    <td>Selected state</td>
+                    <td>Target + operational covariates</td>
+                    <td>Dynamic regression</td>
+                    <td>C</td>
+                    <td><span class="badge open">Candidate</span></td>
+                </tr>
+                <tr>
+                    <td>F-006</td>
+                    <td>Selected state</td>
+                    <td>Target + covariates</td>
+                    <td>Quantile model</td>
+                    <td>C</td>
+                    <td><span class="badge open">Candidate</span></td>
+                </tr>
+                <tr>
+                    <td>F-007</td>
+                    <td>Selected state</td>
+                    <td>Target + covariates</td>
+                    <td>Tree-based model</td>
+                    <td>C</td>
+                    <td><span class="badge open">Candidate</span></td>
+                </tr>
+                <tr>
+                    <td>F-008</td>
+                    <td>Selected state</td>
+                    <td>Selected feature set</td>
+                    <td>Complex sequence model</td>
+                    <td>C</td>
+                    <td><span class="badge not-started">Deferred</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>
+        Update once the actual dataset and target are known.
+    </p>
+</section>
+
+<section class="section" id="s37">
+    <div class="section-header">
+        <span class="section-number">37</span>
+        <h2>Minimum Evidence for Forecast Validation</h2>
+    </div>
+
+    <p>
+        Validation is not established merely because a model runs, a graph
+        looks plausible, training loss decreases, tests pass, or a complex
+        model produces predictions.
+    </p>
+
+    <p>Required evidence:</p>
+
+    <ol>
+        <li>Scientifically defined target.</li>
+        <li>Explicit forecast origin.</li>
+        <li>Leakage control.</li>
+        <li>Persistence evaluation.</li>
+        <li>Chronological evaluation.</li>
+        <li>Protected final test.</li>
+        <li>Horizon-specific reporting.</li>
+        <li>Uncertainty evaluation when probabilistic forecasts are claimed.</li>
+        <li>Threshold/event evaluation where applicable.</li>
+        <li>Reproducible results.</li>
+    </ol>
+
+    <span class="badge requires-test">Requires Project Evidence</span>
+</section>
+
+<section class="section" id="s38">
+    <div class="section-header">
+        <span class="section-number">38</span>
+        <h2>Scientific and Operational Interpretation</h2>
+    </div>
+
+    <p>
+        Forecast performance and operational usefulness are distinct.
+        A model may lower MAE without improving threshold detection,
+        improve average error but calibrate poorly, perform well short-term
+        but lack useful longer-horizon lead time, or require unavailable
+        future inputs.
+    </p>
+
+    <div class="callout dark quote">
+        Forecast accuracy is necessary evidence, but not by itself evidence
+        of operational value.
+    </div>
+</section>
+
+<section class="section" id="s39">
+    <div class="section-header">
+        <span class="section-number">39</span>
+        <h2>Open Forecasting Decisions</h2>
+    </div>
+
+    <ol>
+        <li>Final forecast target.</li>
+        <li>Final target transformation.</li>
+        <li>Final sensor depth / state representation.</li>
+        <li>Final horizon set.</li>
+        <li>Forecast cadence.</li>
+        <li>Exogenous feature set.</li>
+        <li>ET0 implementation.</li>
+        <li>VPD implementation.</li>
+        <li>Treatment of future weather information.</li>
+        <li>Probabilistic forecasting method.</li>
+        <li>Threshold-event evaluation definition.</li>
+        <li>Acceptable forecast error.</li>
+        <li>Acceptable uncertainty miscalibration.</li>
+        <li>Acceptable false-alert burden.</li>
+        <li>Minimum useful lead time.</li>
+        <li>Feasibility of multi-site validation.</li>
+        <li>Whether complexity beyond statistical baselines is justified.</li>
+    </ol>
+
+    <span class="badge open">Open</span>
+</section>
+
+<section class="section" id="s40">
+    <div class="section-header">
+        <span class="section-number">40</span>
+        <h2>Forecasting Status</h2>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Area</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Forecasting objective</td>
+                    <td><span class="badge supported">Decided</span></td>
+                </tr>
+                <tr>
+                    <td>Persistence baseline</td>
+                    <td><span class="badge supported">Decided</span></td>
+                </tr>
+                <tr>
+                    <td>Chronological evaluation</td>
+                    <td><span class="badge supported">Decided</span></td>
+                </tr>
+                <tr>
+                    <td>Walk-forward evaluation</td>
+                    <td><span class="badge supported">Decided</span></td>
+                </tr>
+                <tr>
+                    <td>Final target</td>
+                    <td><span class="badge researching">Researching</span></td>
+                </tr>
+                <tr>
+                    <td>Forecast horizons</td>
+                    <td><span class="badge researching">Researching</span></td>
+                </tr>
+                <tr>
+                    <td>Feature set</td>
+                    <td><span class="badge researching">Researching</span></td>
+                </tr>
+                <tr>
+                    <td>Statistical model</td>
+                    <td><span class="badge open">Open</span></td>
+                </tr>
+                <tr>
+                    <td>ML model</td>
+                    <td><span class="badge open">Open</span></td>
+                </tr>
+                <tr>
+                    <td>Probabilistic method</td>
+                    <td><span class="badge researching">Researching</span></td>
+                </tr>
+                <tr>
+                    <td>Threshold-event evaluation</td>
+                    <td><span class="badge open">Open</span></td>
+                </tr>
+                <tr>
+                    <td>Alert persistence</td>
+                    <td><span class="badge open">Open</span></td>
+                </tr>
+                <tr>
+                    <td>Multi-site validation</td>
+                    <td><span class="badge open">Open</span></td>
+                </tr>
+                <tr>
+                    <td>Deep learning</td>
+                    <td><span class="badge not-started">Deferred</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="section" id="s41">
+    <div class="section-header">
+        <span class="section-number">41</span>
+        <h2>Traceability</h2>
+    </div>
+
+    <p>Governed by:</p>
+
+    <ul>
+        <li><code>00_project/PROJECT_CHARTER.md</code></li>
+        <li><code>01_research/RESEARCH_FEASIBILITY.md</code></li>
+        <li><code>02_product/PRD.md</code></li>
+        <li><code>03_scientific/DATA_SCIENTIFIC_SPEC.md</code></li>
+    </ul>
+
+    <p>Informs:</p>
+
+    <ul>
+        <li><code>05_architecture/TECHNICAL_SPEC.md</code></li>
+        <li><code>06_decisions/ADR_INDEX.md</code></li>
+        <li><code>07_contracts/EVENT_TELEMETRY_CONTRACT.md</code></li>
+        <li><code>08_implementation/IMPLEMENTATION_PLAN.md</code></li>
+        <li><code>09_evidence/EXPERIMENT_LOG.md</code></li>
+    </ul>
+
+    <p>
+        Forecasting decisions that materially affect system architecture
+        must be reflected in an ADR.
+    </p>
+</section>
+
+<section class="section" id="s42">
+    <div class="section-header">
+        <span class="section-number">42</span>
+        <h2>Next Gate</h2>
+    </div>
+
+    <div class="callout dark">
+        <strong>Forecastability Gate</strong>
+        <p>
+            The next stage is empirical rather than architectural.
+        </p>
+    </div>
+
+    <div class="experiment">
+
+        <div class="experiment-title">
+            <strong>Experiment 1 — Observational Dataset Readiness</strong>
+            <span class="badge requires-test">Required</span>
+        </div>
+
+        <ul>
+            <li>Usable observational dataset.</li>
+            <li>Defined target candidate.</li>
+            <li>Temporal integrity audit.</li>
+            <li>Missingness and QC assessment.</li>
+        </ul>
+
+        <div class="experiment-output">
+            Output → Forecast-Ready Data Record
+        </div>
+
+    </div>
+
+    <div class="experiment">
+
+        <div class="experiment-title">
+            <strong>Experiment 2 — Persistence Benchmark</strong>
+            <span class="badge requires-test">Required</span>
+        </div>
+
+        <ul>
+            <li>Baseline forecast performance.</li>
+            <li>Horizon-specific evaluation.</li>
+            <li>Walk-forward assessment.</li>
+        </ul>
+
+        <div class="experiment-output">
+            Output → Baseline Skill Record
+        </div>
+
+    </div>
+
+    <div class="experiment">
+
+        <div class="experiment-title">
+            <strong>Experiment 3 — Feature Value</strong>
+            <span class="badge requires-test">Required</span>
+        </div>
+
+        <ul>
+            <li>Candidate exogenous variables.</li>
+            <li>Leakage-safe feature comparison.</li>
+            <li>Incremental out-of-sample skill.</li>
+        </ul>
+
+        <div class="experiment-output">
+            Output → Feature Decision Evidence
+        </div>
+
+    </div>
+
+    <div class="experiment">
+
+        <div class="experiment-title">
+            <strong>Experiment 4 — Initial Uncertainty Evaluation</strong>
+            <span class="badge requires-test">Required</span>
+        </div>
+
+        <ul>
+            <li>Probabilistic forecast candidate.</li>
+            <li>Empirical coverage.</li>
+            <li>Interval width / sharpness.</li>
+        </ul>
+
+        <div class="experiment-output">
+            Output → Calibration Evidence
+        </div>
+
+    </div>
+
+    <p>
+        Only after these results should the project decide whether more
+        complex forecasting models are warranted.
+    </p>
+
+    <div class="quote">
+        Select and audit the observational dataset, establish the forecasting
+        target, construct leakage-safe evaluation periods, and measure persistence
+        before escalating model complexity.
+    </div>
+</section>
+
+
+    <footer class="footer">
+        CA-ENG // Master Record<br>
+        Agri Telemetry &amp; Forecasting Platform<br>
+        Data &amp; Forecast Design &nbsp;&bull;&nbsp; Last Edited: 30 SEP 2026 &nbsp;&bull;&nbsp; Status: RESEARCHING
+    </footer>
+
+</main>
+
+</body>
+</html>

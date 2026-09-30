@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agri-telemetry.io/schemas/alert-event.schema.json",
+  "title": "AlertEvent",
+  "description": "Standard schema for multi-tier platform alerts and operational risk events, strictly distinguishing data-quality faults from physical deviations and agronomic threshold risks. Strictly non-actuating.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "alert_id",
+    "category",
+    "severity",
+    "source_id",
+    "site_id",
+    "trigger_time",
+    "trigger_condition",
+    "actionable_guidance",
+    "is_autonomous_actuation"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantic versioning of the schema (e.g., 1.0.0)"
+    },
+    "alert_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this alert event"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "DATA_QUALITY_ALERT",
+        "PHYSICAL_DEVIATION",
+        "AGRONOMIC_RISK",
+        "OPERATIONAL_WARNING"
+      ],
+      "description": "Strict taxonomic category. Data-quality faults must NEVER trigger agronomic risk."
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "INFO",
+        "WARNING",
+        "CRITICAL"
+      ],
+      "description": "Operational urgency of the alert"
+    },
+    "source_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Originating monitoring station, sensor logger, or pipeline component"
+    },
+    "site_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Associated agricultural management unit or field zone"
+    },
+    "trigger_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC ISO 8601 timestamp when the condition was detected"
+    },
+    "trigger_condition": {
+      "type": "object",
+      "required": [
+        "threshold_type",
+        "threshold_value"
+      ],
+      "properties": {
+        "threshold_type": {
+          "type": "string",
+          "enum": [
+            "SENSOR_OUT_OF_RANGE",
+            "SENSOR_STUCK_VALUE",
+            "TELEMETRY_LATENCY_BREACH",
+            "MASS_BALANCE_RESIDUAL",
+            "MANAGEMENT_ALLOWABLE_DEPLETION",
+            "CRITICAL_WILTING_PROXIMITY"
+          ],
+          "description": "Type of threshold or condition evaluated"
+        },
+        "threshold_value": {
+          "type": "number",
+          "description": "Threshold trigger value"
+        },
+        "threshold_unit": {
+          "type": "string",
+          "description": "Unit of threshold (e.g., 'm3/m3', 'fraction', 'seconds')"
+        },
+        "forecast_horizon_hours": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Lead time in hours if triggered by a forecast event; null for real-time QC alerts"
+        },
+        "exceedance_probability": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Uncertainty-calibrated probability of threshold crossing"
+        },
+        "predicted_value": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Observed or predicted value that triggered the evaluation"
+        }
+      },
+      "additionalProperties": false
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "crop_type": {
+          "type": "string"
+        },
+        "growth_stage": {
+          "type": "string"
+        },
+        "current_depletion_fraction": {
+          "type": "number"
+        },
+        "forecast_model_id": {
+          "type": "string"
+        },
+        "qc_failure_reason": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "actionable_guidance": {
+      "type": "string",
+      "minLength": 5,
+      "description": "Human-readable advisory message explaining the risk and recommended operational evaluation"
+    },
+    "is_autonomous_actuation": {
+      "type": "boolean",
+      "const": false,
+      "description": "Safety flag: must always be false. Platform provides decision support only, never autonomous control."
+    }
+  },
+  "additionalProperties": false
+}

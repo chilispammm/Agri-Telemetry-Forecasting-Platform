@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Agri Telemetry & Forecasting — Data & Scientific Specification</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #f4f1ea;
+            --surface: #faf8f3;
+            --ink: #151515;
+            --muted: #62605a;
+            --border: #d3cec0;
+            --dark: #151515;
+            --dark-border: #333;
+            --amber: #b7791f;
+            --grey: #777;
+            --green: #34785a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 2rem;
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background: var(--bg);
+            font-family: "Inter", sans-serif;
+            line-height: 1.65;
+        }
+
+        /* Sidebar */
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 270px;
+            height: 100vh;
+            padding: 2.5rem 1.75rem;
+            border-right: 1px solid var(--border);
+            background: var(--bg);
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .brand {
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--ink);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-meta {
+            margin-bottom: 2.5rem;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.7;
+            text-transform: uppercase;
+            letter-spacing: .7px;
+        }
+
+        .nav-item {
+            display: block;
+            margin-bottom: .9rem;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: .45px;
+            text-transform: uppercase;
+            transition: color .2s ease;
+        }
+
+        .nav-item:hover {
+            color: var(--ink);
+        }
+
+        /* Main */
+
+        .main {
+            width: calc(100% - 270px);
+            max-width: 1200px;
+            margin-left: 270px;
+            padding: 4rem 5rem 7rem;
+        }
+
+        .top-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 2rem;
+            padding-bottom: 1rem;
+            margin-bottom: 4rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .hero {
+            max-width: 900px;
+            margin-bottom: 5rem;
+        }
+
+        .eyebrow {
+            margin-bottom: 1rem;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            max-width: 900px;
+            margin: 0 0 1.5rem;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            line-height: 1.02;
+            letter-spacing: -.055em;
+            font-weight: 600;
+        }
+
+        .hero-description {
+            max-width: 780px;
+            color: var(--muted);
+            font-size: 16px;
+        }
+
+        /* Principle */
+
+        .principle {
+            padding: 2rem 2.25rem;
+            margin: 2rem 0 3rem;
+            background: var(--dark);
+            color: white;
+        }
+
+        .principle-label {
+            margin-bottom: .75rem;
+            color: #999;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .principle strong {
+            display: block;
+            margin-bottom: 1.25rem;
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .workflow {
+            color: #ddd;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 12px;
+            letter-spacing: .2px;
+            line-height: 2;
+            overflow-wrap: anywhere;
+        }
+
+        .lead {
+            max-width: 850px;
+            font-size: 15px;
+        }
+
+        /* Sections */
+
+        .section {
+            margin-top: 5rem;
+            scroll-margin-top: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            padding-top: 1rem;
+            margin-bottom: 2rem;
+            border-top: 1px solid var(--ink);
+        }
+
+        .section-number {
+            min-width: 30px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.65rem;
+            line-height: 1.2;
+            letter-spacing: -.025em;
+            font-weight: 600;
+        }
+
+        h3 {
+            margin: 2.5rem 0 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        h4 {
+            margin: 1.75rem 0 .75rem;
+            font-size: .9rem;
+            font-weight: 700;
+        }
+
+        p {
+            max-width: 850px;
+        }
+
+        .note {
+            color: var(--muted);
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        /* Tables */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0 2rem;
+            border-top: 1px solid var(--ink);
+            font-size: 13px;
+        }
+
+        th,
+        td {
+            padding: 1.1rem .9rem;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .7px;
+            text-transform: uppercase;
+        }
+
+        .key {
+            width: 28%;
+            border-right: 1px solid var(--border);
+            font-weight: 600;
+        }
+
+        /* Status badges */
+
+        .badge {
+            display: inline-block;
+            padding: 3px 7px;
+            border: 1px solid currentColor;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .researching {
+            color: var(--amber);
+        }
+
+        .open {
+            color: var(--grey);
+        }
+
+        .validated {
+            color: var(--green);
+        }
+
+        /* Flow */
+
+        .flow {
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: rgba(0, 0, 0, .035);
+            border-left: 3px solid var(--ink);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 12px;
+            line-height: 2.1;
+            overflow-x: auto;
+            white-space: pre-line;
+        }
+
+        .flow-horizontal {
+            white-space: normal;
+            line-height: 2;
+        }
+
+        /* Lists */
+
+        ul,
+        ol {
+            max-width: 850px;
+            padding-left: 1.4rem;
+        }
+
+        li {
+            margin-bottom: .65rem;
+        }
+
+        /* Callouts */
+
+        .callout {
+            padding: 1.5rem 1.75rem;
+            margin: 2rem 0;
+            border-left: 3px solid var(--ink);
+            background: var(--surface);
+            font-size: 13px;
+        }
+
+        .callout strong {
+            font-weight: 600;
+        }
+
+        .dark-callout {
+            padding: 1.75rem 2rem;
+            margin: 2rem 0;
+            background: var(--dark);
+            color: white;
+        }
+
+        .dark-callout p {
+            color: #ddd;
+            font-size: 14px;
+        }
+
+        .dark-callout strong {
+            color: white;
+        }
+
+        .dark-callout .label {
+            color: #999;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        /* Formula blocks */
+
+        .formula {
+            padding: 1.5rem 1.75rem;
+            margin: 1.5rem 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 14px;
+            line-height: 2;
+            overflow-x: auto;
+        }
+
+        .formula-caption {
+            display: block;
+            margin-top: .75rem;
+            color: var(--muted);
+            font-family: "Inter", sans-serif;
+            font-size: 11px;
+            font-style: italic;
+        }
+
+        /* Footer */
+
+        .footer {
+            padding-top: 3rem;
+            margin-top: 7rem;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 10px;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+            line-height: 2;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 1100px) {
+            .main {
+                padding: 3rem 3rem 6rem;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                max-height: none;
+                border-right: 0;
+                border-bottom: 1px solid var(--border);
+                padding: 1.5rem;
+            }
+
+            .sidebar-meta {
+                margin-bottom: 1.5rem;
+            }
+
+            .sidebar nav {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: .5rem 1rem;
+            }
+
+            .nav-item {
+                margin-bottom: .4rem;
+            }
+
+            .main {
+                width: 100%;
+                margin-left: 0;
+                padding: 3rem 1.5rem 5rem;
+            }
+
+            .top-meta {
+                flex-direction: column;
+                gap: .5rem;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .sidebar nav {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                gap: .65rem;
+            }
+
+            h2 {
+                font-size: 1.35rem;
+            }
+
+            .flow {
+                font-size: 11px;
+            }
+        }
+
+        /* Print */
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 18mm;
+            }
+
+            body {
+                background: white;
+                color: black;
+                font-size: 10pt;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                width: 100%;
+                max-width: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            .top-meta {
+                margin-bottom: 2rem;
+            }
+
+            .section {
+                margin-top: 3rem;
+            }
+
+            .section-header {
+                break-after: avoid;
+            }
+
+            .callout,
+            .formula,
+            table {
+                break-inside: avoid;
+            }
+
+            .principle,
+            .dark-callout {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            a {
+                color: inherit;
+                text-decoration: none;
+            }
+
+            .footer {
+                margin-top: 3rem;
+            }
+        }
+    
+        /* LaTeX Math & Mermaid Flowcharts */
+        .math-block {
+            margin: 1.5rem 0;
+            padding: 1.25rem 1.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--blue);
+            overflow-x: auto;
+            font-size: 1.05rem;
+        }
+
+        .mermaid {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-top: 2px solid var(--ink);
+            padding: 2rem 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        mjx-container[jax="CHTML"][display="true"] {
+            margin: 0.5rem 0 !important;
+        }
+
+</style>
+
+    <!-- MathJax for LaTeX mathematical formula rendering -->
+    <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Mermaid for Flowcharts and Diagrams -->
+    <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'neutral',
+        themeVariables: {
+            fontFamily: 'Inter, -apple-system, sans-serif',
+            primaryColor: '#faf8f3',
+            primaryBorderColor: '#151515',
+            primaryTextColor: '#151515',
+            lineColor: '#151515',
+            secondaryColor: '#f4f1ea',
+            tertiaryColor: '#faf8f3',
+            edgeLabelBackground: '#ffffff'
+        }
+    });
+    </script>
+
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+    <div class="brand">CA-ENG // Master Record</div>
+
+    <div class="sidebar-meta">
+        Agri Telemetry & Forecasting Platform<br>
+        Data & Scientific Specification<br>
+        September 30, 2026
+    </div>
+
+    <nav aria-label="Document navigation">
+        <a class="nav-item" href="#authority">Document Authority</a>
+        <a class="nav-item" href="#s01">01. Governing Principle</a>
+        <a class="nav-item" href="#s02">02. Scientific Objective</a>
+        <a class="nav-item" href="#s03">03. Scientific Object</a>
+        <a class="nav-item" href="#s04">04. Observation Classes</a>
+        <a class="nav-item" href="#s05">05. Candidate Data Sources</a>
+        <a class="nav-item" href="#s06">06. Variable Catalogue</a>
+        <a class="nav-item" href="#s07">07. Soil-Water State</a>
+        <a class="nav-item" href="#s08">08. Sensor Depth</a>
+        <a class="nav-item" href="#s09">09. Atmospheric Demand</a>
+        <a class="nav-item" href="#s10">10. Rainfall & Irrigation</a>
+        <a class="nav-item" href="#s11">11. Temporal Representation</a>
+        <a class="nav-item" href="#s12">12. Temporal Aggregation</a>
+        <a class="nav-item" href="#s13">13. Data Quality</a>
+        <a class="nav-item" href="#s14">14. Physical Plausibility</a>
+        <a class="nav-item" href="#s15">15. Derived Variables</a>
+        <a class="nav-item" href="#s16">16. Water Balance</a>
+        <a class="nav-item" href="#s17">17. MAD</a>
+        <a class="nav-item" href="#s18">18. Threshold Semantics</a>
+        <a class="nav-item" href="#s19">19. Deviation Semantics</a>
+        <a class="nav-item" href="#s20">20. Uncertainty</a>
+        <a class="nav-item" href="#s21">21. Alert Interpretation</a>
+        <a class="nav-item" href="#s22">22. Point vs Field</a>
+        <a class="nav-item" href="#s23">23. Synthetic Telemetry</a>
+        <a class="nav-item" href="#s24">24. Assumptions</a>
+        <a class="nav-item" href="#s25">25. Limitations</a>
+        <a class="nav-item" href="#s26">26. Validation Requirements</a>
+        <a class="nav-item" href="#s27">27. Empirical Experiments</a>
+        <a class="nav-item" href="#s28">28. Rejection Criteria</a>
+        <a class="nav-item" href="#s29">29. Open Decisions</a>
+        <a class="nav-item" href="#s30">30. Decision Status</a>
+        <a class="nav-item" href="#s31">31. Traceability</a>
+        <a class="nav-item" href="#s32">32. Current Status</a>
+        <a class="nav-item" href="#s33">33. Next Gate</a>
+    </nav>
+
+</aside>
+
+
+<main class="main">
+
+    <div class="top-meta">
+        <span>Agri Telemetry & Forecasting Platform</span>
+        <span>Last Edited: 30 SEP 2026 &nbsp; / &nbsp; Status: Researching</span>
+    </div>
+
+
+    <!-- DOCUMENT AUTHORITY -->
+
+    <section class="hero" id="authority">
+
+        <div class="eyebrow">CA-ENG / Data & Scientific Specification</div>
+
+        <h1>Data & Scientific Specification</h1>
+
+        <p class="hero-description">
+            Defining the scientific meaning, structure, provenance,
+            transformation, and interpretation of data used by the
+            Agri Telemetry & Forecasting Platform.
+        </p>
+
+        <div class="principle">
+
+            <div class="principle-label">Scientific Governing Principle</div>
+
+            <strong>Represent the physical state before attempting to predict or classify it.</strong>
+
+            <div class="workflow">
+                OBSERVATION → QUALITY CONTROL → STATE REPRESENTATION
+                → DERIVED VARIABLES → FORECAST → UNCERTAINTY
+                → THRESHOLD / RISK ASSESSMENT
+            </div>
+
+        </div>
+
+        <div class="callout">
+            <strong>Document status:</strong>
+            <span class="badge researching">Researching</span>
+            <br><br>
+            <strong>Last updated:</strong> September 30, 2026<br>
+            <strong>Document:</strong> <code>03_scientific/DATA_SCIENTIFIC_SPEC.md</code>
+        </div>
+
+        <p class="lead">
+            This specification establishes the scientific foundations for
+            interpreting agricultural telemetry and evaluating whether it
+            can support reproducible, uncertainty-aware soil-water forecasts.
+            It deliberately leaves unresolved scientific decisions open until
+            they are supported by empirical evidence.
+        </p>
+
+    </section>
+
+
+    <!-- 01 -->
+
+    <section class="section" id="s01">
+        <div class="section-header">
+            <span class="section-number">01</span>
+            <h2>Document Authority</h2>
+        </div>
+
+        <p>This document defines the scientific meaning, structure, provenance, transformation, and interpretation of data used by the Agri Telemetry & Forecasting Platform.</p>
+
+        <p>It establishes:</p>
+        <ul>
+            <li>what constitutes an observation;</li>
+            <li>what scientific state the system is attempting to represent;</li>
+            <li>which variables are measured versus derived;</li>
+            <li>how soil-water state is represented;</li>
+            <li>how atmospheric demand, precipitation, and irrigation are treated;</li>
+            <li>temporal and unit conventions;</li>
+            <li>quality-control and missing-data principles;</li>
+            <li>threshold and risk semantics;</li>
+            <li>scientific assumptions and limitations;</li>
+            <li>validation requirements for unresolved scientific decisions.</li>
+        </ul>
+
+        <p>This document does <strong>not</strong> define:</p>
+        <ul>
+            <li>message-broker architecture;</li>
+            <li>API architecture;</li>
+            <li>database technology;</li>
+            <li>deployment topology;</li>
+            <li>forecasting model selection;</li>
+            <li>MLflow or other MLOps tooling;</li>
+            <li>final alert implementation;</li>
+            <li>user-interface design.</li>
+        </ul>
+
+        <p>Those decisions belong to the Technical Specification, Forecast Design, Event/Telemetry Contract, and ADRs.</p>
+    </section>
+
+
+    <!-- 02 -->
+
+    <section class="section" id="s02">
+        <div class="section-header">
+            <span class="section-number">02</span>
+            <h2>Governing Scientific Principle</h2>
+        </div>
+
+        <div class="dark-callout">
+            <div class="label">Governing Principle</div>
+            <p><strong>Represent the physical state before attempting to predict or classify it.</strong></p>
+        </div>
+
+        <p>The system must not treat a raw sensor reading, statistical anomaly, or model output as an agricultural decision signal without establishing what that quantity represents physically and operationally.</p>
+
+        <div class="flow flow-horizontal">
+            OBSERVATION → QUALITY CONTROL → STATE REPRESENTATION → DERIVED VARIABLES → FORECAST → UNCERTAINTY → THRESHOLD/RISK ASSESSMENT
+        </div>
+
+        <p>A technically successful pipeline does not establish scientific validity.</p>
+    </section>
+
+
+    <!-- 03 -->
+
+    <section class="section" id="s03">
+        <div class="section-header">
+            <span class="section-number">03</span>
+            <h2>Scientific Objective</h2>
+        </div>
+
+        <p>The scientific objective is to determine whether historical and simulated agricultural telemetry can support reproducible, uncertainty-aware forecasts of a relevant soil-water state and identify potential threshold-crossing risk with useful lead time.</p>
+
+        <div class="callout">
+            <strong>Primary experimental question</strong>
+            <p>Can historical in-situ telemetry support calibrated forecasts of near-term soil-water trajectories and identify meaningful deviation or threshold-crossing risk with useful lead time?</p>
+        </div>
+
+        <p>The system is therefore concerned with <strong>temporal state estimation and forecasting</strong>, rather than simply predicting the next raw sensor reading.</p>
+    </section>
+
+
+    <!-- 04 -->
+
+    <section class="section" id="s04">
+        <div class="section-header">
+            <span class="section-number">04</span>
+            <h2>Scientific Object</h2>
+        </div>
+
+        <h3>4.1 Primary Scientific Object</h3>
+
+        <p>The primary scientific object is a <strong>soil-water state observed at a defined location and depth over time</strong>.</p>
+
+        <p>The exact state representation remains <span class="badge researching">Researching</span>.</p>
+
+        <p>Candidate representations include:</p>
+        <ol>
+            <li>volumetric soil-water content;</li>
+            <li>normalised soil-water status;</li>
+            <li>root-zone water storage;</li>
+            <li>root-zone depletion;</li>
+            <li>fraction of available water;</li>
+            <li>another physically justified transformation of observed soil-water content.</li>
+        </ol>
+
+        <p>No candidate is considered the final target until it has been evaluated against:</p>
+        <ul>
+            <li>data availability;</li>
+            <li>physical interpretability;</li>
+            <li>temporal stability;</li>
+            <li>forecastability;</li>
+            <li>agronomic relevance;</li>
+            <li>threshold interpretability;</li>
+            <li>cross-site comparability.</li>
+        </ul>
+
+        <h3>4.2 Why Raw Soil Moisture May Not Be Sufficient</h3>
+
+        <p>Volumetric soil-water content is a measurable physical quantity, but the same volumetric value can imply different agronomic conditions depending on:</p>
+
+        <ul>
+            <li>soil texture;</li>
+            <li>field capacity;</li>
+            <li>permanent wilting point;</li>
+            <li>soil depth;</li>
+            <li>root-zone depth;</li>
+            <li>crop;</li>
+            <li>crop growth stage;</li>
+            <li>rooting distribution;</li>
+            <li>sensor calibration;</li>
+            <li>local hydraulic conditions.</li>
+        </ul>
+
+        <div class="callout">
+            <strong>A raw soil-moisture value must not automatically be interpreted as crop water stress or irrigation need.</strong>
+        </div>
+    </section>
+
+
+    <!-- 05 -->
+
+    <section class="section" id="s05">
+        <div class="section-header">
+            <span class="section-number">05</span>
+            <h2>Observation Classes</h2>
+        </div>
+
+        <p>Every important quantity must be classified by origin.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Class</th>
+                    <th>Definition</th>
+                    <th>Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td class="key">Observed</td><td>Directly obtained from an observational dataset or telemetry source</td><td>Soil moisture</td></tr>
+                <tr><td class="key">Derived</td><td>Calculated from observed or otherwise explicitly sourced variables</td><td>ET0, VPD</td></tr>
+                <tr><td class="key">Modelled</td><td>Produced by a numerical/reanalysis model</td><td>ERA5-Land soil water</td></tr>
+                <tr><td class="key">Forecast</td><td>Future estimate available at forecast origin</td><td>Weather forecast</td></tr>
+                <tr><td class="key">Simulated</td><td>Artificially generated to reproduce telemetry behaviour</td><td>Resampled device stream</td></tr>
+                <tr><td class="key">Synthetic Fault</td><td>Controlled corruption applied to a simulated stream</td><td>Packet loss</td></tr>
+                <tr><td class="key">Predicted</td><td>Produced by the project's forecasting model</td><td>Soil-water quantile forecast</td></tr>
+            </tbody>
+        </table>
+
+        <p>These classes must remain distinguishable throughout the pipeline.</p>
+
+        <p>A modelled/reanalysis quantity must not be silently relabelled as an observed field measurement.</p>
+    </section>
+
+
+    <!-- 06 -->
+
+    <section class="section" id="s06">
+        <div class="section-header">
+            <span class="section-number">06</span>
+            <h2>Candidate Data Sources</h2>
+        </div>
+
+        <h3>6.1 Primary Observational Candidate</h3>
+
+        <p><strong>NOAA USCRN</strong> remains the leading candidate for the initial empirical study because it provides high-frequency in-situ meteorological and soil observations suitable for temporal forecasting experiments.</p>
+
+        <p>Candidate variables include:</p>
+        <ul>
+            <li>soil moisture;</li>
+            <li>soil temperature;</li>
+            <li>air temperature;</li>
+            <li>relative humidity;</li>
+            <li>precipitation;</li>
+            <li>solar radiation.</li>
+        </ul>
+
+        <div class="callout">
+            <strong>USCRN is not yet scientifically validated as the project's final data source.</strong>
+        </div>
+
+        <p>A station-level audit is required before the source can move from <code>RESEARCHING</code> to <code>DECIDED</code>.</p>
+
+        <p>The audit must establish:</p>
+        <ul>
+            <li>station availability;</li>
+            <li>observation period;</li>
+            <li>soil-moisture depth(s);</li>
+            <li>cadence;</li>
+            <li>missingness;</li>
+            <li>quality flags;</li>
+            <li>variable completeness;</li>
+            <li>timestamp behaviour;</li>
+            <li>continuity;</li>
+            <li>suitability of the available soil and atmospheric variables;</li>
+            <li>whether the resulting dataset supports the intended forecasting experiment.</li>
+        </ul>
+
+        <h3>6.2 Alternative Observational Sources</h3>
+
+        <p>Potential alternatives include:</p>
+        <ul>
+            <li>International Soil Moisture Network (ISMN);</li>
+            <li>AmeriFlux;</li>
+            <li>other suitable public in-situ research networks.</li>
+        </ul>
+
+        <p>These remain alternatives rather than fallback sources selected in advance. Selection must be evidence-based.</p>
+
+        <h3>6.3 Reanalysis and Modelled Products</h3>
+
+        <p>Potential products such as ERA5-Land may provide:</p>
+        <ul>
+            <li>meteorological covariates;</li>
+            <li>atmospheric demand inputs;</li>
+            <li>precipitation;</li>
+            <li>soil-water context.</li>
+        </ul>
+
+        <p>They may be useful for historical covariates or comparison. They must not be treated as equivalent to local in-situ observations.</p>
+
+        <h3>6.4 Satellite Products</h3>
+
+        <p>Products such as SMAP may provide broader soil-moisture context.</p>
+
+        <p>They are not assumed to represent:</p>
+        <ul>
+            <li>hourly field telemetry;</li>
+            <li>local root-zone conditions;</li>
+            <li>direct irrigation requirements.</li>
+        </ul>
+
+        <p>Any use must explicitly account for differences in spatial scale, temporal cadence, measurement depth, and retrieval method.</p>
+
+        <h3>6.5 Soil Context</h3>
+
+        <p>Soil datasets may provide contextual variables such as:</p>
+        <ul>
+            <li>soil texture;</li>
+            <li>soil-water retention characteristics;</li>
+            <li>bulk density;</li>
+            <li>available water capacity.</li>
+        </ul>
+
+        <p>These are contextual inputs, not telemetry observations.</p>
+    </section>
+
+
+    <!-- 07 -->
+
+    <section class="section" id="s07">
+        <div class="section-header">
+            <span class="section-number">07</span>
+            <h2>Variable Catalogue</h2>
+        </div>
+
+        <p>The following catalogue defines the current scientific role of candidate variables.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Variable</th>
+                    <th>Origin</th>
+                    <th>Scientific Role</th>
+                    <th>Unit</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Volumetric soil moisture</td><td>Observed</td><td>Primary soil-water observation candidate</td><td>m³/m³</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>Soil temperature</td><td>Observed</td><td>Soil/environmental explanatory variable</td><td>°C</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>Air temperature</td><td>Observed/forecast</td><td>Atmospheric demand/explanatory variable</td><td>°C</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>Relative humidity</td><td>Observed/forecast</td><td>Atmospheric demand/explanatory variable</td><td>%</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>Precipitation</td><td>Observed/forecast</td><td>Water input</td><td>mm</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>Irrigation</td><td>Observed/simulated</td><td>Water input</td><td>mm or equivalent</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>Wind speed</td><td>Observed/forecast</td><td>ET0 input</td><td>m/s</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>Solar radiation</td><td>Observed/forecast</td><td>ET0 input</td><td>W/m² or MJ/m²/day</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>Net radiation</td><td>Derived/observed</td><td>ET0 input</td><td>Energy flux</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>VPD</td><td>Derived</td><td>Atmospheric dryness indicator</td><td>kPa</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>ET0</td><td>Derived</td><td>Reference atmospheric water demand</td><td>mm/day</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>Root-zone depth</td><td>Contextual</td><td>State interpretation</td><td>mm or m</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>Field capacity</td><td>Contextual</td><td>Water-retention parameter</td><td>m³/m³</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>Wilting point</td><td>Contextual</td><td>Water-retention parameter</td><td>m³/m³</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>MAD</td><td>Derived/configured</td><td>Management threshold</td><td>Fraction or equivalent</td><td><span class="badge open">Open</span></td></tr>
+            </tbody>
+        </table>
+
+        <p class="note">This table is a working scientific catalogue rather than a declaration that every variable will enter the final forecasting model.</p>
+    </section>
+
+
+    <!-- 08 -->
+
+    <section class="section" id="s08">
+        <div class="section-header">
+            <span class="section-number">08</span>
+            <h2>Soil-Water State Representation</h2>
+        </div>
+
+        <h3>8.1 Volumetric Soil-Water Content</h3>
+
+        <p>Volumetric soil-water content is expressed as:</p>
+
+        <div class="formula">
+            θᵥ = V<sub>water</sub> / V<sub>soil</sub>
+            <span class="formula-caption">Volumetric soil-water content</span>
+        </div>
+
+        <p>with units of:</p>
+
+        <div class="formula">m³/m³</div>
+
+        <p>It is a directly interpretable physical measurement but is not, by itself, a universal measure of crop water stress.</p>
+
+        <h3>8.2 Available Water</h3>
+
+        <p>Where field capacity and wilting point are available, a normalised representation may be considered:</p>
+
+        <div class="formula">
+            AW = θ<sub>FC</sub> − θ<sub>WP</sub><br><br>
+            f<sub>AW</sub> = (θᵥ − θ<sub>WP</sub>) / (θ<sub>FC</sub> − θ<sub>WP</sub>)
+        </div>
+
+        <p>where:</p>
+        <ul>
+            <li>θᵥ = observed volumetric soil-water content;</li>
+            <li>θ<sub>FC</sub> = field capacity;</li>
+            <li>θ<sub>WP</sub> = permanent wilting point.</li>
+        </ul>
+
+        <p>This representation is a <strong>candidate</strong>, not a final specification. Its validity depends on the quality and applicability of the soil-water retention parameters.</p>
+
+        <h3>8.3 Root-Zone Water Storage</h3>
+
+        <p>If multiple depths and sufficient soil parameters are available, the system may represent water storage across a defined root zone.</p>
+
+        <div class="formula">
+            S = Σᵢ θᵢ Δzᵢ
+        </div>
+
+        <p>where:</p>
+        <ul>
+            <li>θᵢ = soil-water content at depth interval i;</li>
+            <li>Δzᵢ = thickness represented by that interval.</li>
+        </ul>
+
+        <p>A more complete formulation may account for soil-specific properties and rooting distribution.</p>
+
+        <p>The project must not imply root-zone conditions from a single shallow sensor without evidence.</p>
+
+        <h3>8.4 Root-Zone Depletion</h3>
+
+        <p>A depletion representation may be expressed conceptually as:</p>
+
+        <div class="formula">
+            D = S<sub>FC</sub> − S
+        </div>
+
+        <p>where:</p>
+        <ul>
+            <li>S<sub>FC</sub> = root-zone water storage at the chosen reference field-capacity condition;</li>
+            <li>S = current estimated root-zone storage.</li>
+        </ul>
+
+        <p>The final formulation remains <span class="badge open">Open</span>.</p>
+    </section>
+
+
+    <!-- 09 -->
+
+    <section class="section" id="s09">
+        <div class="section-header">
+            <span class="section-number">09</span>
+            <h2>Sensor Depth</h2>
+        </div>
+
+        <p>Depth is a first-class scientific attribute.</p>
+
+        <p>A soil-moisture observation without depth information is incomplete for root-zone interpretation.</p>
+
+        <p>Each soil-water observation should retain:</p>
+        <ul>
+            <li>measurement depth;</li>
+            <li>depth interval where applicable;</li>
+            <li>sensor identifier;</li>
+            <li>site/station identifier;</li>
+            <li>unit;</li>
+            <li>timestamp;</li>
+            <li>quality flag;</li>
+            <li>provenance.</li>
+        </ul>
+
+        <p>Different depths must not automatically be merged into a single time series.</p>
+
+        <p>A shallow sensor and a deeper sensor can legitimately exhibit different temporal responses to rainfall, evaporation, infiltration, root uptake, and drainage.</p>
+    </section>
+
+
+    <!-- 10 -->
+
+    <section class="section" id="s10">
+        <div class="section-header">
+            <span class="section-number">10</span>
+            <h2>Atmospheric Demand</h2>
+        </div>
+
+        <h3>10.1 Reference Evapotranspiration (ET0)</h3>
+
+        <p>ET0 represents atmospheric evaporative demand for a standard reference surface.</p>
+
+        <p>Where required variables are available, the project may derive ET0 using an established method such as the FAO-56 Penman-Monteith formulation.</p>
+
+        <p>ET0 is considered a candidate explanatory variable because soil-water decline is affected by atmospheric demand.</p>
+
+        <p>The exact implementation remains <span class="badge researching">Researching</span> pending:</p>
+        <ul>
+            <li>variable availability;</li>
+            <li>temporal resolution;</li>
+            <li>source consistency;</li>
+            <li>missing-data treatment;</li>
+            <li>calculation requirements.</li>
+        </ul>
+
+        <h3>10.2 Vapour Pressure Deficit (VPD)</h3>
+
+        <p>VPD describes the atmospheric moisture deficit and may provide explanatory information about atmospheric dryness.</p>
+
+        <p>It is not equivalent to ET0.</p>
+
+        <p>The system must not substitute VPD for ET0 merely because VPD is easier to calculate.</p>
+
+        <p>VPD may be derived from temperature and humidity using an explicitly documented formulation. Its final role is <span class="badge open">Open</span>.</p>
+
+        <h3>10.3 Scientific Distinction</h3>
+
+        <div class="flow">
+            VPD → atmospheric moisture deficit
+
+            ET0 → reference-surface evaporative demand
+        </div>
+
+        <p>Both may be informative, but their scientific meanings differ.</p>
+    </section>
+
+
+    <!-- 11 -->
+
+    <section class="section" id="s11">
+        <div class="section-header">
+            <span class="section-number">11</span>
+            <h2>Rainfall and Irrigation</h2>
+        </div>
+
+        <h3>11.1 Rainfall</h3>
+
+        <p>Rainfall is treated as a water input rather than simply another predictor.</p>
+
+        <p>The system must preserve:</p>
+        <ul>
+            <li>observation time;</li>
+            <li>accumulation period;</li>
+            <li>measurement unit;</li>
+            <li>source;</li>
+            <li>quality/provenance.</li>
+        </ul>
+
+        <p>Temporal aggregation must account for the fact that rainfall is an accumulated quantity.</p>
+
+        <p>For example, summing precipitation across an interval is fundamentally different from averaging soil moisture across that interval.</p>
+
+        <h3>11.2 Irrigation</h3>
+
+        <p>Actual irrigation events are currently an important data gap.</p>
+
+        <p>The scientific specification therefore does not assume that irrigation history exists in the primary observational dataset.</p>
+
+        <p>Potential approaches include:</p>
+        <ol>
+            <li>use a dataset/site containing observed irrigation;</li>
+            <li>exclude irrigation-dependent analyses where irrigation cannot be observed;</li>
+            <li>introduce explicitly labelled simulated irrigation events;</li>
+            <li>use an intervention/scheduling layer as an experimental assumption.</li>
+        </ol>
+
+        <p>The final approach must be documented rather than silently inferred.</p>
+
+        <div class="callout">
+            <strong>A simulated irrigation event must never be represented as an observed farm event.</strong>
+        </div>
+    </section>
+
+
+    <!-- 12 -->
+
+    <section class="section" id="s12">
+        <div class="section-header">
+            <span class="section-number">12</span>
+            <h2>Temporal Representation</h2>
+        </div>
+
+        <h3>12.1 Event Time</h3>
+        <p>The timestamp associated with when an observation occurred is the primary scientific time reference.</p>
+
+        <h3>12.2 Ingestion Time</h3>
+        <p>The timestamp associated with when the system received an event is operational metadata.</p>
+
+        <p>The two must remain distinct.</p>
+
+        <p>A delayed event must not be treated as a newly observed physical event simply because it was received later.</p>
+
+        <h3>12.3 Native Cadence</h3>
+
+        <p>Where possible, source observations should be retained at their native cadence before aggregation.</p>
+
+        <p>The system must not manufacture higher-frequency physical observations merely to satisfy a streaming architecture.</p>
+
+        <div class="callout">
+            Hourly observed soil moisture must not be presented as genuine five-minute soil-moisture observations simply because the simulated edge device publishes every five minutes.
+        </div>
+
+        <p>A five-minute simulated stream may repeat, transform, or perturb the historical signal for event-processing experiments, but it must remain labelled as simulated.</p>
+    </section>
+
+
+    <!-- 13 -->
+
+    <section class="section" id="s13">
+        <div class="section-header">
+            <span class="section-number">13</span>
+            <h2>Temporal Aggregation</h2>
+        </div>
+
+        <p>Aggregation must be variable-specific.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Variable Type</th>
+                    <th>Candidate Aggregation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td class="key">Soil moisture</td><td>Mean / median / selected state representation</td></tr>
+                <tr><td class="key">Temperature</td><td>Mean / min / max</td></tr>
+                <tr><td class="key">Relative humidity</td><td>Mean / selected statistics</td></tr>
+                <tr><td class="key">Precipitation</td><td>Sum</td></tr>
+                <tr><td class="key">Solar radiation</td><td>Integrated/aggregated energy</td></tr>
+                <tr><td class="key">Wind speed</td><td>Mean / distributional statistics</td></tr>
+                <tr><td class="key">ET0</td><td>Sum over relevant forecast period</td></tr>
+                <tr><td class="key">VPD</td><td>Mean / max / distributional statistics</td></tr>
+            </tbody>
+        </table>
+
+        <p>These are candidate rules and must be validated against the forecasting task.</p>
+
+        <p>Aggregation must not use future observations relative to a forecast origin.</p>
+    </section>
+
+
+    <!-- 14 -->
+
+    <section class="section" id="s14">
+        <div class="section-header">
+            <span class="section-number">14</span>
+            <h2>Data Quality</h2>
+        </div>
+
+        <p>Data quality is a scientific concern, not merely an engineering concern.</p>
+
+        <p>The system must distinguish between:</p>
+        <ol>
+            <li>missing observation;</li>
+            <li>explicitly flagged poor-quality observation;</li>
+            <li>physically implausible observation;</li>
+            <li>duplicate observation;</li>
+            <li>delayed observation;</li>
+            <li>out-of-order observation;</li>
+            <li>sensor drift;</li>
+            <li>communication outage;</li>
+            <li>genuine environmental extreme.</li>
+        </ol>
+
+        <p>These categories must not automatically be collapsed into a single <code>anomaly</code> label.</p>
+
+        <h3>14.1 Quality Flags</h3>
+        <p>Source-provided quality flags must be preserved where available.</p>
+        <p>The project should not overwrite the original quality classification without retaining the source value.</p>
+
+        <h3>14.2 Missingness</h3>
+        <p>Missing data must be quantified before modelling.</p>
+
+        <p>Required audit dimensions include:</p>
+        <ul>
+            <li>overall missingness;</li>
+            <li>missingness by variable;</li>
+            <li>missingness by station;</li>
+            <li>missingness by depth;</li>
+            <li>missingness by season;</li>
+            <li>consecutive missing periods;</li>
+            <li>relationship between missingness and environmental conditions where testable.</li>
+        </ul>
+
+        <h3>14.3 Imputation</h3>
+        <p>Imputation is not automatically permitted.</p>
+
+        <p>Any imputation used for forecasting must:</p>
+        <ul>
+            <li>be defined explicitly;</li>
+            <li>avoid future leakage;</li>
+            <li>be applied consistently across evaluation periods;</li>
+            <li>preserve the distinction between observed and imputed values;</li>
+            <li>be evaluated for its effect on forecast performance.</li>
+        </ul>
+    </section>
+
+
+    <!-- 15 -->
+
+    <section class="section" id="s15">
+        <div class="section-header">
+            <span class="section-number">15</span>
+            <h2>Physical Plausibility</h2>
+        </div>
+
+        <p>Physical plausibility checks may be used to identify candidate data-quality problems.</p>
+
+        <p>Examples include:</p>
+        <ul>
+            <li>impossible units;</li>
+            <li>impossible timestamps;</li>
+            <li>impossible precipitation values;</li>
+            <li>abrupt sensor changes inconsistent with neighbouring observations;</li>
+            <li>persistent flatlining;</li>
+            <li>unrealistic jumps;</li>
+            <li>physically implausible soil-moisture ranges.</li>
+        </ul>
+
+        <div class="callout">
+            <strong>A statistically unusual observation is not automatically physically incorrect.</strong>
+        </div>
+
+        <p>Extreme weather and genuine environmental transitions can produce unusual measurements.</p>
+
+        <p>Data-quality rules must therefore be conservative and traceable.</p>
+    </section>
+
+
+    <!-- 16 -->
+
+    <section class="section" id="s16">
+        <div class="section-header">
+            <span class="section-number">16</span>
+            <h2>Derived Variables</h2>
+        </div>
+
+        <p>Derived variables must retain their calculation provenance.</p>
+
+        <p>At minimum, derived-variable metadata should identify:</p>
+        <ul>
+            <li>source variables;</li>
+            <li>calculation method;</li>
+            <li>parameter values;</li>
+            <li>temporal resolution;</li>
+            <li>unit;</li>
+            <li>software/code version where relevant;</li>
+            <li>assumptions.</li>
+        </ul>
+
+        <p>Candidate derived variables include:</p>
+        <ul>
+            <li>VPD;</li>
+            <li>ET0;</li>
+            <li>rolling soil-moisture change;</li>
+            <li>rate of drying/wetting;</li>
+            <li>cumulative precipitation;</li>
+            <li>estimated depletion;</li>
+            <li>available-water fraction.</li>
+        </ul>
+
+        <p>A derived variable must not be presented as an independently observed measurement.</p>
+    </section>
+
+
+    <!-- 17 -->
+
+    <section class="section" id="s17">
+        <div class="section-header">
+            <span class="section-number">17</span>
+            <h2>Soil-Water Balance Concepts</h2>
+        </div>
+
+        <p>The scientific framework recognises the conceptual water balance:</p>
+
+        <div class="formula">
+            ΔS = P + I + CR − ET − R − DP
+        </div>
+
+        <p>where:</p>
+        <ul>
+            <li>ΔS = change in soil-water storage;</li>
+            <li>P = precipitation;</li>
+            <li>I = irrigation;</li>
+            <li>CR = capillary rise;</li>
+            <li>ET = evapotranspiration;</li>
+            <li>R = runoff;</li>
+            <li>DP = deep percolation.</li>
+        </ul>
+
+        <p>The project does not currently claim that all terms can be observed or estimated reliably.</p>
+
+        <p>This equation provides a physical framework for interpreting soil-water trajectories rather than an assertion that the final system will implement a complete water-balance model.</p>
+    </section>
+
+
+    <!-- 18 -->
+
+    <section class="section" id="s18">
+        <div class="section-header">
+            <span class="section-number">18</span>
+            <h2>Management Allowable Depletion (MAD)</h2>
+        </div>
+
+        <p>MAD is treated as a <strong>management parameter</strong>, not a universal physical constant.</p>
+
+        <p>Conceptually, irrigation may be initiated before the soil-water deficit reaches a chosen maximum allowable depletion.</p>
+
+        <p>The appropriate value depends on factors including:</p>
+        <ul>
+            <li>crop;</li>
+            <li>crop growth stage;</li>
+            <li>soil water-holding characteristics;</li>
+            <li>effective rooting depth;</li>
+            <li>irrigation system;</li>
+            <li>management objective;</li>
+            <li>expected atmospheric demand;</li>
+            <li>operational constraints.</li>
+        </ul>
+
+        <div class="callout">
+            <strong>The project must not hard-code a universal MAD value such as 20% without scientific and project-specific justification.</strong>
+        </div>
+
+        <p>The final threshold representation remains <span class="badge open">Open</span>.</p>
+
+        <p>Possible forms include:</p>
+        <ul>
+            <li>fraction of available water depleted;</li>
+            <li>volumetric soil-water threshold;</li>
+            <li>root-zone storage threshold;</li>
+            <li>crop-stage-specific threshold;</li>
+            <li>another scientifically justified state threshold.</li>
+        </ul>
+    </section>
+
+
+    <!-- 19 -->
+
+    <section class="section" id="s19">
+        <div class="section-header">
+            <span class="section-number">19</span>
+            <h2>Threshold Semantics</h2>
+        </div>
+
+        <p>A threshold must be defined against the chosen state representation.</p>
+
+        <div class="flow">
+            Observed state → estimated depletion → management threshold
+
+            is scientifically different from:
+
+            raw sensor reading → arbitrary numeric cutoff
+        </div>
+
+        <p>Threshold selection must therefore occur only after the state representation has been established.</p>
+
+        <p>Thresholds must document:</p>
+        <ul>
+            <li>physical meaning;</li>
+            <li>units;</li>
+            <li>source/evidence;</li>
+            <li>applicable crop/stage/soil context;</li>
+            <li>whether the threshold is observed, derived, or configured;</li>
+            <li>uncertainty;</li>
+            <li>operational interpretation.</li>
+        </ul>
+    </section>
+
+
+    <!-- 20 -->
+
+    <section class="section" id="s20">
+        <div class="section-header">
+            <span class="section-number">20</span>
+            <h2>Deviation Semantics</h2>
+        </div>
+
+        <p>The system distinguishes several forms of deviation.</p>
+
+        <h3>20.1 Data-Quality Deviation</h3>
+        <p>The observation is inconsistent with expected data behaviour.</p>
+        <p>Examples:</p>
+        <ul>
+            <li>duplicate event;</li>
+            <li>impossible value;</li>
+            <li>sensor flatline;</li>
+            <li>communication gap.</li>
+        </ul>
+        <p>This does not imply environmental change.</p>
+
+        <h3>20.2 Physical/Environmental Deviation</h3>
+        <p>The observed state differs materially from the expected temporal or physical pattern.</p>
+        <p>Examples may include:</p>
+        <ul>
+            <li>unusually rapid drying;</li>
+            <li>unexpected wetting;</li>
+            <li>unexpected persistence after rainfall.</li>
+        </ul>
+        <p>This does not automatically imply crop stress.</p>
+
+        <h3>20.3 Forecast Deviation</h3>
+        <p>The observed trajectory begins to diverge from the forecast distribution.</p>
+        <p>This is a model-monitoring concept and must be evaluated against the model's uncertainty.</p>
+
+        <h3>20.4 Agronomic/Operational Risk</h3>
+        <p>A forecasted or estimated state approaches a scientifically justified management threshold with sufficient evidence and relevant lead time.</p>
+        <p>This is the closest level to an operational alert.</p>
+
+        <div class="callout">
+            The project must not collapse all four categories into one generic anomaly label.
+        </div>
+    </section>
+
+
+    <!-- 21 -->
+
+    <section class="section" id="s21">
+        <div class="section-header">
+            <span class="section-number">21</span>
+            <h2>Uncertainty</h2>
+        </div>
+
+        <h3>Prediction uncertainty</h3>
+        <p>Uncertainty about a future observation or state conditional on available information.</p>
+        <p>Examples:</p>
+        <ul>
+            <li>prediction intervals;</li>
+            <li>quantile forecasts;</li>
+            <li>predictive distributions.</li>
+        </ul>
+
+        <h3>Measurement uncertainty</h3>
+        <p>Uncertainty associated with the observation itself.</p>
+        <p>Examples:</p>
+        <ul>
+            <li>sensor accuracy;</li>
+            <li>calibration;</li>
+            <li>measurement noise.</li>
+        </ul>
+
+        <h3>Parameter/model uncertainty</h3>
+        <p>Uncertainty associated with model parameters or model structure.</p>
+
+        <p>The project does not currently commit to a single uncertainty decomposition.</p>
+
+        <p>Any probabilistic forecast must clearly state what uncertainty its interval or distribution represents.</p>
+
+        <div class="callout">
+            A prediction interval must not be labelled a confidence interval unless its statistical interpretation genuinely matches that terminology.
+        </div>
+    </section>
+
+
+    <!-- 22 -->
+
+    <section class="section" id="s22">
+        <div class="section-header">
+            <span class="section-number">22</span>
+            <h2>Scientific Interpretation of Alerts</h2>
+        </div>
+
+        <p>An alert should answer a scientifically interpretable question.</p>
+
+        <p>A potential alert may contain:</p>
+        <ul>
+            <li>current observed state;</li>
+            <li>expected state;</li>
+            <li>forecast trajectory;</li>
+            <li>uncertainty bounds;</li>
+            <li>relevant threshold;</li>
+            <li>estimated time to threshold;</li>
+            <li>forecast horizon;</li>
+            <li>data-quality status;</li>
+            <li>contributing environmental context;</li>
+            <li>provenance;</li>
+            <li>confidence/calibration information where justified.</li>
+        </ul>
+
+        <p>The alert must not claim:</p>
+
+        <div class="callout">
+            <strong>“The crop is stressed.”</strong>
+        </div>
+
+        <p>unless the project has independent evidence capable of supporting such a claim.</p>
+
+        <p>The more defensible statement is closer to:</p>
+
+        <div class="dark-callout">
+            <p>“The forecasted soil-water trajectory has a defined probability of approaching/crossing the selected management threshold within the evaluated horizon.”</p>
+        </div>
+
+        <p>The exact alert language remains a product/interface decision.</p>
+    </section>
+
+
+    <!-- 23 -->
+
+    <section class="section" id="s23">
+        <div class="section-header">
+            <span class="section-number">23</span>
+            <h2>Point Sensor vs Field Representation</h2>
+        </div>
+
+        <p>A sensor provides a measurement at a specific location and depth.</p>
+
+        <div class="callout">
+            <strong>Point telemetry must not automatically be interpreted as field-wide soil-water state.</strong>
+        </div>
+
+        <p>Field-level claims require evidence concerning:</p>
+        <ul>
+            <li>sensor placement;</li>
+            <li>spatial variability;</li>
+            <li>number of sensors;</li>
+            <li>soil heterogeneity;</li>
+            <li>irrigation uniformity;</li>
+            <li>crop variability;</li>
+            <li>representative sampling.</li>
+        </ul>
+
+        <p>The initial project may therefore operate explicitly at the <strong>station/site/depth</strong> level.</p>
+
+        <p>Spatial generalisation is an open validation question rather than an assumption.</p>
+    </section>
+
+
+    <!-- 24 -->
+
+    <section class="section" id="s24">
+        <div class="section-header">
+            <span class="section-number">24</span>
+            <h2>Synthetic Telemetry</h2>
+        </div>
+
+        <p>Synthetic telemetry exists to evaluate event-processing and operational robustness.</p>
+
+        <div class="flow">
+            REAL OBSERVED HISTORY
+                    ↓
+            CONTROLLED TRANSFORMATION
+                    ↓
+            SIMULATED TELEMETRY
+        </div>
+
+        <p>The preferred approach is real observed history transformed under controlled conditions rather than arbitrary random sensor values.</p>
+
+        <p>Synthetic experiments may introduce:</p>
+        <ul>
+            <li>packet loss;</li>
+            <li>duplicate delivery;</li>
+            <li>delayed delivery;</li>
+            <li>out-of-order delivery;</li>
+            <li>reconnects;</li>
+            <li>sensor drift;</li>
+            <li>abnormal readings;</li>
+            <li>communication outages.</li>
+        </ul>
+
+        <p>Synthetic faults must be explicitly labelled.</p>
+
+        <p>The scientific forecasting dataset and the synthetic event-processing stream must remain distinguishable.</p>
+    </section>
+
+
+    <!-- 25 -->
+
+    <section class="section" id="s25">
+        <div class="section-header">
+            <span class="section-number">25</span>
+            <h2>Scientific Assumptions</h2>
+        </div>
+
+        <p>Current working assumptions:</p>
+
+        <ol>
+            <li>The selected observational source contains sufficient soil-water observations for temporal analysis.</li>
+            <li>Measurement depth can be identified.</li>
+            <li>Relevant timestamps can be interpreted consistently.</li>
+            <li>At least some atmospheric explanatory variables are available.</li>
+            <li>Soil-water observations retain sufficient temporal structure for forecasting experiments.</li>
+            <li>A scientifically interpretable state representation can be constructed from available data.</li>
+            <li>A management threshold can be defined for the selected experimental context.</li>
+            <li>Forecast evaluation can be performed without future information leakage.</li>
+            <li>Synthetic telemetry can preserve meaningful historical temporal structure.</li>
+            <li>Any irrigation representation not directly observed can be explicitly modelled as an assumption.</li>
+        </ol>
+
+        <p>Each assumption must be tested where practical.</p>
+    </section>
+
+
+    <!-- 26 -->
+
+    <section class="section" id="s26">
+        <div class="section-header">
+            <span class="section-number">26</span>
+            <h2>Known Scientific Limitations</h2>
+        </div>
+
+        <h3>26.1 Sensor representativeness</h3>
+        <p>A point measurement may not represent the surrounding field.</p>
+
+        <h3>26.2 Missing irrigation observations</h3>
+        <p>Without observed irrigation events, complete operational water-balance reconstruction may not be possible.</p>
+
+        <h3>26.3 Soil parameter uncertainty</h3>
+        <p>Field capacity, wilting point, and available water capacity may be uncertain or unavailable at the required spatial scale.</p>
+
+        <h3>26.4 Root-zone uncertainty</h3>
+        <p>Effective rooting depth changes with crop and growth stage.</p>
+
+        <h3>26.5 Weather forecast uncertainty</h3>
+        <p>Operational forecasts depend on the quality of future weather information.</p>
+
+        <h3>26.6 Sensor error and drift</h3>
+        <p>Observed changes may reflect instrumentation behaviour rather than environmental processes.</p>
+
+        <h3>26.7 Site specificity</h3>
+        <p>A successful model at one station does not establish generalisation to another site, crop, soil, or climate.</p>
+
+        <h3>26.8 Threshold uncertainty</h3>
+        <p>Management thresholds are contextual and may not be precisely known.</p>
+
+        <h3>26.9 Observational limitations</h3>
+        <p>Public research datasets may represent monitoring or climate objectives rather than commercial irrigation operations.</p>
+    </section>
+
+
+    <!-- 27 -->
+
+    <section class="section" id="s27">
+        <div class="section-header">
+            <span class="section-number">27</span>
+            <h2>Scientific Validation Requirements</h2>
+        </div>
+
+        <p>The following must be established before the corresponding decisions can be marked <code>VALIDATED</code>.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Decision</th>
+                    <th>Required Evidence</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Primary observational source</td><td>Station/site audit</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>Soil-moisture target</td><td>Empirical + physical comparison of candidate representations</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>Sensor depth selection</td><td>Data availability + scientific interpretation</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>Forecast horizons</td><td>Out-of-sample performance by horizon</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>ET0 inclusion</td><td>Data availability + ablation/evaluation</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>VPD inclusion</td><td>Data availability + ablation/evaluation</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>State transformation</td><td>Forecastability + interpretability evaluation</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>MAD representation</td><td>Scientific source + project context</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>Threshold-crossing definition</td><td>Explicit state + threshold formulation</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>Deviation method</td><td>Empirical detection evaluation</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>Alert persistence rule</td><td>False-alert/lead-time evaluation</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>Spatial generalisation</td><td>Multi-site evidence where possible</td><td><span class="badge open">Open</span></td></tr>
+            </tbody>
+        </table>
+    </section>
+
+
+    <!-- 28 -->
+
+    <section class="section" id="s28">
+        <div class="section-header">
+            <span class="section-number">28</span>
+            <h2>Required Empirical Experiments</h2>
+        </div>
+
+        <h3>Experiment A — Source Audit</h3>
+        <p>For each candidate station/site:</p>
+        <ul>
+            <li>observation period;</li>
+            <li>cadence;</li>
+            <li>variables;</li>
+            <li>depth;</li>
+            <li>missingness;</li>
+            <li>quality flags;</li>
+            <li>timestamp continuity;</li>
+            <li>anomalous periods;</li>
+            <li>usable modelling period.</li>
+        </ul>
+
+        <h3>Experiment B — Soil-State Representation</h3>
+        <p>Compare candidate targets such as:</p>
+        <ul>
+            <li>raw volumetric soil moisture;</li>
+            <li>normalised available-water state;</li>
+            <li>depletion;</li>
+            <li>root-zone representation where feasible.</li>
+        </ul>
+
+        <p>Evaluate interpretability, stability, data requirements, forecastability, and threshold compatibility.</p>
+
+        <h3>Experiment C — Forecastability</h3>
+        <p>Evaluate persistence before more complex models.</p>
+
+        <p>At minimum, investigate candidate horizons including:</p>
+        <ul>
+            <li>native cadence;</li>
+            <li>short horizon;</li>
+            <li>24h;</li>
+            <li>72h;</li>
+            <li>168h.</li>
+        </ul>
+
+        <p>Final horizons remain evidence-dependent.</p>
+
+        <h3>Experiment D — Feature Value</h3>
+        <p>Evaluate candidate inputs such as:</p>
+        <ul>
+            <li>precipitation;</li>
+            <li>temperature;</li>
+            <li>humidity;</li>
+            <li>ET0;</li>
+            <li>VPD;</li>
+            <li>lagged soil moisture;</li>
+            <li>temporal features.</li>
+        </ul>
+
+        <p>Feature inclusion must be supported by out-of-sample evidence.</p>
+
+        <h3>Experiment E — Threshold Risk</h3>
+        <p>Where a defensible threshold is available, evaluate:</p>
+        <ul>
+            <li>threshold-crossing detection;</li>
+            <li>lead time;</li>
+            <li>missed events;</li>
+            <li>false alerts;</li>
+            <li>uncertainty calibration.</li>
+        </ul>
+
+        <h3>Experiment F — Synthetic Telemetry</h3>
+        <p>Evaluate event-processing behaviour under:</p>
+        <ul>
+            <li>duplicates;</li>
+            <li>delays;</li>
+            <li>out-of-order events;</li>
+            <li>missing events;</li>
+            <li>reconnects;</li>
+            <li>abnormal readings.</li>
+        </ul>
+
+        <p>This validates engineering behaviour rather than agricultural forecasting validity.</p>
+    </section>
+
+
+    <!-- 29 -->
+
+    <section class="section" id="s29">
+        <div class="section-header">
+            <span class="section-number">29</span>
+            <h2>Scientific Rejection Criteria</h2>
+        </div>
+
+        <p>A proposed scientific approach should be rejected or reconsidered if:</p>
+
+        <ul>
+            <li>it requires unavailable data to function;</li>
+            <li>it treats modelled data as observed without justification;</li>
+            <li>it depends on future information;</li>
+            <li>it produces strong agricultural claims from weak measurements;</li>
+            <li>it requires an arbitrary universal threshold;</li>
+            <li>it materially worsens calibration or event performance;</li>
+            <li>it only performs well under random temporal splits;</li>
+            <li>it cannot be reproduced;</li>
+            <li>its additional complexity produces no meaningful scientific or operational benefit.</li>
+        </ul>
+    </section>
+
+
+    <!-- 30 -->
+
+    <section class="section" id="s30">
+        <div class="section-header">
+            <span class="section-number">30</span>
+            <h2>Open Scientific Decisions</h2>
+        </div>
+
+        <p>The following remain deliberately unresolved:</p>
+
+        <ol>
+            <li>Primary observational dataset/site.</li>
+            <li>Final soil-water state representation.</li>
+            <li>Primary sensor depth.</li>
+            <li>Whether the model target should be raw soil moisture or a transformed state.</li>
+            <li>Root-zone representation.</li>
+            <li>ET0 calculation method.</li>
+            <li>Whether VPD materially improves forecasting.</li>
+            <li>Treatment of irrigation.</li>
+            <li>Forecast horizons.</li>
+            <li>Forecast uncertainty method.</li>
+            <li>Threshold representation.</li>
+            <li>MAD definition.</li>
+            <li>Deviation detection method.</li>
+            <li>Alert persistence/confirmation rule.</li>
+            <li>Required spatial generalisation.</li>
+            <li>Minimum evidence required for agronomic risk classification.</li>
+        </ol>
+
+        <p>These decisions should be resolved through evidence rather than preference.</p>
+    </section>
+
+
+    <!-- 31 -->
+
+    <section class="section" id="s31">
+        <div class="section-header">
+            <span class="section-number">31</span>
+            <h2>Scientific Decision Status</h2>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Area</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Agricultural problem framing</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>Observational data source</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>Soil-water target</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>Soil depth</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>Root-zone representation</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>ET0</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>VPD</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>Rainfall treatment</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>Irrigation treatment</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>Forecast horizons</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>Uncertainty representation</td><td><span class="badge researching">Researching</span></td></tr>
+                <tr><td>MAD</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>Threshold semantics</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>Deviation detection</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>Alert persistence</td><td><span class="badge open">Open</span></td></tr>
+                <tr><td>Spatial generalisation</td><td><span class="badge open">Open</span></td></tr>
+            </tbody>
+        </table>
+    </section>
+
+
+    <!-- 32 -->
+
+    <section class="section" id="s32">
+        <div class="section-header">
+            <span class="section-number">32</span>
+            <h2>Traceability</h2>
+        </div>
+
+        <p>This specification derives its scientific requirements from:</p>
+
+        <ul>
+            <li><code>00_project/PROJECT_CHARTER.md</code></li>
+            <li><code>01_research/RESEARCH_FEASIBILITY.md</code></li>
+            <li><code>02_product/PRD.md</code></li>
+        </ul>
+
+        <p>It informs:</p>
+
+        <ul>
+            <li><code>04_forecasting/DATA_FORECAST_DESIGN.md</code></li>
+            <li><code>05_architecture/TECHNICAL_SPEC.md</code></li>
+            <li><code>06_decisions/ADR_INDEX.md</code></li>
+            <li><code>07_contracts/EVENT_TELEMETRY_CONTRACT.md</code></li>
+            <li><code>08_implementation/IMPLEMENTATION_PLAN.md</code></li>
+        </ul>
+
+        <p>Scientific decisions must remain traceable to evidence and, where material, to the corresponding ADR or experiment record.</p>
+    </section>
+
+
+    <!-- 33 -->
+
+    <section class="section" id="s33">
+        <div class="section-header">
+            <span class="section-number">33</span>
+            <h2>Current Status</h2>
+        </div>
+
+        <div class="dark-callout">
+            <div class="label">Overall Status</div>
+            <p><strong>RESEARCHING</strong></p>
+        </div>
+
+        <p>The project has sufficient scientific framing to begin empirical data investigation.</p>
+
+        <p>However, the following have <strong>not</strong> yet been established:</p>
+
+        <ul>
+            <li>final observational source;</li>
+            <li>final soil-water state;</li>
+            <li>final forecast target;</li>
+            <li>final feature set;</li>
+            <li>final threshold representation;</li>
+            <li>final MAD formulation;</li>
+            <li>final forecast horizons;</li>
+            <li>final deviation methodology;</li>
+            <li>final alert semantics.</li>
+        </ul>
+
+        <p>The purpose of the next stage is therefore not to make these choices by assumption, but to generate the evidence required to make them.</p>
+    </section>
+
+
+    <!-- 34 -->
+
+    <section class="section" id="s34">
+        <div class="section-header">
+            <span class="section-number">34</span>
+            <h2>Next Gate</h2>
+        </div>
+
+        <h3>Gate: Scientific Representation</h3>
+
+        <p>The next evidence required is:</p>
+
+        <ol>
+            <li>audit candidate observational data;</li>
+            <li>inspect available soil-moisture depths;</li>
+            <li>quantify missingness and quality;</li>
+            <li>examine temporal structure;</li>
+            <li>compare candidate state representations;</li>
+            <li>establish which variables can be computed reliably;</li>
+            <li>identify the minimum scientifically defensible forecasting target.</li>
+        </ol>
+
+        <div class="dark-callout">
+            <div class="label">Immediate Next Activity</div>
+            <p><strong>NOAA USCRN candidate station audit + exploratory data analysis.</strong></p>
+        </div>
+
+        <p>The result of that audit should update this document and determine which scientific decisions can move from:</p>
+
+        <div class="flow flow-horizontal">
+            RESEARCHING → DECIDED
+        </div>
+
+        <p>without prematurely locking the architecture or forecasting model.</p>
+    </section>
+
+
+    <footer class="footer">
+        CA-ENG // Master Record<br>
+        Agri Telemetry & Forecasting Platform<br>
+        Data & Scientific Specification<br>
+        Status: Researching<br>
+        Last Updated: September 30, 2026
+    </footer>
+
+</main>
+
+</body>
+</html>

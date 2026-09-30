@@ -1,0 +1,2214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Research Feasibility | Agri Telemetry & Forecasting Platform</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --ink: #111;
+            --muted: #666;
+            --light: #f7f7f7;
+            --lighter: #fafafa;
+            --line: #111;
+            --green: #047857;
+            --amber: #b45309;
+            --purple: #6d28d9;
+            --blue: #0369a1;
+            --red: #b91c1c;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            color: var(--ink);
+            background: #fff;
+            line-height: 1.65;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 270px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 2rem 1.5rem;
+            border-right: 3px solid var(--line);
+            background: #fff;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--line);
+            padding-bottom: 1rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .sidebar-status {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+
+        .nav-item {
+            display: block;
+            color: #444;
+            text-decoration: none;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .55px;
+            margin-bottom: 1rem;
+            line-height: 1.35;
+        }
+
+        .nav-item:hover {
+            color: #000;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main-content {
+            margin-left: 270px;
+            padding: 3rem 4rem 6rem;
+            max-width: 1280px;
+        }
+
+        .top-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 2rem;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            color: var(--muted);
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 1rem;
+            margin-bottom: 4rem;
+        }
+
+        .hero {
+            max-width: 900px;
+            margin-bottom: 5rem;
+        }
+
+        .hero-kicker {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: clamp(2.4rem, 5vw, 4.5rem);
+            line-height: .98;
+            letter-spacing: -3px;
+            margin: 0 0 1.5rem;
+            font-weight: 700;
+        }
+
+        .hero-description {
+            font-size: 17px;
+            line-height: 1.75;
+            max-width: 820px;
+            color: #333;
+        }
+
+        /* =========================
+           DOCUMENT AUTHORITY
+        ========================= */
+
+        .authority {
+            border-left: 4px solid var(--ink);
+            background: var(--lighter);
+            padding: 1.5rem 1.75rem;
+            margin: 2rem 0 4rem;
+            font-size: 13px;
+        }
+
+        .authority strong {
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        /* =========================
+           SECTIONS
+        ========================= */
+
+        .section {
+            margin-top: 5rem;
+            scroll-margin-top: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            border-bottom: 2px solid var(--line);
+            padding-bottom: .7rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .section-number {
+            flex: 0 0 auto;
+            font-family: monospace;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        h2 {
+            font-size: 1.45rem;
+            line-height: 1.2;
+            margin: 0;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: -.5px;
+        }
+
+        h3 {
+            font-size: 1rem;
+            margin: 2rem 0 .7rem;
+            text-transform: uppercase;
+            letter-spacing: .2px;
+        }
+
+        p {
+            font-size: 14px;
+            margin: 0 0 1.2rem;
+        }
+
+        ul,
+        ol {
+            font-size: 14px;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: .5rem;
+        }
+
+        strong {
+            font-weight: 700;
+        }
+
+        em {
+            color: #333;
+        }
+
+        /* =========================
+           STATUS BADGES
+        ========================= */
+
+        .badge {
+            display: inline-block;
+            padding: 3px 7px;
+            border: 1px solid currentColor;
+            font-size: 9px;
+            line-height: 1.25;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .55px;
+            white-space: nowrap;
+        }
+
+        .supported {
+            color: var(--green);
+        }
+
+        .plausible {
+            color: var(--amber);
+        }
+
+        .requires-test {
+            color: var(--purple);
+        }
+
+        .open {
+            color: var(--blue);
+        }
+
+        .rejected {
+            color: var(--red);
+            border-style: dashed;
+        }
+
+        .researching {
+            color: #2563eb;
+        }
+
+        .not-started {
+            color: #777;
+        }
+
+        /* =========================
+           CALLOUTS
+        ========================= */
+
+        .callout {
+            padding: 1.35rem 1.5rem;
+            margin: 1.5rem 0;
+            background: #f8fafc;
+            border-left: 3px solid #94a3b8;
+            font-size: 13px;
+        }
+
+        .callout.dark {
+            background: #111;
+            color: #fff;
+            border-left-color: #fff;
+        }
+
+        .callout.warning {
+            background: #fffaf0;
+            border-left-color: var(--amber);
+        }
+
+        .callout-title {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            margin-bottom: .6rem;
+        }
+
+        .quote {
+            font-size: 18px;
+            line-height: 1.55;
+            font-weight: 500;
+            border-left: 3px solid #111;
+            padding-left: 1.25rem;
+            margin: 1.5rem 0 2rem;
+        }
+
+        /* =========================
+           FLOW
+        ========================= */
+
+        .flow {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: .5rem;
+            margin: 1.5rem 0 2rem;
+        }
+
+        .flow-node {
+            padding: .65rem .85rem;
+            border: 1px solid #111;
+            font-family: monospace;
+            font-size: 11px;
+            font-weight: 600;
+            background: #fff;
+        }
+
+        .flow-arrow {
+            font-size: 16px;
+            color: #777;
+        }
+
+        /* =========================
+           DATA SOURCE CARDS
+        ========================= */
+
+        .source-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0 2rem;
+        }
+
+        .source-card {
+            border: 1px solid #111;
+            padding: 1.25rem;
+        }
+
+        .source-card h3 {
+            margin-top: 0;
+            margin-bottom: .5rem;
+        }
+
+        .source-type {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .7px;
+            color: var(--muted);
+            margin-bottom: .75rem;
+        }
+
+        .source-card p {
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 0;
+        }
+
+        /* =========================
+           TABLES
+        ========================= */
+
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1.5rem 0 2.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #111;
+            font-size: 12px;
+        }
+
+        th,
+        td {
+            border: 1px solid #111;
+            padding: .85rem .9rem;
+            vertical-align: top;
+            text-align: left;
+        }
+
+        th {
+            background: #f7f7f7;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .45px;
+        }
+
+        td:first-child {
+            font-weight: 600;
+        }
+
+        /* =========================
+           CODE / TECHNICAL
+        ========================= */
+
+        code {
+            font-family: monospace;
+            font-size: .9em;
+            background: #f1f1f1;
+            padding: 2px 5px;
+        }
+
+        .code-block {
+            background: #111;
+            color: #fff;
+            padding: 1.25rem 1.5rem;
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.7;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        /* =========================
+           EXPERIMENTS
+        ========================= */
+
+        .experiment {
+            border-top: 1px solid #bbb;
+            padding: 1.5rem 0;
+        }
+
+        .experiment:first-child {
+            border-top: 0;
+        }
+
+        .experiment-title {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: baseline;
+            margin-bottom: .7rem;
+        }
+
+        .experiment-title strong {
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .experiment-output {
+            font-size: 11px;
+            font-family: monospace;
+            color: #555;
+            margin-top: .75rem;
+        }
+
+        /* =========================
+           CONTRADICTIONS
+        ========================= */
+
+        .contradiction {
+            border: 1px solid #111;
+            margin-bottom: 1.25rem;
+        }
+
+        .contradiction-header {
+            padding: .85rem 1rem;
+            background: #f7f7f7;
+            border-bottom: 1px solid #111;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .contradiction-body {
+            padding: 1rem;
+            font-size: 13px;
+        }
+
+        .contradiction-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* =========================
+           GATE CARDS
+        ========================= */
+
+        .gate-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .gate-card {
+            border: 1px solid #111;
+            padding: 1rem;
+        }
+
+        .gate-number {
+            font-family: monospace;
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: .5rem;
+        }
+
+        .gate-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: .7rem;
+        }
+
+        .gate-card p {
+            font-size: 11px;
+            color: #444;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            border-top: 2px solid #111;
+            margin-top: 6rem;
+            padding-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            gap: 2rem;
+            font-size: 10px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .6px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1000px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .main-content {
+                margin-left: 220px;
+                padding: 2.5rem 2.5rem 5rem;
+            }
+
+            .source-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gate-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                border-right: 0;
+                border-bottom: 2px solid #111;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 2rem 1.25rem 4rem;
+            }
+
+            .top-meta {
+                flex-direction: column;
+                gap: .5rem;
+                margin-bottom: 3rem;
+            }
+
+            h1 {
+                letter-spacing: -2px;
+            }
+
+            .gate-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-arrow {
+                display: none;
+            }
+
+            .flow-node {
+                width: 100%;
+            }
+
+            footer {
+                flex-direction: column;
+            }
+        }
+
+        @media print {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                max-width: none;
+                padding: 0;
+            }
+
+            .section {
+                page-break-inside: avoid;
+            }
+
+            body {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+            CA-ENG // RESEARCH
+        </div>
+
+        <div class="sidebar-status">
+            Status:
+            <span class="badge researching">Researching</span>
+        </div>
+
+        <a class="nav-item" href="#s01">01. Executive Assessment</a>
+        <a class="nav-item" href="#s02">02. Problem Feasibility</a>
+        <a class="nav-item" href="#s03">03. Agricultural Feasibility</a>
+        <a class="nav-item" href="#s04">04. Scientific Feasibility</a>
+        <a class="nav-item" href="#s05">05. Data Feasibility</a>
+        <a class="nav-item" href="#s06">06. Forecasting</a>
+        <a class="nav-item" href="#s07">07. Evaluation</a>
+        <a class="nav-item" href="#s08">08. Uncertainty</a>
+        <a class="nav-item" href="#s09">09. Anomaly Detection</a>
+        <a class="nav-item" href="#s10">10. Alert Persistence</a>
+        <a class="nav-item" href="#s11">11. Transport</a>
+        <a class="nav-item" href="#s12">12. Streaming</a>
+        <a class="nav-item" href="#s13">13. Event Integrity</a>
+        <a class="nav-item" href="#s14">14. MLOps</a>
+        <a class="nav-item" href="#s15">15. Architecture</a>
+        <a class="nav-item" href="#s16">16. Reconciliations</a>
+        <a class="nav-item" href="#s17">17. Research Gaps</a>
+        <a class="nav-item" href="#s18">18. Validation</a>
+        <a class="nav-item" href="#s19">19. Decision Gates</a>
+        <a class="nav-item" href="#s20">20. Research Status</a>
+        <a class="nav-item" href="#s21">21. What Research Justifies</a>
+        <a class="nav-item" href="#s22">22. Current Decision</a>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================= -->
+
+    <main class="main-content">
+
+        <div class="top-meta">
+            <span>Agri Telemetry & Forecasting Platform</span>
+            <span>Last Edited: 29 SEP 2026 &nbsp;&nbsp; // &nbsp;&nbsp; Status: Researching</span>
+        </div>
+
+
+        <!-- HERO -->
+
+        <section class="hero">
+
+            <div class="hero-kicker">
+                01 Research / Feasibility Record
+            </div>
+
+            <h1>Research<br>Feasibility</h1>
+
+            <p class="hero-description">
+                Evidence ledger for determining what the initial research establishes,
+                what remains uncertain, and what must be empirically validated before
+                the platform's scientific and technical design is frozen.
+            </p>
+
+        </section>
+
+
+        <div class="authority">
+            <strong>Document Authority</strong><br><br>
+
+            This document synthesizes the initial feasibility research for the
+            Agri Telemetry & Forecasting Platform. Its purpose is to distinguish
+            what external evidence supports, what remains uncertain, what can safely
+            proceed to specification, and what must be validated empirically by this project.
+
+            <br><br>
+
+            This document does <strong>not</strong> determine the final architecture,
+            forecasting model, dataset, or alert methodology. Those decisions require
+            subsequent experiments and ADRs.
+        </div>
+
+
+        <!-- 01 -->
+
+        <section class="section" id="s01">
+
+            <div class="section-header">
+                <span class="section-number">01</span>
+                <h2>Executive Feasibility Assessment</h2>
+            </div>
+
+            <p>
+                The initial research supports the <strong>general problem framing</strong>:
+                agricultural telemetry can support temporal monitoring of soil-water
+                conditions, while forecasting and uncertainty estimation can potentially
+                provide earlier indication of an approaching management threshold.
+            </p>
+
+            <p>
+                However, the feasibility of this specific system has
+                <strong>not yet been demonstrated</strong>.
+            </p>
+
+            <div class="callout dark">
+                <div class="callout-title">Three questions remain central</div>
+
+                <ol>
+                    <li>Can a suitable historical in-situ dataset support reproducible telemetry simulation?</li>
+                    <li>Can near-term soil-water trajectories be forecast with useful skill beyond simple baselines?</li>
+                    <li>Can forecast uncertainty and deviation detection produce sufficiently reliable threshold-risk signals to justify an operational alert?</li>
+                </ol>
+            </div>
+
+            <p>
+                The project therefore proceeds from
+                <strong>research-supported concept → empirical data validation → forecasting experiments → architecture validation</strong>.
+            </p>
+
+            <p>
+                The research does not justify assuming that a particular dataset,
+                forecasting model, broker, or alert rule will succeed.
+            </p>
+
+        </section>
+
+
+        <!-- 02 -->
+
+        <section class="section" id="s02">
+
+            <div class="section-header">
+                <span class="section-number">02</span>
+                <h2>Problem Feasibility</h2>
+            </div>
+
+            <p>
+                <span class="badge supported">Supported by Research</span>
+            </p>
+
+            <p>
+                Agricultural irrigation decisions are not normally based on an isolated
+                raw soil-moisture reading. Soil-water status is interpreted relative to
+                factors such as root-zone depth, available water-holding capacity,
+                crop development, atmospheric demand, rainfall, irrigation, and
+                management thresholds.
+            </p>
+
+            <p>
+                The research therefore supports framing the problem around
+                <strong>soil-water trajectory and threshold risk</strong>, rather than
+                simply predicting the next raw sensor value.
+            </p>
+
+            <div class="quote">
+                Given measured root-zone water status, crop stage, soil properties,
+                irrigation/rainfall inputs, and near-term atmospheric demand, will
+                the field reach a management threshold before the next feasible
+                irrigation opportunity — and with what confidence?
+            </div>
+
+            <p>
+                This is an <strong>ultimate product vision</strong>, not yet a
+                validated capability of the system.
+            </p>
+
+            <h3>Initial Experimental Question</h3>
+
+            <div class="callout">
+                Can historical in-situ telemetry support calibrated forecasts of
+                near-term soil-water trajectories and identify meaningful deviation
+                or threshold-crossing risk with useful lead time?
+            </div>
+
+        </section>
+
+
+        <!-- 03 -->
+
+        <section class="section" id="s03">
+
+            <div class="section-header">
+                <span class="section-number">03</span>
+                <h2>Agricultural / Operational Feasibility</h2>
+            </div>
+
+            <p>
+                <span class="badge supported">Supported by Research</span>
+                <span class="badge requires-test">Implementation Requires Validation</span>
+            </p>
+
+            <p>
+                Agronomic guidance supports evaluating irrigation through root-zone
+                water availability and depletion rather than treating a single
+                sensor value as a universal indicator of crop stress.
+            </p>
+
+            <h3>Relevant Concepts</h3>
+
+            <ul>
+                <li><strong>Root-zone water status:</strong> The physical state the system ultimately seeks to represent.</li>
+                <li><strong>Available water:</strong> Water available to the crop between relevant soil-water limits.</li>
+                <li><strong>MAD — Management Allowable Depletion:</strong> A configurable management threshold rather than a universal constant.</li>
+                <li><strong>Atmospheric demand:</strong> Conditions influencing crop water use, potentially represented through variables such as ET₀ and VPD.</li>
+                <li><strong>Irrigation opportunity:</strong> The practical window within which an operator can respond.</li>
+            </ul>
+
+            <div class="callout warning">
+                <div class="callout-title">What remains unestablished</div>
+
+                The project cannot yet claim that a particular sensor depth represents
+                the complete root zone, that a particular MAD value is appropriate,
+                that a specific forecast horizon is operationally sufficient, or that
+                a USCRN station represents a commercial irrigated field.
+            </div>
+
+        </section>
+
+
+        <!-- 04 -->
+
+        <section class="section" id="s04">
+
+            <div class="section-header">
+                <span class="section-number">04</span>
+                <h2>Scientific Feasibility</h2>
+            </div>
+
+            <p>
+                <span class="badge plausible">Plausible but Unproven</span>
+            </p>
+
+            <p>
+                The proposed scientific chain is plausible:
+            </p>
+
+            <div class="flow">
+                <div class="flow-node">Observed Telemetry</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">State / Derived Variables</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Temporal Forecast</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Predictive Uncertainty</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Threshold Assessment</div>
+            </div>
+
+            <p>Potentially useful variables include:</p>
+
+            <ul>
+                <li>volumetric soil moisture;</li>
+                <li>soil temperature;</li>
+                <li>air temperature;</li>
+                <li>relative humidity;</li>
+                <li>precipitation;</li>
+                <li>ET₀;</li>
+                <li>VPD;</li>
+                <li>temporal lags and rolling statistics;</li>
+                <li>depth/profile information.</li>
+            </ul>
+
+            <h3>Scientific Constraints</h3>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Constraint</th>
+                            <th>Implication</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Point sensor ≠ field state</td>
+                            <td>A local measurement does not automatically represent field-average or root-zone water status.</td>
+                        </tr>
+                        <tr>
+                            <td>Depth matters</td>
+                            <td>Different depths represent different portions of the soil profile and respond differently to weather and uptake.</td>
+                        </tr>
+                        <tr>
+                            <td>Soil moisture ≠ depletion</td>
+                            <td>Converting observations into agronomic state requires soil and crop assumptions.</td>
+                        </tr>
+                        <tr>
+                            <td>ET₀ ≠ VPD</td>
+                            <td>They describe different physical quantities and must not be treated as interchangeable.</td>
+                        </tr>
+                        <tr>
+                            <td>Anomaly ≠ cause</td>
+                            <td>A statistical deviation does not establish why the physical system changed.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+
+        <!-- 05 -->
+
+        <section class="section" id="s05">
+
+            <div class="section-header">
+                <span class="section-number">05</span>
+                <h2>Data Feasibility</h2>
+            </div>
+
+            <p>
+                <span class="badge requires-test">Requires Empirical Test</span>
+            </p>
+
+            <p>
+                The leading data candidate is <strong>NOAA USCRN</strong>, but the
+                project has not yet completed the required station-level audit.
+            </p>
+
+            <p>
+                The distinction between data types is mandatory.
+            </p>
+
+            <div class="source-grid">
+
+                <div class="source-card">
+                    <div class="source-type">Observed In-Situ Telemetry</div>
+                    <h3>NOAA USCRN</h3>
+                    <p>
+                        Candidate primary historical source. Potential advantages
+                        include in-situ observations, applicable multi-depth soil
+                        measurements, meteorological observations, hourly data,
+                        public historical access, real measurement noise and missingness.
+                    </p>
+                </div>
+
+                <div class="source-card">
+                    <div class="source-type">Alternative In-Situ Networks</div>
+                    <h3>ISMN / AmeriFlux</h3>
+                    <p>
+                        Potential alternatives if the USCRN station audit does not
+                        produce a suitable experimental site or period.
+                    </p>
+                </div>
+
+                <div class="source-card">
+                    <div class="source-type">Reanalysis / Modelled</div>
+                    <h3>ERA5-Land / Open-Meteo</h3>
+                    <p>
+                        Potential supplementary meteorological covariates,
+                        comparison/reference products, or gap-analysis inputs.
+                        They must not be represented as physical sensor observations.
+                    </p>
+                </div>
+
+                <div class="source-card">
+                    <div class="source-type">Satellite Retrieval</div>
+                    <h3>NASA SMAP</h3>
+                    <p>
+                        Potential broad spatial/contextual comparison. Not a direct
+                        substitute for hourly edge telemetry.
+                    </p>
+                </div>
+
+                <div class="source-card">
+                    <div class="source-type">Static Soil Context</div>
+                    <h3>ISRIC SoilGrids</h3>
+                    <p>
+                        Potential soil texture and profile context. Not telemetry.
+                    </p>
+                </div>
+
+                <div class="source-card">
+                    <div class="source-type">Synthetic Telemetry</div>
+                    <h3>Controlled Simulation</h3>
+                    <p>
+                        Real historical observations paced through a simulator,
+                        with controlled perturbations and telemetry faults.
+                    </p>
+                </div>
+
+            </div>
+
+            <h3>Required USCRN Audit</h3>
+
+            <ul>
+                <li>station availability;</li>
+                <li>soil-moisture depth availability;</li>
+                <li>timestamp cadence;</li>
+                <li>missingness;</li>
+                <li>quality flags;</li>
+                <li>variable co-availability;</li>
+                <li>period of continuous overlap;</li>
+                <li>anomalous values;</li>
+                <li>provenance;</li>
+                <li>suitability for the experimental question.</li>
+            </ul>
+
+            <div class="callout">
+                <strong>Current position:</strong>
+                USCRN is a candidate primary historical source,
+                not yet the validated project dataset.
+            </div>
+
+        </section>
+
+
+        <!-- 06 -->
+
+        <section class="section" id="s06">
+
+            <div class="section-header">
+                <span class="section-number">06</span>
+                <h2>Forecasting Feasibility</h2>
+            </div>
+
+            <p>
+                <span class="badge requires-test">Requires Empirical Test</span>
+            </p>
+
+            <p>
+                Research supports the use of time-series forecasting for
+                soil-moisture-related prediction, but it does not establish which
+                model will provide sufficient skill for this project.
+            </p>
+
+            <div class="callout dark">
+                <div class="callout-title">Mandatory Principle</div>
+                <strong>Persistence must earn its defeat.</strong>
+            </div>
+
+            <h3>Mandatory Baseline</h3>
+
+            <div class="code-block">
+ŷ(t+h) = y(t)
+            </div>
+
+            <p>
+                The persistence forecast establishes the minimum benchmark that
+                more complex models must materially improve upon.
+            </p>
+
+            <h3>Candidate Model Ladder</h3>
+
+            <ol>
+                <li>Persistence</li>
+                <li>Seasonal / climatological naive baseline where appropriate</li>
+                <li>Rolling / EWMA baseline</li>
+                <li>ETS</li>
+                <li>ARIMA / SARIMA</li>
+                <li>SARIMAX / dynamic regression</li>
+                <li>Quantile regression</li>
+                <li>Tree-based regression / boosting</li>
+                <li>Sequence models only if evidence justifies escalation</li>
+            </ol>
+
+            <h3>Candidate Horizons</h3>
+
+            <div class="flow">
+                <div class="flow-node">1h</div>
+                <div class="flow-node">6h</div>
+                <div class="flow-node">12h</div>
+                <div class="flow-node">24h</div>
+                <div class="flow-node">72h</div>
+                <div class="flow-node">168h</div>
+            </div>
+
+            <p>
+                These remain candidate horizons until the data audit and baseline
+                experiments establish what is meaningful.
+            </p>
+
+        </section>
+
+
+        <!-- 07 -->
+
+        <section class="section" id="s07">
+
+            <div class="section-header">
+                <span class="section-number">07</span>
+                <h2>Forecasting Evaluation</h2>
+            </div>
+
+            <p>
+                The project must not select a model using one aggregate error
+                metric alone.
+            </p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Evaluation Layer</th>
+                            <th>Candidate Metrics</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Point Forecast</td>
+                            <td>MAE, RMSE, bias, R² as descriptive context, skill relative to persistence</td>
+                        </tr>
+                        <tr>
+                            <td>Probabilistic</td>
+                            <td>Coverage, interval width, pinball loss, CRPS or equivalent, calibration by horizon</td>
+                        </tr>
+                        <tr>
+                            <td>Operational</td>
+                            <td>Threshold-event detection, false-alert burden, missed events, lead time, regime stability</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout warning">
+                A model that reduces average RMSE while producing materially worse
+                threshold decisions should not automatically be considered an improvement.
+            </div>
+
+            <h3>Required Validation Structure</h3>
+
+            <ul>
+                <li>chronological train / validation / test separation;</li>
+                <li>rolling-origin or walk-forward evaluation;</li>
+                <li>an untouched final test period;</li>
+                <li>no random timestamp splitting;</li>
+                <li>explicit handling of weather-feature availability;</li>
+                <li>leakage checks for every exogenous variable.</li>
+            </ul>
+
+        </section>
+
+
+        <!-- 08 -->
+
+        <section class="section" id="s08">
+
+            <div class="section-header">
+                <span class="section-number">08</span>
+                <h2>Uncertainty / Prediction-Interval Feasibility</h2>
+            </div>
+
+            <p>
+                <span class="badge requires-test">Requires Empirical Test</span>
+            </p>
+
+            <p>
+                Point forecasts alone are insufficient for a risk-oriented system.
+                The project therefore needs a method for estimating uncertainty around
+                future soil-water states.
+            </p>
+
+            <h3>Candidate Methods</h3>
+
+            <ul>
+                <li>parametric prediction intervals;</li>
+                <li>quantile regression;</li>
+                <li>quantile tree-based models;</li>
+                <li>conformal forecasting;</li>
+                <li>empirical residual-based intervals.</li>
+            </ul>
+
+            <div class="callout warning">
+                <div class="callout-title">Statistical Constraint</div>
+
+                Sequential soil-moisture forecast errors are not guaranteed to be
+                independent. Therefore, a sequence of prediction-interval breaches
+                cannot automatically be assigned a false-alarm probability of
+                <code>αⁿ</code>.
+            </div>
+
+            <p>
+                Any persistence filter or N-of-M rule must instead be treated as
+                an engineering decision and evaluated empirically.
+            </p>
+
+            <h3>Required Evaluation</h3>
+
+            <ul>
+                <li>nominal versus empirical coverage;</li>
+                <li>interval width;</li>
+                <li>residual autocorrelation;</li>
+                <li>behaviour during rapid wetting/drying;</li>
+                <li>event-level false alerts;</li>
+                <li>lead time.</li>
+            </ul>
+
+        </section>
+
+
+        <!-- 09 -->
+
+        <section class="section" id="s09">
+
+            <div class="section-header">
+                <span class="section-number">09</span>
+                <h2>Anomaly / Deviation Feasibility</h2>
+            </div>
+
+            <p>
+                <span class="badge plausible">Plausible but Unproven</span>
+            </p>
+
+            <p>
+                The research supports separating several kinds of abnormal behaviour
+                rather than treating every statistical deviation as the same anomaly.
+            </p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Examples</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Data-Quality Anomaly</td>
+                            <td>Missing telemetry, impossible values, duplicates, flatline, sensor drift, timestamp corruption.</td>
+                        </tr>
+                        <tr>
+                            <td>Model Deviation</td>
+                            <td>Observed behaviour differs materially from the model's expected distribution.</td>
+                        </tr>
+                        <tr>
+                            <td>Physical / Environmental Deviation</td>
+                            <td>Unexpected wetting, drying, atmospheric demand, or other physical behaviour.</td>
+                        </tr>
+                        <tr>
+                            <td>Agronomic Risk</td>
+                            <td>Forecast indicates potentially meaningful approach toward a configured management threshold.</td>
+                        </tr>
+                        <tr>
+                            <td>Operational Anomaly</td>
+                            <td>Delayed events, duplicates, out-of-order events, consumer failure, stale state.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>
+                These categories should not automatically be collapsed into a single
+                alert type.
+            </p>
+
+        </section>
+
+
+        <!-- 10 -->
+
+        <section class="section" id="s10">
+
+            <div class="section-header">
+                <span class="section-number">10</span>
+                <h2>Alert Persistence / N-of-M Feasibility</h2>
+            </div>
+
+            <p>
+                <span class="badge open">Open / Requires Empirical Test</span>
+            </p>
+
+            <p>
+                A persistence rule may be useful to prevent transient forecast noise
+                from immediately becoming an operational alert.
+            </p>
+
+            <div class="callout">
+                <strong>Candidate rule:</strong><br><br>
+                Alert if the threshold-risk condition is observed in at least
+                <code>N</code> of the previous <code>M</code> evaluation points.
+            </div>
+
+            <p>
+                However, <code>N</code> and <code>M</code> must not be chosen
+                arbitrarily and presented as statistically validated.
+            </p>
+
+            <p>They should be evaluated against:</p>
+
+            <ul>
+                <li>false-alert rate;</li>
+                <li>missed-event rate;</li>
+                <li>alert lead time;</li>
+                <li>alert duration;</li>
+                <li>serial dependence;</li>
+                <li>event severity.</li>
+            </ul>
+
+        </section>
+
+
+        <!-- 11 -->
+
+        <section class="section" id="s11">
+
+            <div class="section-header">
+                <span class="section-number">11</span>
+                <h2>Telemetry Transport Feasibility</h2>
+            </div>
+
+            <p>
+                <span class="badge open">Open Question</span>
+            </p>
+
+            <p>
+                The project needs to determine whether the telemetry simulator should
+                communicate using HTTP or MQTT.
+            </p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>MQTT May Be Justified If</th>
+                            <th>HTTP May Be Sufficient If</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Persistent device-like connections are required.</td>
+                            <td>The simulator simply posts to one ingestion API.</td>
+                        </tr>
+                        <tr>
+                            <td>Reconnect behaviour needs to be demonstrated.</td>
+                            <td>Application-level retries are sufficient.</td>
+                        </tr>
+                        <tr>
+                            <td>QoS semantics matter.</td>
+                            <td>No broker-mediated delivery semantics are required.</td>
+                        </tr>
+                        <tr>
+                            <td>Multiple subscribers are useful.</td>
+                            <td>There is only one downstream consumer.</td>
+                        </tr>
+                        <tr>
+                            <td>Topic-based routing is part of the workload.</td>
+                            <td>Simple request/response ingestion is enough.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Candidate: MQTT 5 + Mosquitto</h3>
+
+            <p>
+                Potential advantages include QoS, session semantics, retained messages,
+                message expiry, structured topic hierarchy, and explicit reconnect behaviour.
+            </p>
+
+            <p>
+                The cost is another infrastructure component and additional failure
+                semantics that the project must test.
+            </p>
+
+            <div class="callout">
+                <strong>Current position:</strong>
+                MQTT is not justified merely because the project contains an IoT simulator.
+                The transport decision must emerge from the actual workload.
+            </div>
+
+        </section>
+
+
+        <!-- 12 -->
+
+        <section class="section" id="s12">
+
+            <div class="section-header">
+                <span class="section-number">12</span>
+                <h2>Streaming / Buffering Feasibility</h2>
+            </div>
+
+            <p>
+                <span class="badge open">Open Question</span>
+            </p>
+
+            <p>
+                If MQTT is selected, the project may require an intermediate durable
+                stream before downstream processing.
+            </p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Technology</th>
+                            <th>Potential Fit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Redis Streams</td>
+                            <td>Local Docker Compose, consumer groups, pending entries, acknowledgement and recovery.</td>
+                        </tr>
+                        <tr>
+                            <td>Apache Kafka</td>
+                            <td>Long-lived event logs, multiple consumer groups, substantial replay and partitioned scaling.</td>
+                        </tr>
+                        <tr>
+                            <td>RabbitMQ</td>
+                            <td>Brokered work queues and routing where durable telemetry history is not the primary requirement.</td>
+                        </tr>
+                        <tr>
+                            <td>Direct Processing</td>
+                            <td>Potentially sufficient if workload and failure requirements are simple.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout">
+                <strong>Current position:</strong>
+                Redis Streams is a leading candidate for investigation, not a final decision.
+                Kafka is not rejected categorically; it should only be introduced if the
+                workload demonstrates requirements that justify its additional complexity.
+            </div>
+
+            <p>Required decision evidence:</p>
+
+            <ul>
+                <li>expected event volume;</li>
+                <li>retention requirement;</li>
+                <li>replay requirement;</li>
+                <li>number of consumers;</li>
+                <li>failure-recovery behaviour;</li>
+                <li>ordering requirements;</li>
+                <li>local resource constraints.</li>
+            </ul>
+
+        </section>
+
+
+        <!-- 13 -->
+
+        <section class="section" id="s13">
+
+            <div class="section-header">
+                <span class="section-number">13</span>
+                <h2>Event Integrity Feasibility</h2>
+            </div>
+
+            <p>
+                <span class="badge supported">Supported as Engineering Requirement</span>
+            </p>
+
+            <p>
+                Regardless of the transport technology selected, telemetry events
+                require an explicit contract.
+            </p>
+
+            <div class="code-block">
+event_id
+device_id
+sensor_id
+field_id
+event_time
+ingest_time
+sequence_number
+schema_version
+value
+unit
+quality_status
+provenance
+            </div>
+
+            <p>
+                The architecture must distinguish
+                <strong>event-time ordering</strong> from
+                <strong>delivery ordering</strong>.
+            </p>
+
+            <p>
+                Downstream processing must also be designed around idempotency because
+                at-least-once delivery can produce duplicates.
+            </p>
+
+        </section>
+
+
+        <!-- 14 -->
+
+        <section class="section" id="s14">
+
+            <div class="section-header">
+                <span class="section-number">14</span>
+                <h2>MLOps Feasibility</h2>
+            </div>
+
+            <p>
+                <span class="badge plausible">Plausible / Scope Open</span>
+            </p>
+
+            <p>
+                Experiment tracking is potentially valuable because forecasting
+                experiments will vary by dataset, station, depth, horizon, feature set,
+                temporal split, model, hyperparameters, preprocessing and evaluation metrics.
+            </p>
+
+            <h3>MLflow Tracking</h3>
+
+            <p>Potentially useful for recording:</p>
+
+            <ul>
+                <li>experiment parameters;</li>
+                <li>metrics;</li>
+                <li>tags;</li>
+                <li>artifacts;</li>
+                <li>model outputs;</li>
+                <li>dataset metadata;</li>
+                <li>experiment lineage.</li>
+            </ul>
+
+            <h3>What MLflow Does Not Solve by Itself</h3>
+
+            <ul>
+                <li>raw-data version control;</li>
+                <li>sensor observability;</li>
+                <li>data-quality monitoring;</li>
+                <li>streaming infrastructure;</li>
+                <li>feature stores;</li>
+                <li>drift detection;</li>
+                <li>retraining policy;</li>
+                <li>operational alerting.</li>
+            </ul>
+
+            <div class="callout">
+                <strong>Current scope:</strong>
+                MLflow Tracking remains a candidate. A model registry, automated
+                retraining system, or production-scale MLOps platform should not
+                be introduced unless later requirements justify it.
+            </div>
+
+        </section>
+
+
+        <!-- 15 -->
+
+        <section class="section" id="s15">
+
+            <div class="section-header">
+                <span class="section-number">15</span>
+                <h2>Architecture Feasibility</h2>
+            </div>
+
+            <p>
+                <span class="badge open">Not Yet Validated</span>
+            </p>
+
+            <p>
+                The architecture cannot be considered validated until the project knows:
+            </p>
+
+            <ol>
+                <li>what data can actually be obtained;</li>
+                <li>what cadence is available;</li>
+                <li>what forecast horizon is useful;</li>
+                <li>what workload the telemetry simulator generates;</li>
+                <li>what delivery guarantees are actually required;</li>
+                <li>what downstream consumers exist;</li>
+                <li>what replay and retention behaviour is necessary.</li>
+            </ol>
+
+            <p>
+                Therefore the architecture should emerge from the validated workload
+                rather than precede it.
+            </p>
+
+            <div class="flow">
+                <div class="flow-node">Historical / Simulated Telemetry</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Transport</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Event Integrity</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">State Reconstruction</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Forecast</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Uncertainty</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Risk / Alert</div>
+            </div>
+
+            <p>
+                The implementation technologies inside those stages remain open.
+            </p>
+
+        </section>
+
+
+        <!-- 16 -->
+
+        <section class="section" id="s16">
+
+            <div class="section-header">
+                <span class="section-number">16</span>
+                <h2>Major Contradictions & Reconciliations</h2>
+            </div>
+
+            <div class="contradiction">
+                <div class="contradiction-header">
+                    16.1 — Reanalysis as Primary Telemetry
+                </div>
+
+                <div class="contradiction-body">
+                    <p><strong>Earlier assumption:</strong> A gap-free weather/reanalysis product could serve as the primary simulated sensor dataset.</p>
+
+                    <p><strong>Finding:</strong> This would remove many of the physical and operational properties that the telemetry system is intended to demonstrate.</p>
+
+                    <p><strong>Current position:</strong> Reanalysis may be useful as a covariate or reference product, but should not automatically be treated as observed edge telemetry.</p>
+
+                    <p><span class="badge rejected">Rejected as Primary Telemetry Assumption</span></p>
+                </div>
+            </div>
+
+
+            <div class="contradiction">
+                <div class="contradiction-header">
+                    16.2 — Raw Soil-Moisture Deviation as the Operational Target
+                </div>
+
+                <div class="contradiction-body">
+                    <p><strong>Earlier assumption:</strong> A statistical deviation from expected soil moisture is itself the central anomaly.</p>
+
+                    <p><strong>Finding:</strong> A deviation can be caused by legitimate environmental behaviour or sensor conditions and does not automatically represent agronomic risk.</p>
+
+                    <p><strong>Current position:</strong> The system should distinguish data-quality, physical/model, and agronomic-risk signals.</p>
+
+                    <p><span class="badge rejected">Rejected as Sole Alert Semantic</span></p>
+                </div>
+            </div>
+
+
+            <div class="contradiction">
+                <div class="contradiction-header">
+                    16.3 — Consecutive Prediction-Interval Breaches as Independent Events
+                </div>
+
+                <div class="contradiction-body">
+                    <p><strong>Earlier assumption:</strong> Repeated breaches could be assigned a simple <code>αⁿ</code> probability.</p>
+
+                    <p><strong>Finding:</strong> Serial dependence makes the independence assumption inappropriate.</p>
+
+                    <p><strong>Current position:</strong> Persistence filters may still be useful, but their behaviour must be empirically evaluated.</p>
+
+                    <p><span class="badge rejected">Rejected</span></p>
+                </div>
+            </div>
+
+
+            <div class="contradiction">
+                <div class="contradiction-header">
+                    16.4 — QRF as the Predetermined ML Solution
+                </div>
+
+                <div class="contradiction-body">
+                    <p><strong>Earlier assumption:</strong> Quantile Random Forest would be the first major ML model.</p>
+
+                    <p><strong>Finding:</strong> QRF may be useful for nonlinear and probabilistic prediction, but the project has not yet demonstrated that it outperforms simpler models on the selected dataset.</p>
+
+                    <p><strong>Current position:</strong> QRF remains a candidate experiment rather than a predetermined solution.</p>
+
+                    <p><span class="badge open">Open / Requires Experiment</span></p>
+                </div>
+            </div>
+
+
+            <div class="contradiction">
+                <div class="contradiction-header">
+                    16.5 — MQTT as an Automatic IoT Requirement
+                </div>
+
+                <div class="contradiction-body">
+                    <p><strong>Earlier assumption:</strong> Simulating an ESP32 implies MQTT.</p>
+
+                    <p><strong>Finding:</strong> IoT simulation alone does not establish a requirement for MQTT.</p>
+
+                    <p><strong>Current position:</strong> MQTT must earn its place through the required transport semantics.</p>
+
+                    <p><span class="badge open">Open</span></p>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- 17 -->
+
+        <section class="section" id="s17">
+
+            <div class="section-header">
+                <span class="section-number">17</span>
+                <h2>Research Gaps</h2>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Area</th>
+                            <th>Current Gap</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td>Data</td>
+                            <td>Suitable station/site not selected; missingness, depth availability, overlap period and irrigation information unknown.</td>
+                        </tr>
+
+                        <tr>
+                            <td>Scientific</td>
+                            <td>Target state, root-zone reconstruction, soil/crop parameters, MAD parameterisation, ET₀ and VPD implementation remain open.</td>
+                        </tr>
+
+                        <tr>
+                            <td>Forecasting</td>
+                            <td>Baseline performance, useful horizon, exogenous feature value, uncertainty method and threshold-event performance unknown.</td>
+                        </tr>
+
+                        <tr>
+                            <td>Engineering</td>
+                            <td>Event rate, failure scenarios, transport requirements, replay/retention needs and consumer count unknown.</td>
+                        </tr>
+
+                        <tr>
+                            <td>Operational</td>
+                            <td>Decision-maker, feasible irrigation-action window and observed irrigation information remain undefined.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+
+        <!-- 18 -->
+
+        <section class="section" id="s18">
+
+            <div class="section-header">
+                <span class="section-number">18</span>
+                <h2>Required Empirical Validation</h2>
+            </div>
+
+            <div class="experiment">
+
+                <div class="experiment-title">
+                    <strong>Experiment 1 — Candidate Station Audit</strong>
+                    <span class="badge requires-test">Required</span>
+                </div>
+
+                <ul>
+                    <li>retrieve historical data;</li>
+                    <li>inspect available variables;</li>
+                    <li>inspect soil-moisture depths;</li>
+                    <li>quantify missingness;</li>
+                    <li>inspect quality flags;</li>
+                    <li>identify continuous periods;</li>
+                    <li>inspect temporal cadence;</li>
+                    <li>examine precipitation and soil-moisture response;</li>
+                    <li>document provenance.</li>
+                </ul>
+
+                <div class="experiment-output">
+                    OUTPUT → Data Feasibility Record
+                </div>
+
+            </div>
+
+
+            <div class="experiment">
+
+                <div class="experiment-title">
+                    <strong>Experiment 2 — Temporal Characterisation</strong>
+                    <span class="badge requires-test">Required</span>
+                </div>
+
+                <ul>
+                    <li>inspect autocorrelation;</li>
+                    <li>inspect seasonal behaviour;</li>
+                    <li>identify wetting/drying regimes;</li>
+                    <li>quantify persistence;</li>
+                    <li>examine missingness patterns;</li>
+                    <li>identify candidate forecast horizons.</li>
+                </ul>
+
+                <div class="experiment-output">
+                    OUTPUT → Temporal Baseline Report
+                </div>
+
+            </div>
+
+
+            <div class="experiment">
+
+                <div class="experiment-title">
+                    <strong>Experiment 3 — Persistence Forecast</strong>
+                    <span class="badge requires-test">Mandatory Baseline</span>
+                </div>
+
+                <p>
+                    Run chronological rolling-origin persistence forecasts across
+                    the candidate horizons supported by the data.
+                </p>
+
+                <div class="experiment-output">
+                    OUTPUT → Baseline Forecast Report
+                </div>
+
+            </div>
+
+
+            <div class="experiment">
+
+                <div class="experiment-title">
+                    <strong>Experiment 4 — Statistical Escalation</strong>
+                    <span class="badge open">Conditional</span>
+                </div>
+
+                <p>
+                    Only if the persistence experiment justifies escalation:
+                    test a transparent statistical model and selected exogenous variables.
+                </p>
+
+                <div class="experiment-output">
+                    OUTPUT → Model Comparison Report
+                </div>
+
+            </div>
+
+
+            <div class="experiment">
+
+                <div class="experiment-title">
+                    <strong>Experiment 5 — Probabilistic Forecasting</strong>
+                    <span class="badge requires-test">Required if Risk Layer Proceeds</span>
+                </div>
+
+                <p>
+                    Evaluate uncertainty methods against empirical coverage,
+                    interval width, calibration, event detection and lead time.
+                </p>
+
+                <div class="experiment-output">
+                    OUTPUT → Uncertainty Validation Report
+                </div>
+
+            </div>
+
+
+            <div class="experiment">
+
+                <div class="experiment-title">
+                    <strong>Experiment 6 — Telemetry Fault Simulation</strong>
+                    <span class="badge open">After Data Contract</span>
+                </div>
+
+                <p>
+                    Inject packet loss, duplicates, delay, out-of-order events,
+                    outages, drift and anomalous observations.
+                </p>
+
+                <div class="experiment-output">
+                    OUTPUT → Fault Model / Telemetry Reliability Report
+                </div>
+
+            </div>
+
+
+            <div class="experiment">
+
+                <div class="experiment-title">
+                    <strong>Experiment 7 — Transport / Streaming Decision</strong>
+                    <span class="badge open">Evidence Required</span>
+                </div>
+
+                <p>
+                    Use the actual workload generated by previous experiments to
+                    compare HTTP, MQTT, direct processing and streaming candidates.
+                </p>
+
+                <div class="experiment-output">
+                    OUTPUT → ADR Evidence
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- 19 -->
+
+        <section class="section" id="s19">
+
+            <div class="section-header">
+                <span class="section-number">19</span>
+                <h2>Decision Gate Status</h2>
+            </div>
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Gate</th>
+                            <th>Requirement</th>
+                            <th>Status</th>
+                            <th>Evidence Required</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>1. Problem Feasibility</td>
+                            <td>Is the operational problem supported by established agricultural practice and literature?</td>
+                            <td><span class="badge supported">Supported</span></td>
+                            <td>Existing agronomic / forecasting literature</td>
+                        </tr>
+
+                        <tr>
+                            <td>2. Data Feasibility</td>
+                            <td>Can an appropriate historical in-situ dataset support the experiment?</td>
+                            <td><span class="badge researching">Researching</span></td>
+                            <td>Station audit + EDA</td>
+                        </tr>
+
+                        <tr>
+                            <td>3. Forecasting Feasibility</td>
+                            <td>Can the target be forecast with useful out-of-sample skill?</td>
+                            <td><span class="badge researching">Researching</span></td>
+                            <td>Persistence + model experiments</td>
+                        </tr>
+
+                        <tr>
+                            <td>4. Uncertainty / Alert Feasibility</td>
+                            <td>Can predictive uncertainty support useful event detection?</td>
+                            <td><span class="badge researching">Researching</span></td>
+                            <td>Calibration + event metrics</td>
+                        </tr>
+
+                        <tr>
+                            <td>5. Architecture Feasibility</td>
+                            <td>Do selected technologies solve demonstrated workload requirements?</td>
+                            <td><span class="badge open">Open</span></td>
+                            <td>Workload + failure/recovery experiments</td>
+                        </tr>
+
+                        <tr>
+                            <td>6. End-to-End Validation</td>
+                            <td>Does the complete system reliably transform telemetry into validated outputs?</td>
+                            <td><span class="badge not-started">Not Started</span></td>
+                            <td>Full integration validation</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- 20 -->
+
+        <section class="section" id="s20">
+
+            <div class="section-header">
+                <span class="section-number">20</span>
+                <h2>Definitive Research Status</h2>
+            </div>
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Area</th>
+                            <th>Status</th>
+                            <th>What Is Established</th>
+                            <th>What Remains</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Problem</td>
+                            <td><span class="badge supported">Supported</span></td>
+                            <td>Agricultural water management uses soil-water state and management thresholds.</td>
+                            <td>Project-specific operational workflow.</td>
+                        </tr>
+
+                        <tr>
+                            <td>Agronomic Framing</td>
+                            <td><span class="badge plausible">Partially Open</span></td>
+                            <td>Root-zone status and depletion are meaningful concepts.</td>
+                            <td>Target representation and parameters.</td>
+                        </tr>
+
+                        <tr>
+                            <td>Dataset</td>
+                            <td><span class="badge researching">Researching</span></td>
+                            <td>Candidate in-situ networks exist.</td>
+                            <td>Station audit.</td>
+                        </tr>
+
+                        <tr>
+                            <td>Forecasting</td>
+                            <td><span class="badge researching">Researching</span></td>
+                            <td>Soil-moisture forecasting is technically established.</td>
+                            <td>Project-specific skill.</td>
+                        </tr>
+
+                        <tr>
+                            <td>Uncertainty</td>
+                            <td><span class="badge researching">Researching</span></td>
+                            <td>Probabilistic forecasting is feasible.</td>
+                            <td>Calibration on selected data.</td>
+                        </tr>
+
+                        <tr>
+                            <td>Anomaly Detection</td>
+                            <td><span class="badge plausible">Plausible</span></td>
+                            <td>Multiple anomaly categories are meaningful.</td>
+                            <td>Event definitions and validation.</td>
+                        </tr>
+
+                        <tr>
+                            <td>Transport</td>
+                            <td><span class="badge open">Open</span></td>
+                            <td>MQTT and HTTP can support telemetry.</td>
+                            <td>Actual workload requirement.</td>
+                        </tr>
+
+                        <tr>
+                            <td>Streaming</td>
+                            <td><span class="badge open">Open</span></td>
+                            <td>Redis, Kafka and RabbitMQ provide different semantics.</td>
+                            <td>Retention, replay and consumer requirements.</td>
+                        </tr>
+
+                        <tr>
+                            <td>MLOps</td>
+                            <td><span class="badge plausible">Plausible</span></td>
+                            <td>Experiment tracking is useful for reproducibility.</td>
+                            <td>Final scope.</td>
+                        </tr>
+
+                        <tr>
+                            <td>End-to-End System</td>
+                            <td><span class="badge not-started">Not Validated</span></td>
+                            <td>Conceptual pipeline is coherent.</td>
+                            <td>Full empirical validation.</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- 21 -->
+
+        <section class="section" id="s21">
+
+            <div class="section-header">
+                <span class="section-number">21</span>
+                <h2>What Research Now Justifies</h2>
+            </div>
+
+            <div class="callout dark">
+                <div class="callout-title">Safe to Proceed</div>
+
+                <ul>
+                    <li>a telemetry-centred temporal system rather than a spatial remote-sensing system;</li>
+                    <li>an experimental target centred on soil-water trajectory;</li>
+                    <li>explicit treatment of uncertainty;</li>
+                    <li>persistence as the mandatory forecasting baseline;</li>
+                    <li>chronological / walk-forward validation;</li>
+                    <li>strict separation of observed, modelled, satellite, static and synthetic data;</li>
+                    <li>explicit telemetry event integrity;</li>
+                    <li>fault-injection testing;</li>
+                    <li>empirical evaluation of threshold-risk detection.</li>
+                </ul>
+            </div>
+
+            <div class="callout warning">
+                <div class="callout-title">Must Remain Open</div>
+
+                <ul>
+                    <li>final dataset;</li>
+                    <li>final soil-water state representation;</li>
+                    <li>MAD numeric value;</li>
+                    <li>forecast horizons;</li>
+                    <li>final feature set;</li>
+                    <li>final forecasting model;</li>
+                    <li>uncertainty method;</li>
+                    <li>N-of-M parameters;</li>
+                    <li>MQTT versus HTTP;</li>
+                    <li>Redis Streams versus Kafka/RabbitMQ;</li>
+                    <li>final MLflow scope;</li>
+                    <li>observed versus simulated irrigation treatment.</li>
+                </ul>
+            </div>
+
+        </section>
+
+
+        <!-- 22 -->
+
+        <section class="section" id="s22">
+
+            <div class="section-header">
+                <span class="section-number">22</span>
+                <h2>Current Decision</h2>
+            </div>
+
+            <p>
+                <span class="badge researching">Researching</span>
+            </p>
+
+            <p>
+                The initial research phase has established that the project has a
+                defensible problem domain and a technically plausible experimental path.
+            </p>
+
+            <p>
+                It has <strong>not</strong> yet established that the proposed dataset,
+                forecasting approach, uncertainty method, alert logic, or architecture
+                will work.
+            </p>
+
+            <div class="callout dark">
+
+                <div class="callout-title">
+                    Next Decision
+                </div>
+
+                <strong>
+                    Audit the candidate NOAA USCRN data before specifying the scientific
+                    target or technical architecture.
+                </strong>
+
+            </div>
+
+            <p>
+                The immediate deliverable is a reproducible
+                <strong>candidate station/data audit</strong>.
+            </p>
+
+            <p>
+                Only after that evidence exists should the project proceed to the
+                next level of specification.
+            </p>
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer>
+            <span>Agri Telemetry & Forecasting Platform</span>
+            <span>Research Feasibility // September 2026</span>
+            <span>Build the evidence before building the complexity.</span>
+        </footer>
+
+    </main>
+
+</body>
+</html>

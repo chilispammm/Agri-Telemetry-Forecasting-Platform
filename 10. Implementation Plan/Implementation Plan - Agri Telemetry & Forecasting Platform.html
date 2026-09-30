@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agri Telemetry &amp; Forecasting — Implementation Plan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+
+:root {
+    --bg: #f4f1ea;
+    --surface: #faf8f3;
+    --ink: #151515;
+    --muted: #62605a;
+    --border: #d3cec0;
+    --dark: #151515;
+    --dark-border: #333;
+    --blue: #2563eb;
+    --amber: #b7791f;
+    --grey: #777;
+    --green: #34785a;
+    --red: #991b1b;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+body {
+    margin: 0;
+    color: var(--ink);
+    background: var(--bg);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.65;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 270px;
+    height: 100vh;
+    padding: 2.5rem 1.75rem;
+    border-right: 1px solid var(--border);
+    background: var(--bg);
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.brand {
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--ink);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.sidebar-meta {
+    margin-bottom: 2.5rem;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.7;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+}
+
+.nav-item {
+    display: block;
+    margin-bottom: .9rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .45px;
+    text-transform: uppercase;
+    transition: color .2s ease;
+}
+
+.nav-item:hover { color: var(--ink); }
+
+/* Main Content Area */
+.main {
+    width: calc(100% - 270px);
+    max-width: 1200px;
+    margin-left: 270px;
+    padding: 4rem 5rem 7rem;
+}
+
+.top-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-bottom: 1rem;
+    margin-bottom: 4rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.hero { max-width: 900px; margin-bottom: 5rem; }
+
+.eyebrow {
+    margin-bottom: 1rem;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+h1 {
+    max-width: 900px;
+    margin: 0 0 1.5rem;
+    font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+    line-height: 1.05;
+    letter-spacing: -.045em;
+    font-weight: 600;
+}
+
+.hero-description {
+    max-width: 780px;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Principle / Highlight Callout */
+.principle {
+    padding: 2rem 2.25rem;
+    margin: 2rem 0 3rem;
+    background: var(--dark);
+    color: white;
+}
+
+.principle-label {
+    margin-bottom: .75rem;
+    color: #999;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.principle strong {
+    display: block;
+    margin-bottom: 1.25rem;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.workflow {
+    color: #ddd;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: .2px;
+    line-height: 2;
+    overflow-wrap: anywhere;
+}
+
+/* Content Sections */
+.section {
+    margin-top: 5rem;
+    scroll-margin-top: 2rem;
+}
+
+.section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding-top: 1rem;
+    margin-bottom: 2rem;
+    border-top: 1px solid var(--ink);
+}
+
+.section-number {
+    min-width: 30px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+h2 {
+    margin: 0;
+    font-size: 1.65rem;
+    line-height: 1.2;
+    letter-spacing: -.025em;
+    font-weight: 600;
+}
+
+h3 {
+    margin: 2.5rem 0 1rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+h4 {
+    margin: 1.75rem 0 .75rem;
+    font-size: .9rem;
+    font-weight: 700;
+}
+
+p {
+    max-width: 850px;
+    font-size: 14px;
+}
+
+/* Lists */
+ul, ol {
+    max-width: 850px;
+    padding-left: 1.4rem;
+    font-size: 13.5px;
+}
+
+li {
+    margin-bottom: .6rem;
+}
+
+/* Tables */
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    margin: 1.5rem 0 2rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 1px solid var(--ink);
+    font-size: 13px;
+}
+
+th, td {
+    padding: 1.1rem .9rem;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+}
+
+.key {
+    width: 28%;
+    border-right: 1px solid var(--border);
+    font-weight: 600;
+}
+
+/* Callouts & Requirements */
+.callout {
+    padding: 1.5rem 1.75rem;
+    margin: 2rem 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--ink);
+    font-size: 13px;
+}
+.callout.warning { border-left-color: var(--amber); }
+.callout.dark { background: var(--dark); color: white; border-left-color: var(--ink); }
+
+/* Monospace Code & ASCII Blocks */
+code {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    background: #eae5d9;
+    padding: 2px 6px;
+}
+
+pre {
+    background: var(--dark);
+    color: #eee;
+    padding: 1.5rem;
+    overflow-x: auto;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    margin: 1.5rem 0;
+}
+
+pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+}
+
+/* Mermaid Flowcharts */
+.mermaid {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--ink);
+    padding: 2rem 1.5rem;
+    margin: 2rem 0;
+    text-align: center;
+    overflow-x: auto;
+}
+
+/* LaTeX Block Math */
+.math-block {
+    margin: 1.5rem 0;
+    padding: 1.25rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    overflow-x: auto;
+    font-size: 1.05rem;
+}
+
+mjx-container[jax="CHTML"][display="true"] {
+    margin: 0.5rem 0 !important;
+}
+
+/* Restrained Status Badges */
+.badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border: 1px solid currentColor;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background: transparent;
+}
+.badge-decided, .decided, .badge-validated, .validated, .badge-tested, .tested, .defined {
+    color: var(--green);
+    border-color: var(--green);
+}
+.badge-researching, .researching {
+    color: var(--blue);
+    border-color: var(--blue);
+}
+.badge-assumption, .assumption {
+    color: var(--amber);
+    border-color: var(--amber);
+}
+.badge-configurable, .configurable, .badge-open, .open, .not-started {
+    color: var(--grey);
+    border-color: var(--grey);
+}
+.badge-implemented, .implemented {
+    color: var(--blue);
+    border-color: var(--blue);
+}
+.badge-rejected, .rejected {
+    color: var(--red);
+    border-color: var(--red);
+}
+
+a { color: var(--ink); text-decoration: underline; font-weight: 600; }
+a:hover { opacity: 0.8; }
+
+/* Footer */
+.footer {
+    padding-top: 3rem;
+    margin-top: 7rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    line-height: 2;
+}
+
+/* Responsive & Print */
+@media (max-width: 1100px) {
+    .main { padding: 3rem 3rem 6rem; }
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+        padding: 1.5rem;
+    }
+    .sidebar-meta { margin-bottom: 1.5rem; }
+    .sidebar nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .5rem 1rem;
+    }
+    .nav-item { margin-bottom: .4rem; }
+    .main { width: 100%; margin-left: 0; padding: 3rem 1.5rem 5rem; }
+    .top-meta { flex-direction: column; gap: .5rem; }
+}
+
+@media (max-width: 520px) {
+    .sidebar nav { grid-template-columns: 1fr; }
+    .section-header { gap: .65rem; }
+    h2 { font-size: 1.35rem; }
+}
+
+@media print {
+    @page { size: A4; margin: 18mm; }
+    body { background: white; color: black; font-size: 10pt; }
+    .sidebar { display: none; }
+    .main { width: 100%; max-width: none; margin: 0; padding: 0; }
+    .top-meta { margin-bottom: 2rem; }
+    .section { margin-top: 3rem; }
+    .section-header { break-after: avoid; }
+    .table-wrap, table, pre, .callout, .principle, .mermaid, .math-block { break-inside: avoid; }
+    a { color: inherit; text-decoration: none; }
+    .footer { margin-top: 3rem; }
+}
+
+    </style>
+
+    <!-- MathJax for LaTeX mathematical formula rendering -->
+    <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Mermaid for Flowcharts and Diagrams -->
+    <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'neutral',
+        themeVariables: {
+            fontFamily: 'Inter, -apple-system, sans-serif',
+            primaryColor: '#faf8f3',
+            primaryBorderColor: '#151515',
+            primaryTextColor: '#151515',
+            lineColor: '#151515',
+            secondaryColor: '#f4f1ea',
+            tertiaryColor: '#faf8f3',
+            edgeLabelBackground: '#ffffff'
+        }
+    });
+    </script>
+
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand">CA-ENG // Master Record</div>
+        <div class="sidebar-meta">
+            Agri Telemetry &amp; Forecasting<br>
+            10 / Implementation<br>
+            Status: <span class="badge badge-decided">DECIDED</span>
+        </div>
+        <nav aria-label="Document navigation">
+            <a href="#plan-purpose-execution-philosophy" class="nav-item">01. Plan Purpose & Execution Philosophy</a>
+            <a href="#phased-build-scope" class="nav-item">02. Phased Build Scope</a>
+            <a href="#detailed-component-plan-16-modules" class="nav-item">03. Detailed Component Plan (16 Modules)</a>
+            <a href="#implementation-dependency-graph-build-order" class="nav-item">04. Implementation Dependency Graph & Build Order</a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <div class="top-meta">
+            <span>Agri Telemetry &amp; Forecasting Platform</span>
+            <span>Last Edited: September 30, 2026 &nbsp; / &nbsp; Status: DECIDED</span>
+        </div>
+
+        <header class="hero">
+            <div class="eyebrow">10 / Implementation</div>
+            <h1>Implementation Plan</h1>
+            <p class="hero-description">Canonical engineering document for the Agri Telemetry &amp; Forecasting Platform.</p>
+        </header>
+
+<p><strong>Status:</strong> DECIDED</p>
+<p><strong>Last Updated:</strong> September 30, 2026</p>
+<p><strong>Document:</strong> <code>08_implementation/IMPLEMENTATION_PLAN.md</code> / <code>10. Implementation Plan/Implementation Plan - Agri Telemetry & Forecasting Platform.md</code></p>
+
+        <section id="plan-purpose-execution-philosophy" class="section">
+            <div class="section-header">
+                <div class="section-number">01</div>
+                <h2>Plan Purpose & Execution Philosophy</h2>
+            </div>
+<p>This document outlines the concrete, execution-oriented roadmap for building the <strong>Agri Telemetry & Forecasting Platform</strong>.</p>
+<p>In strict adherence to <strong>Rule #18</strong> (*"Keep the simplest architecture that satisfies demonstrated requirements"*) and <strong>Rule #29</strong> (*"Do not optimise for impressive architecture. Optimise for evidence, reproducibility, and demonstrated decision value"*), this plan focuses on delivering a verified, leak-free <strong>Minimum Reproducible Vertical Slice</strong> first, before introducing any optional infrastructure.</p>
+</section>
+
+        <section id="phased-build-scope" class="section">
+            <div class="section-header">
+                <div class="section-number">02</div>
+                <h2>Phased Build Scope</h2>
+            </div>
+<div class="mermaid">
+flowchart TD
+    subgraph Phase 1: MUST BUILD NOW
+        A1[Historical Station Ingestion & Clean Data Pipeline] --> A2[Event Validation & Synthetic Fault Injector]
+        A2 --> A3[State Estimation & Persistence Baseline Engine]
+        A3 --> A4[Walk-Forward Chronological Evaluator]
+        A4 --> A5[Three-Tier Anomaly & Advisory Generator]
+    end
+
+    subgraph Phase 2: SUPPORTING
+        B1[FastAPI Telemetry Ingress & Query Endpoints] --> B2[Local Redis / Stream Queue Buffer]
+        B2 --> B3[Conditional Linear / GBDT Model Benchmark]
+    end
+
+    subgraph Phase 3: DEFERRED
+        C1[Distributed Kafka / RabbitMQ Clusters]
+        C2[Deep Learning Sequence Models LSTM/Transformers]
+        C3[Autonomous Irrigation Actuation Hooks]
+    end
+
+    Phase 1 --> Phase 2
+    Phase 2 -.-> Phase 3
+</div>
+<h3>2.1 Category Breakdown</h3>
+<ul><li><strong>MUST BUILD NOW (Phase 1):</strong> The core Python package, deterministic station parser, schema validators, synthetic fault injector, state estimator, walk-forward persistence baseline, probabilistic quantile calculator, and test harness.</li><li><strong>SUPPORTING (Phase 2):</strong> Local SQLite / DuckDB persistence, lightweight FastAPI event receiver, and Docker Compose definition.</li><li><strong>DEFERRED (Phase 3):</strong> Kubernetes orchestration, distributed message brokers (Kafka/RabbitMQ), cloud data lakes, deep-learning frameworks (PyTorch/TensorFlow), and external proprietary farm APIs.</li></ul>
+</section>
+
+        <section id="detailed-component-plan-16-modules" class="section">
+            <div class="section-header">
+                <div class="section-number">03</div>
+                <h2>Detailed Component Plan (16 Modules)</h2>
+            </div>
+<h3>3.1 Repository & Package Structure</h3>
+<ul><li>Root package: <code>agri_telemetry/</code></li><li><code>agri_telemetry/domain/</code>: Domain entities, value objects, scientific constants.</li><li><code>agri_telemetry/contracts/</code>: JSON schema loaders, Pydantic/dataclass event models.</li><li><code>agri_telemetry/ingestion/</code>: USCRN / SCAN parsers, replay iterator, timestamp normalizers.</li><li><code>agri_telemetry/qc/</code>: Range checkers, spike filters, stuck-sensor detectors, fault labellers.</li><li><code>agri_telemetry/state/</code>: Volumetric water content to root-zone depletion & available water fraction.</li><li><code>agri_telemetry/forecasting/</code>: Persistence baseline, walk-forward backtester, metrics (MAE, RMSE, Pinball loss).</li><li><code>agri_telemetry/alerts/</code>: 3-tier anomaly router (QC, Physical Residual, Agronomic MAD Risk).</li><li><code>agri_telemetry/simulation/</code>: Fault injector (spikes, dropouts, frozen sensors).</li><li><code>tests/</code>: Unit tests, integration tests, contract compliance tests, leakage tests.</li></ul>
+<h3>3.2 Environment & Runtime</h3>
+<ul><li>Python 3.10+ virtual environment.</li><li>Core dependencies: <code>pydantic&gt;=2.0</code>, <code>jsonschema&gt;=4.0</code>, <code>pandas&gt;=2.0</code>, <code>numpy&gt;=1.24</code>, <code>scipy&gt;=1.10</code>, <code>pytest&gt;=7.4</code>.</li><li>Strict lockfile reproducibility via <code>requirements.txt</code> / <code>pyproject.toml</code>.</li></ul>
+<h3>3.3 Data Acquisition</h3>
+<ul><li>Download and cache verified public station records (e.g. USCRN Nebraska/Kansas agricultural research stations).</li><li>Local cache path: <code>data/raw/</code> with immutable checksum verification (<code>SHA256</code>).</li></ul>
+<h3>3.4 Ingestion & Timestamp Normalization</h3>
+<ul><li>Parse sub-hourly / hourly station records into canonical <code>TelemetryEvent</code> structures.</li><li>Enforce UTC ISO 8601 formatting.</li><li>Explicitly split <code>event_time</code> (station reading time) from <code>ingest_time</code> (clock time at ingest).</li></ul>
+<h3>3.5 Event Validation & Ingress QC</h3>
+<ul><li>Validate every raw dictionary against <code>telemetry-event.schema.json</code>.</li><li>Apply rule-based QC filters:</li><li>VWC valid range: $[0.0, 0.65]\text{ m}^3/\text{m}^3$.</li><li>Soil Temperature range: $[-20.0, 50.0]^\circ\text{C}$.</li><li>Step-change $\Delta$ threshold: flag jumps $> 0.15\text{ m}^3/\text{m}^3\text{/hr}$ without precipitation.</li><li>Tag events with <code>qc_flag</code> (<code>VALID</code>, <code>SUSPECT_SPIKE</code>, <code>SUSPECT_STUCK</code>, <code>OUT_OF_RANGE</code>).</li></ul>
+<h3>3.6 Persistence & Deduplication State</h3>
+<ul><li>In-memory / lightweight SQLite key-value store indexing <code>event_id</code> and compound natural keys (<code>source_id + event_time</code>).</li><li>Idempotent ingestion: reject or ignore duplicate records without mutating state.</li></ul>
+<h3>3.7 Feature Generation & Lag Construction</h3>
+<ul><li>Construct temporal feature vectors strictly from $t \le t_{\text{origin}}$.</li><li>Generate rolling lag windows ($t-1\text{h}, t-24\text{h}, t-168\text{h}$).</li><li>Enforce strict time-travel leakage prevention assertions.</li></ul>
+<h3>3.8 Forecasting Baseline (Persistence Benchmark)</h3>
+<ul><li>Implement <code>PersistenceBaseline</code>:</li></ul>
+<div class="math-block">$$\hat{Y}_{t+h|t} = Y_t \quad \forall h \in [1, 168\text{ hours}]$$</div>
+<ul><li>Implement <code>DiurnalPersistenceBaseline</code> for atmospheric demand.</li><li>Baseline must be beaten on out-of-sample data before any ML candidate is approved.</li></ul>
+<h3>3.9 Uncertainty & Quantile Estimation</h3>
+<ul><li>Compute empirical historical residual distributions across forecast horizons $h \in \{6, 12, 24, 48, 72, 168\}\text{ hours}$.</li><li>Generate calibrated quantiles ($q_{10}, q_{25}, q_{50}, q_{75}, q_{90}$) and $80\%$ prediction intervals.</li></ul>
+<h3>3.10 Deviation & Agronomic Risk Logic</h3>
+<ul><li>Compute site-specific Management Allowable Depletion ($D_{\text{MAD}}$) exceedance probability:</li></ul>
+<div class="math-block">$$P(\text{Depletion}_{t+h} > D_{\text{MAD}} \mid \mathcal{F}_t)$$</div>
+<ul><li>Emit <code>AlertEvent</code> if $P > \tau_{\text{threshold}}$ (e.g. $\tau = 0.75$).</li><li>Preserve non-actuating advisory status (<code>is_autonomous_actuation: false</code>).</li></ul>
+<h3>3.11 Synthetic Telemetry & Fault Injection</h3>
+<ul><li>Module to inject controlled, labeled synthetic anomalies into replay stream:</li><li><code>VALUE_SPIKE</code>: inject unphysical sensor jump.</li><li><code>SENSOR_STUCK</code>: repeat static float for $N$ timesteps.</li><li><code>CLOCK_DRIFT</code>: shift <code>event_time</code> backward/forward.</li><li><code>PACKET_DROP</code>: omit observations over a multi-hour window.</li><li>Verify that injected faults are caught by Tier 1 QC and NEVER trigger Tier 3 Agronomic alerts.</li></ul>
+<h3>3.12 Evaluation Engine</h3>
+<ul><li>Walk-forward backtesting loop.</li><li>Metrics calculated per horizon $h$:</li><li>Mean Absolute Error ($\text{MAE}$)</li><li>Root Mean Squared Error ($\text{RMSE}$)</li><li>Continuous Ranked Probability Score ($\text{CRPS}$) / Quantile Pinball Loss</li><li>Prediction Interval Coverage Probability ($\text{PICP}$) for $80\%$ nominal coverage.</li></ul>
+<h3>3.13 Observability & Structured Logging</h3>
+<ul><li>Structured JSON logging to stdout / file:</li><li>Fields: <code>timestamp</code>, <code>level</code>, <code>component</code>, <code>event_id</code>, <code>station_id</code>, <code>message</code>.</li><li>Event counters: <code>events_ingested_total</code>, <code>events_qc_failed_total</code>, <code>forecasts_generated_total</code>, <code>alerts_emitted_total</code>.</li></ul>
+<h3>3.14 Testing Suite</h3>
+<ul><li><code>test_schemas.py</code>: Schema validation against valid/invalid JSON payloads.</li><li><code>test_qc_rules.py</code>: Verification of spike, range, and stuck-sensor detection.</li><li><code>test_leakage.py</code>: Temporal assertion tests guaranteeing no future data leaks into features or forecasts.</li><li><code>test_idempotency.py</code>: Verification that duplicate events do not corrupt state.</li><li><code>test_persistence.py</code>: Correct mathematical output of persistence baseline.</li><li><code>test_anomaly_isolation.py</code>: Verification that Tier 1 sensor faults do not trigger Tier 3 agronomic alerts.</li></ul>
+<h3>3.15 Reproducibility Harness</h3>
+<ul><li>Single CLI entrypoint: <code>python -m agri_telemetry.cli run-pipeline --config config/sample_run.json</code>.</li><li>Deterministic seed configuration.</li><li>Markdown summary output written to <code>11. Evidence & Validation/</code>.</li></ul>
+<h3>3.16 Documentation & Evidence Updates</h3>
+<ul><li>Record experiment runs in <code>11. Evidence & Validation/Evidence & Validation - Agri Telemetry & Forecasting Platform.md</code>.</li><li>Transition statuses honestly (<code>DECIDED</code> $\to$ <code>IMPLEMENTED</code> $\to$ <code>TESTED</code> $\to$ <code>VALIDATED</code>).</li></ul>
+</section>
+
+        <section id="implementation-dependency-graph-build-order" class="section">
+            <div class="section-header">
+                <div class="section-number">04</div>
+                <h2>Implementation Dependency Graph & Build Order</h2>
+            </div>
+<pre><code>Step 1: Contracts & JSON Schemas (Done)
+   │
+   ▼
+Step 2: Core Domain Entities & QC Engine
+   │
+   ▼
+Step 3: Station Ingestion & Synthetic Fault Simulator
+   │
+   ▼
+Step 4: Persistence Baseline & Walk-Forward Evaluator
+   │
+   ▼
+Step 5: Three-Tier Alert & Risk Evaluator
+   │
+   ▼
+Step 6: Comprehensive Test Harness & Evidence Capture</code></pre>
+</section>
+
+        <footer class="footer">
+            CA-ENG // Agri Telemetry &amp; Forecasting Platform<br>
+            Implementation Plan &nbsp;&bull;&nbsp; Last Edited: September 30, 2026 &nbsp;&bull;&nbsp; Status: DECIDED
+        </footer>
+    </main>
+</body>
+</html>

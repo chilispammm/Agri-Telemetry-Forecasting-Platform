@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agri Telemetry & Forecasting Platform - Master Engineering Record</title>
+    <!-- Satoshi Font -->
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Core Monochrome */
+            --bg-page: #ffffff;
+            --bg-surface: #fcfcfc;
+            --text-main: #171717;
+            --text-muted: #52525b;
+            --border-heavy: #171717;
+            --border-light: #e5e5e5;
+            
+            /* Status Accents */
+            --color-info-bg: #f0f9ff;
+            --color-info-border: #bae6fd;
+            --color-info-text: #0369a1;
+            
+            --color-success-bg: #f0fdf4;
+            --color-success-border: #bbf7d0;
+            --color-success-text: #15803d;
+            
+            --color-warning-bg: #fffbeb;
+            --color-warning-border: #fde68a;
+            --color-warning-text: #b45309;
+            
+            --color-danger-bg: #fef2f2;
+            --color-danger-border: #fecaca;
+            --color-danger-text: #b91c1c;
+
+            --color-neutral-bg: #f4f4f5;
+            --color-neutral-border: #d4d4d8;
+            --color-neutral-text: #3f3f46;
+            
+            --color-purple-bg: #faf5ff;
+            --color-purple-border: #e9d5ff;
+            --color-purple-text: #7e22ce;
+
+            --font-sans: 'Satoshi', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            scroll-behavior: smooth;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 0.02em;
+            color: var(--text-main);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            display: inline-block;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 4rem 0 1.5rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-heavy);
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+        }
+        
+        .section-num {
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin: 2rem 0 1rem 0;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 0.25rem;
+        }
+
+        p { margin-bottom: 1rem; font-size: 0.95rem; }
+        ul, ol { margin-bottom: 1.5rem; padding-left: 1.5rem; font-size: 0.95rem; }
+        li { margin-bottom: 0.5rem; }
+        
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.85em;
+            background: var(--color-neutral-bg);
+            padding: 0.2em 0.4em;
+            border: 1px solid var(--border-light);
+            border-radius: 2px;
+        }
+
+        /* Sidebar */
+        aside.sidebar {
+            width: 300px;
+            background-color: var(--bg-surface);
+            border-right: 2px solid var(--border-heavy);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            z-index: 50;
+        }
+
+        .sidebar-brand {
+            font-size: 0.85rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-heavy);
+            padding-bottom: 1rem;
+        }
+
+        nav ul { list-style: none; padding: 0; }
+        nav li { margin-bottom: 0.5rem; }
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.2s, background-color 0.2s;
+            display: block;
+            padding: 0.4rem 0.5rem;
+            border-radius: 4px;
+        }
+        nav a:hover {
+            color: var(--text-main);
+            background-color: var(--color-neutral-bg);
+        }
+
+        /* Main Content */
+        main.content {
+            margin-left: 300px;
+            flex: 1;
+            padding: 4rem 5rem;
+            max-width: 1400px;
+        }
+
+        /* Callouts */
+        .callout {
+            border: 2px solid var(--border-heavy);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            background-color: var(--bg-surface);
+            position: relative;
+        }
+        .callout-title {
+            position: absolute;
+            top: -0.75rem;
+            left: 1.5rem;
+            background: var(--bg-page);
+            padding: 0 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-main);
+        }
+        .callout.primary {
+            background-color: var(--color-info-bg);
+            border-color: var(--color-info-border);
+        }
+        .callout.primary .callout-title {
+            background-color: var(--color-info-bg);
+            color: var(--color-info-text);
+        }
+        .callout.rules {
+            background-color: var(--color-warning-bg);
+            border-color: var(--color-warning-border);
+        }
+        .callout.rules .callout-title {
+            background-color: var(--color-warning-bg);
+            color: var(--color-warning-text);
+        }
+
+        /* Central Question Block */
+        .central-question {
+            background: var(--text-main);
+            color: var(--bg-page);
+            padding: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            border-radius: 4px;
+        }
+        .central-question h3 { color: var(--color-info-border); border: none; margin-top: 0; }
+        .central-question p { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; line-height: 1.4; color: var(--bg-page); }
+
+        /* Status Badges Vocabulary */
+        .status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.65rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-family: var(--font-mono);
+            border-radius: 2px;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+        .status-unknown { background: var(--bg-page); border-color: var(--border-heavy); color: var(--text-muted); border-style: dashed; }
+        .status-assumption { background: var(--color-warning-bg); border-color: var(--color-warning-border); color: var(--color-warning-text); }
+        .status-hypothesis { background: var(--color-warning-bg); border-color: var(--color-warning-text); color: var(--color-warning-text); }
+        .status-researching { background: var(--color-info-bg); border-color: var(--color-info-border); color: var(--color-info-text); }
+        .status-evidence { background: var(--color-info-bg); border-color: var(--color-info-text); color: var(--color-info-text); }
+        .status-supported { background: var(--color-success-bg); border-color: var(--color-success-border); color: var(--color-success-text); }
+        .status-rejected { background: var(--color-danger-bg); border-color: var(--color-danger-border); color: var(--color-danger-text); text-decoration: line-through; }
+        .status-decided { background: var(--color-purple-bg); border-color: var(--color-purple-border); color: var(--color-purple-text); }
+        .status-validated { background: var(--color-success-border); border-color: var(--color-success-text); color: var(--color-success-text); }
+
+        /* Tables */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-heavy);
+            background: var(--bg-page);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        th, td {
+            padding: 0.85rem 1rem;
+            border: 1px solid var(--border-light);
+            vertical-align: top;
+            text-align: left;
+        }
+        th {
+            background-color: var(--color-neutral-bg);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-main);
+            border-bottom: 2px solid var(--border-heavy);
+        }
+        td { font-family: var(--font-sans); color: var(--text-muted); }
+        td strong { color: var(--text-main); }
+        tr:hover td { background-color: var(--bg-surface); }
+
+        /* ADR Template */
+        .adr-box {
+            border: 1px solid var(--border-heavy);
+            margin-bottom: 1.5rem;
+        }
+        .adr-header {
+            background-color: var(--color-neutral-bg);
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-heavy);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .adr-header h4 { margin: 0; font-size: 0.95rem; }
+        .adr-body { padding: 1.5rem; }
+        .adr-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .adr-row { margin-bottom: 1rem; }
+        .adr-row.full { grid-column: 1 / -1; }
+        .adr-row strong { display: block; font-size: 0.75rem; text-transform: uppercase; color: var(--text-main); margin-bottom: 0.25rem; font-family: var(--font-mono); }
+        .adr-row p { margin-bottom: 0; font-size: 0.9rem; }
+        .adr-evidence-chain { background: var(--bg-surface); padding: 1rem; border: 1px dashed var(--border-light); border-radius: 4px; font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem;}
+
+        /* Flow Diagram */
+        .flow-diagram {
+            padding: 2.5rem;
+            background: var(--color-neutral-bg);
+            border: 1px dashed var(--border-heavy);
+            font-family: var(--font-mono);
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 2;
+        }
+        .flow-diagram strong { color: var(--text-main); }
+
+        /* Checklists */
+        .checklist { list-style: none; padding: 0; }
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+        .checklist input[type="checkbox"] {
+            margin-top: 0.3rem;
+            margin-right: 0.75rem;
+            accent-color: var(--border-heavy);
+        }
+
+        /* Action Block */
+        .action-block {
+            background-color: var(--text-main);
+            color: var(--bg-page);
+            padding: 2.5rem;
+            border-radius: 4px;
+            margin-top: 4rem;
+        }
+        .action-block h2 { color: var(--bg-page); border-bottom-color: var(--border-heavy); }
+        .action-block li { color: var(--border-light); }
+        .action-block strong { color: var(--bg-page); }
+
+        /* Footer */
+        footer {
+            margin-top: 5rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--border-heavy);
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            padding-bottom: 4rem;
+        }
+
+        @media (max-width: 1024px) {
+            aside.sidebar { display: none; }
+            main.content { margin-left: 0; padding: 2rem; }
+            .adr-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-brand">CA-ENG // MASTER RECORD</div>
+        <nav>
+            <ul>
+                <li><a href="#principles">Governing Principles</a></li>
+                <li><a href="#central-question">Central Question</a></li>
+                <li><a href="#1">1. Project Brief</a></li>
+                <li><a href="#2">2. Research Questions</a></li>
+                <li><a href="#3">3. Product Requirements</a></li>
+                <li><a href="#4">4. Scientific & Data Schema</a></li>
+                <li><a href="#5">5. Reference Hypothesis</a></li>
+                <li><a href="#6">6. Architecture Decisions</a></li>
+                <li><a href="#7">7. Build Strategy</a></li>
+                <li><a href="#8">8. Testing & Evidence</a></li>
+                <li><a href="#9">9. Decision Gates</a></li>
+                <li><a href="#10">10. Execution Log</a></li>
+                <li><a href="#11">11. Risks & Open Questions</a></li>
+                <li><a href="#12">12. Portfolio Evidence</a></li>
+                <li><a href="#day1" style="color: var(--color-purple-text); margin-top: 1rem;">Start Here: Day 1</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <h1>Agri Telemetry & Forecasting Platform</h1>
+        <div class="subtitle">23/09/2026 // Master Engineering Research & Execution Document // Status: <span class="status status-unknown">UNKNOWN / INITIALIZING</span></div>
+
+        <div id="principles" class="callout primary">
+            <span class="callout-title">Core Principle</span>
+            <p style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-bottom: 1rem; line-height: 1.3;">
+                Build the evidence before building the complexity.
+            </p>
+            <p style="font-family: var(--font-mono); font-size: 0.9rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--color-info-text);">
+                PLAN &rarr; RESEARCH &rarr; SPECIFY &rarr; BUILD &rarr; TEST &rarr; MEASURE &rarr; REVIEW &rarr; UPDATE
+            </p>
+            <p style="margin-bottom: 0;">Architecture must be justified by requirements and empirical evidence, not by the desire to use impressive technologies. Candidates like MQTT, Redis Streams, MLflow, Docker, and specific forecasting models are <em>considerations</em>, not commitments. Research determines the final stack.</p>
+        </div>
+
+        <div class="callout rules">
+            <span class="callout-title">Engineering Discipline Rules</span>
+            <ul style="margin-bottom: 0;">
+                <li><strong>No fabricated data:</strong> Do not invent research findings, metrics, datasets, test results or scientific conclusions.</li>
+                <li><strong>Strict Vocabulary:</strong> Use the status badges (<code>HYPOTHESIS</code>, <code>RESEARCHING</code>, <code>DECIDED</code>, <code>VALIDATED</code>) honestly. Do not mark anything <code>VALIDATED</code> without documented evidence.</li>
+                <li><strong>Evidence-driven architecture:</strong> Do not lock architecture before validating requirements. Traceability is mandatory.</li>
+                <li><strong>No architecture theater:</strong> Do not add technology simply because it looks impressive. Prefer the simplest architecture that demonstrates the required capability.</li>
+            </ul>
+        </div>
+
+        <div id="central-question" class="central-question">
+            <h3>The Central Operational Question</h3>
+            <p>"Can continuously arriving field telemetry be used to establish a reliable temporal baseline for soil-moisture conditions and detect meaningful deviations early enough to support an operational decision?"</p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2 id="1"><span class="section-num">01</span> Project Brief</h2>
+        <div class="table-wrapper">
+            <table>
+                <tbody>
+                    <tr>
+                        <th style="width: 25%;">Working Hypothesis</th>
+                        <td>Historical satellite analysis identifies stress reactively. Operational systems need to continuously ingest new observations and compare them against expected conditions to alert managers <em>before</em> crop failure.</td>
+                    </tr>
+                    <tr>
+                        <th>Target User</th>
+                        <td><span class="status status-unknown">UNKNOWN</span> [e.g., Farm Managers, Agricultural Insurers, Agronomists.]</td>
+                    </tr>
+                    <tr>
+                        <th>Why Telemetry Matters</th>
+                        <td>Provides high-frequency, localized ground-truth data that complements low-frequency, macro satellite observations.</td>
+                    </tr>
+                    <tr>
+                        <th>Why Forecasting Matters</th>
+                        <td>Anomalies can only be detected if we have a mathematically sound expectation of what "normal" should be for the next N days.</td>
+                    </tr>
+                    <tr>
+                        <th>Useful Output</th>
+                        <td><span class="status status-hypothesis">HYPOTHESIS</span> An automated alert payload logging the sensor ID, current reading, forecasted baseline bounds, and a persistence severity score.</td>
+                    </tr>
+                    <tr>
+                        <th>Portfolio Differentiation</th>
+                        <td>Crop Stress Intelligence = Remote Sensing / Geospatial screening (<strong>Spatial</strong> context).<br>This Project = Event-Driven MLOps / IoT / Time-Series (<strong>Temporal</strong> context).</td>
+                    </tr>
+                    <tr>
+                        <th>Explicitly Out of Scope</th>
+                        <td><span class="status status-decided">DECIDED</span> Physical hardware deployment, proprietary inaccessible farm APIs, UI dashboards (until the API is fully proven).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 2 -->
+        <h2 id="2"><span class="section-num">02</span> Research Questions</h2>
+        <p>A rigorous agenda linking questions directly to the engineering decisions they inform. Do not decide beforehand.</p>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Domain</th>
+                        <th style="width: 25%;">Question & Why It Matters</th>
+                        <th style="width: 25%;">Evidence / Experiment Required</th>
+                        <th style="width: 25%;">Decision It Informs</th>
+                        <th style="width: 10%;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Agriculture</strong></td>
+                        <td>Which variables (VPD, ET₀, Moisture) correlate strongly enough to form a predictive baseline? (Prevents modeling noise).</td>
+                        <td>Literature review; EDA and correlation matrix on sample historical dataset.</td>
+                        <td>Feature engineering schema.</td>
+                        <td><span class="status status-unknown">UNKNOWN</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data</strong></td>
+                        <td>Are there reliable, free sources for historical meteorological data matching edge telemetry frequency?</td>
+                        <td>Validated API schema and historical span (e.g., Open-Meteo &ge; 2 years).</td>
+                        <td>Proceeding with ML forecasting vs simple rule-based logic.</td>
+                        <td><span class="status status-unknown">UNKNOWN</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Forecasting</strong></td>
+                        <td>What is a realistic forecast horizon that maintains useful prediction intervals?</td>
+                        <td>Baseline model error metrics (RMSE/MAE) plotted across t+1 to t+14 days.</td>
+                        <td>Model selection (Statistical vs ML) and operational lead time.</td>
+                        <td><span class="status status-unknown">UNKNOWN</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Engineering</strong></td>
+                        <td>Is Redis Streams sufficient, or is Kafka's operational complexity actually required?</td>
+                        <td>Throughput assumptions, persistence needs, and consumer group failure recovery testing.</td>
+                        <td>Message broker selection.</td>
+                        <td><span class="status status-unknown">UNKNOWN</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Engineering</strong></td>
+                        <td>MQTT vs HTTP for edge ingestion?</td>
+                        <td>Payload overhead comparison and delivery guarantee requirements (QoS).</td>
+                        <td>Ingestion protocol selection.</td>
+                        <td><span class="status status-unknown">UNKNOWN</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>MLOps</strong></td>
+                        <td>How will we define, simulate, and track "forecast degradation" or "data drift"?</td>
+                        <td>MLflow tracking strategy capturing input distribution shifts over simulated time.</td>
+                        <td>MLOps architecture footprint.</td>
+                        <td><span class="status status-unknown">UNKNOWN</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 3 -->
+        <h2 id="3"><span class="section-num">03</span> Product Requirements</h2>
+        <p>Requirements must be testable. Avoid arbitrary thresholds unless explicitly marked as hypotheses.</p>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Requirement</th>
+                        <th>Acceptance Criteria</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>PRQ-01</td>
+                        <td>Simulate Edge Telemetry</td>
+                        <td>A process generates structured JSON payloads representing environmental data at a set frequency, including simulated noise/dropouts.</td>
+                        <td><span class="status status-unknown">UNKNOWN</span></td>
+                    </tr>
+                    <tr>
+                        <td>PRQ-02</td>
+                        <td>Message Ingestion</td>
+                        <td>Payloads are successfully published to a message broker, ordered temporally, and acknowledged by a consumer group.</td>
+                        <td><span class="status status-unknown">UNKNOWN</span></td>
+                    </tr>
+                    <tr>
+                        <td>PRQ-03</td>
+                        <td>Forecasting Baseline</td>
+                        <td>System can generate a forward-looking baseline with mathematically calibrated prediction intervals (upper/lower bounds).</td>
+                        <td><span class="status status-unknown">UNKNOWN</span></td>
+                    </tr>
+                    <tr>
+                        <td>PRQ-04</td>
+                        <td>Real-Time Anomaly Detection</td>
+                        <td>Consumer reads live stream, compares to forecast. Alerts fire <em>only</em> when observed value falls outside the calibrated prediction interval <strong>AND</strong> a configurable temporal persistence condition is satisfied (e.g., anomalous for N consecutive ticks).</td>
+                        <td><span class="status status-hypothesis">HYPOTHESIS</span></td>
+                    </tr>
+                    <tr>
+                        <td>PRQ-05</td>
+                        <td>Failure Recovery</td>
+                        <td>If the anomaly detector disconnects, the broker retains unprocessed messages, and the consumer resumes processing from the correct offset upon reconnection without duplicating alerts.</td>
+                        <td><span class="status status-unknown">UNKNOWN</span></td>
+                    </tr>
+                    <tr>
+                        <td>PRQ-06</td>
+                        <td>Model/Experiment Tracking</td>
+                        <td>Forecasting parameters, holdout validation metrics, and simulated drift metrics are logged to an experiment tracker.</td>
+                        <td><span class="status status-unknown">UNKNOWN</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 4 -->
+        <h2 id="4"><span class="section-num">04</span> Scientific & Data Schema</h2>
+        <p>Distinguishing between observed data, derived variables, features, targets, and alerts.</p>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Variable</th>
+                        <th>Type</th>
+                        <th>Meaning & Unit</th>
+                        <th>Resolution</th>
+                        <th>Scientific Assumptions</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Soil Moisture</strong></td>
+                        <td>Target</td>
+                        <td>Volumetric water content (m&sup3;/m&sup3;)</td>
+                        <td>[PENDING]</td>
+                        <td>Primary indicator of crop water availability.</td>
+                        <td><span class="status status-assumption">ASSUMPTION</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Temperature</strong></td>
+                        <td>Observed Feature</td>
+                        <td>Ambient air temperature (&deg;C)</td>
+                        <td>[PENDING]</td>
+                        <td>Drives evapotranspiration rates.</td>
+                        <td><span class="status status-assumption">ASSUMPTION</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Rel. Humidity</strong></td>
+                        <td>Observed Feature</td>
+                        <td>Moisture in air (%)</td>
+                        <td>[PENDING]</td>
+                        <td>Used in conjunction with temp to derive VPD.</td>
+                        <td><span class="status status-assumption">ASSUMPTION</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>VPD</strong></td>
+                        <td>Derived Feature</td>
+                        <td>Vapor Pressure Deficit (kPa)</td>
+                        <td>[PENDING]</td>
+                        <td>Accurately reflects atmospheric drying power; superior to RH alone.</td>
+                        <td><span class="status status-hypothesis">HYPOTHESIS</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Anomaly Flag</strong></td>
+                        <td>Alert Output</td>
+                        <td>Actionable stress alert (Boolean)</td>
+                        <td>Real-time</td>
+                        <td>Deviation beyond expected calibrated variance + persistence constitutes actionable stress.</td>
+                        <td><span class="status status-hypothesis">HYPOTHESIS</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 5 -->
+        <h2 id="5"><span class="section-num">05</span> Reference System Hypothesis</h2>
+        <p>This is <strong>NOT</strong> the final architecture. It is a candidate flow subject to ADR validation.</p>
+        <div class="flow-diagram">
+            <strong>[PROVISIONAL — REQUIRES VALIDATION]</strong><br><br>
+            Historical Data API &rarr; <strong>Forecasting Model</strong> &rarr; Expected Baseline Bounds<br>
+            &#8595;<br>
+            Simulated Edge Telemetry &rarr; <strong>MQTT Broker</strong> &rarr; Ingestion Bridge &rarr; <strong>Stream (Redis)</strong><br>
+            &#8595;<br>
+            Stream Consumer &rarr; <strong>Anomaly Evaluator</strong> (Compares Stream vs Baseline)<br>
+            &#8595;<br>
+            <strong>MLOps Tracker (MLflow)</strong> &amp; Alert Output
+        </div>
+
+        <!-- Section 6 -->
+        <h2 id="6"><span class="section-num">06</span> Architecture Decision Records (ADRs)</h2>
+        <p>Decisions must be documented with context, evidence, and trade-offs. Nothing is decided until evidence exists.</p>
+
+        <!-- ADR Template -->
+        <div class="adr-box">
+            <div class="adr-header">
+                <h4>ADR-001: Message Broker Selection (Redis Streams vs Kafka vs RabbitMQ)</h4>
+                <span class="status status-researching">RESEARCHING</span>
+            </div>
+            <div class="adr-body">
+                <div class="adr-grid">
+                    <div class="adr-row full">
+                        <strong>Context & Expected Workload</strong>
+                        <p>The system requires a buffer between high-frequency IoT ingestion and the anomaly evaluator to handle backpressure and consumer failures. Throughput assumptions: [PENDING] msgs/sec.</p>
+                    </div>
+                    <div class="adr-row">
+                        <strong>Decision Drivers</strong>
+                        <p>Delivery guarantees (At-least-once), consumer group support, persistence requirements, operational footprint (local Docker simplicity).</p>
+                    </div>
+                    <div class="adr-row">
+                        <strong>Options Considered</strong>
+                        <p>Redis Streams, Apache Kafka, RabbitMQ.</p>
+                    </div>
+                    <div class="adr-row full">
+                        <strong>Evidence Needed / Collected</strong>
+                        <div class="adr-evidence-chain">
+                            Q: Can Redis Streams handle consumer failure recovery?<br>
+                            Exp: Simulate consumer crash during XREADGROUP.<br>
+                            Res: [PENDING]<br>
+                        </div>
+                    </div>
+                    <div class="adr-row">
+                        <strong>Trade-offs / Consequences</strong>
+                        <p>[PENDING]</p>
+                    </div>
+                    <div class="adr-row">
+                        <strong>Decision</strong>
+                        <p>[PENDING]</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="adr-box">
+            <div class="adr-header">
+                <h4>ADR-002: Forecasting Approach (Statistical vs ML)</h4>
+                <span class="status status-unknown">UNKNOWN</span>
+            </div>
+            <div class="adr-body"><p><em>Placeholder. Requires baseline RMSE evaluations.</em></p></div>
+        </div>
+
+        <div class="adr-box">
+            <div class="adr-header">
+                <h4>ADR-003: Ingestion Protocol (MQTT vs HTTP)</h4>
+                <span class="status status-unknown">UNKNOWN</span>
+            </div>
+            <div class="adr-body"><p><em>Placeholder. Requires payload overhead comparison.</em></p></div>
+        </div>
+
+        <div class="adr-box">
+            <div class="adr-header">
+                <h4>ADR-004: MLOps Tracking (MLflow vs Custom Logging)</h4>
+                <span class="status status-unknown">UNKNOWN</span>
+            </div>
+            <div class="adr-body"><p><em>Placeholder. Requires defining exact tracking requirements.</em></p></div>
+        </div>
+
+        <!-- Section 7 -->
+        <h2 id="7"><span class="section-num">07</span> Build Strategy</h2>
+        <p>Implementation executes in vertical slices to prove scientific and data value early, avoiding technology-first dead ends. The sequence may change after research.</p>
+        <ol class="checklist">
+            <li><input type="checkbox" disabled> <strong>Slice 1 (Data & Forecast):</strong> Fetch historical data, establish baseline model, validate prediction intervals (no streaming yet).</li>
+            <li><input type="checkbox" disabled> <strong>Slice 2 (Telemetry Simulation):</strong> Build robust script generating realistic JSON telemetry (including sensor noise/dropouts).</li>
+            <li><input type="checkbox" disabled> <strong>Slice 3 (Event Pipeline):</strong> Implement broker. Publish telemetry and successfully consume/acknowledge it reliably.</li>
+            <li><input type="checkbox" disabled> <strong>Slice 4 (Anomaly Logic):</strong> Connect consumer to baseline bounds. Implement the persistence + threshold logic.</li>
+            <li><input type="checkbox" disabled> <strong>Slice 5 (MLOps):</strong> Integrate experiment tracking to log drift, parameters, and alert frequency.</li>
+            <li><input type="checkbox" disabled> <strong>Slice 6 (End-to-End):</strong> Containerization (Docker), API endpoints, and Final Integration Testing.</li>
+        </ol>
+
+        <!-- Section 8 -->
+        <h2 id="8"><span class="section-num">08</span> Testing & Evidence</h2>
+        <p>Testing must cover both Data/ML correctness AND distributed/event-driven engineering.</p>
+
+        <div class="adr-grid">
+            <div>
+                <h3 style="margin-top:0;">Data & ML Correctness</h3>
+                <ul class="checklist">
+                    <li><input type="checkbox" disabled> <strong>Schema Validation:</strong> Strict Pydantic parsing of incoming telemetry JSON.</li>
+                    <li><input type="checkbox" disabled> <strong>Data Leakage Prevention:</strong> Strict temporal train/test separation (no random shuffling of time-series).</li>
+                    <li><input type="checkbox" disabled> <strong>Forecasting Metrics:</strong> MAE/RMSE evaluated on hold-out temporal sets.</li>
+                    <li><input type="checkbox" disabled> <strong>Unit Tests:</strong> Mathematical correctness of derived features (e.g., VPD calculation).</li>
+                    <li><input type="checkbox" disabled> <strong>Boundary Conditions:</strong> Handling of extreme but valid meteorological values.</li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="margin-top:0;">Distributed Systems Engineering</h3>
+                <ul class="checklist">
+                    <li><input type="checkbox" disabled> <strong>Message Delivery:</strong> Handling malformed payloads and null data gracefully.</li>
+                    <li><input type="checkbox" disabled> <strong>Idempotency & Offsets:</strong> Processing exact-once or at-least-once without duplicating alerts.</li>
+                    <li><input type="checkbox" disabled> <strong>Temporal Integrity:</strong> Handling late or out-of-order messages relative to the forecast.</li>
+                    <li><input type="checkbox" disabled> <strong>Broker Restart:</strong> Persistence of unacknowledged messages across broker crashes.</li>
+                    <li><input type="checkbox" disabled> <strong>Consumer Disconnect:</strong> System recovers and processes backlog upon reconnection.</li>
+                    <li><input type="checkbox" disabled> <strong>Sensor Dropout:</strong> Simulating edge hardware failure and resulting pipeline behavior.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 9 -->
+        <h2 id="9"><span class="section-num">09</span> Decision Gates</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Gate</th>
+                        <th>Question</th>
+                        <th>Evidence Required</th>
+                        <th>Decision / Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1 - Problem Validated</strong></td>
+                        <td>Do I understand the actual operational problem?</td>
+                        <td>Clear problem statement mapped to agricultural reality.</td>
+                        <td><span class="status status-unknown">UNKNOWN</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>2 - Data Validated</strong></td>
+                        <td>Do I have suitable data to model a baseline?</td>
+                        <td>Confirmed historical dataset + EDA Jupyter notebook.</td>
+                        <td><span class="status status-unknown">UNKNOWN</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>3 - Forecasting Validated</strong></td>
+                        <td>Can the forecasting problem be evaluated meaningfully?</td>
+                        <td>A working baseline model with calculated error metrics and sensible prediction intervals.</td>
+                        <td><span class="status status-unknown">UNKNOWN</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>4 - Architecture Validated</strong></td>
+                        <td>Does the proposed architecture solve an actual requirement?</td>
+                        <td>Completed ADRs justifying broker and MLOps choices based on test evidence.</td>
+                        <td><span class="status status-unknown">UNKNOWN</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>5 - End-to-End Validated</strong></td>
+                        <td>Does the complete system behave correctly?</td>
+                        <td>Passing distributed systems failure tests and generated alerts.</td>
+                        <td><span class="status status-unknown">UNKNOWN</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 10 -->
+        <h2 id="10"><span class="section-num">10</span> Execution / Research Log</h2>
+        <p>The empirical record of the project's development. Update this as experiments are run.</p>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Question / Experiment</th>
+                        <th>Expected</th>
+                        <th>Actual</th>
+                        <th>Evidence</th>
+                        <th>Decision</th>
+                        <th>Next Step</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-family: var(--font-mono); color: var(--text-muted);">[YYYY-MM-DD]</td>
+                        <td>[e.g., Can AR model predict SMAP moisture?]</td>
+                        <td>[RMSE < X]</td>
+                        <td>[PENDING]</td>
+                        <td>[Notebook link]</td>
+                        <td>[PENDING]</td>
+                        <td>[TBD]</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 11 -->
+        <h2 id="11"><span class="section-num">11</span> Risks & Open Questions</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Risk / Question</th>
+                        <th>Why It Matters</th>
+                        <th>How We Will Resolve It</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Data Leakage</strong></td>
+                        <td>Causes falsely high model accuracy, failing completely on the live stream.</td>
+                        <td>Strict temporal train/test splits. Never shuffle time-series data during validation.</td>
+                        <td><span class="status status-open">OPEN</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Misleading Portfolio Claims</strong></td>
+                        <td>Destroys credibility with senior technical reviewers.</td>
+                        <td>Explicitly label simulated data. Do not claim "enterprise scale" for local Docker deployments.</td>
+                        <td><span class="status status-open">OPEN</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Poor / Noisy Data</strong></td>
+                        <td>Garbage in, garbage out for the forecasting model.</td>
+                        <td>Conduct rigorous EDA before attempting to forecast.</td>
+                        <td><span class="status status-open">OPEN</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Unrealistic Simulation</strong></td>
+                        <td>If the edge data generator is too perfect, anomaly detection is trivial.</td>
+                        <td>Inject Gaussian noise and missing data spikes into the simulation script.</td>
+                        <td><span class="status status-open">OPEN</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Overengineering</strong></td>
+                        <td>Distracts from the core engineering demonstration.</td>
+                        <td>Strictly adhere to the "simplest architecture" rule. Reject tools without ADR evidence.</td>
+                        <td><span class="status status-open">OPEN</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Arbitrary Thresholds</strong></td>
+                        <td>Hardcoding 2σ without validating residual distribution invalidates scientific claims.</td>
+                        <td>Analyze residual distributions to define calibrated prediction intervals.</td>
+                        <td><span class="status status-open">OPEN</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 12 -->
+        <h2 id="12"><span class="section-num">12</span> Portfolio Evidence</h2>
+        <p>The final project should demonstrate engineering judgement, not simply a list of technologies. Collect this evidence for the final case study.</p>
+        <ul class="checklist">
+            <li><input type="checkbox" disabled> Problem definition and documented research findings.</li>
+            <li><input type="checkbox" disabled> Completed Architecture Decision Records (ADRs) with evidence.</li>
+            <li><input type="checkbox" disabled> Data provenance mapping (source origins, resolution, transformations).</li>
+            <li><input type="checkbox" disabled> Model evaluation (Holdout metrics, residual analysis).</li>
+            <li><input type="checkbox" disabled> Evidence of passing test suites (unit, integration, distributed failure).</li>
+            <li><input type="checkbox" disabled> Event pipeline flow logs (proof of idempotency and processing).</li>
+            <li><input type="checkbox" disabled> MLOps tracking screenshots (e.g., MLflow UI showing drift/runs).</li>
+            <li><input type="checkbox" disabled> Reproducible deployment artifacts (Docker Compose files).</li>
+            <li><input type="checkbox" disabled> Documented limitations and lessons learned.</li>
+        </ul>
+
+        <!-- Day 1 Action Plan -->
+        <div id="day1" class="action-block">
+            <h2>How to Use This Document From Day 1</h2>
+            <p>Do not write pipeline or infrastructure code. Execute the following sequence:</p>
+            <ol style="font-size: 1.1rem; line-height: 1.8;">
+                <li><strong>Locate the Data:</strong> Find a reliable historical dataset (e.g., Open-Meteo) and a corresponding soil moisture dataset (e.g., SMAP). Update the <a href="#4" style="color: var(--color-info-border);">Scientific & Data Schema</a>.</li>
+                <li><strong>Run EDA:</strong> Create a Jupyter notebook. Plot the variables over time. Look for correlations (e.g., VPD vs Moisture). Update <a href="#10" style="color: var(--color-info-border);">Execution Log</a> with findings.</li>
+                <li><strong>Clear Gate 1 & 2:</strong> Once EDA proves the data isn't just noise, change Gates 1 and 2 to <span class="status status-validated" style="background: var(--color-success-bg);">VALIDATED</span>.</li>
+                <li><strong>Build a Baseline:</strong> Train a simple statistical model (e.g., Persistence or ARIMA). Calculate RMSE. Define the prediction intervals. Update ADR-002.</li>
+                <li><strong>Clear Gate 3:</strong> If the baseline is mathematically defensible, change Gate 3 to <span class="status status-validated" style="background: var(--color-success-bg);">VALIDATED</span>.</li>
+                <li><strong>Begin Architecture Validation:</strong> Only now, write the simulated edge script and start testing Redis Streams vs alternatives (ADR-001).</li>
+            </ol>
+        </div>
+
+        <footer>
+            The purpose of this document is not to predict the final architecture.<br>
+            It is to create a disciplined process for discovering it.
+        </footer>
+    </main>
+
+</body>
+</html>
