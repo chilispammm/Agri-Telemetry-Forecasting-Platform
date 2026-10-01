@@ -464,17 +464,18 @@ a:hover { opacity: 0.8; }
         <nav aria-label="Document navigation">
             <a href="#document-authority-scientific-integrity" class="nav-item">01. Document Authority & Scientific Integrity</a>
             <a href="#evidence-classification-framework" class="nav-item">02. Evidence Classification Framework</a>
-            <a href="#master-evidence-validation-matrix" class="nav-item">03. Master Evidence & Validation Matrix</a>
-            <a href="#empirical-data-quality-ingestion-audit" class="nav-item">04. Empirical Data Quality & Ingestion Audit</a>
-            <a href="#empirical-out-of-sample-verification-persistence-benchmark" class="nav-item">05. Empirical Out-of-Sample Verification: Persistence Benchmark</a>
-            <a href="#experiment-decision-ledger" class="nav-item">06. Experiment & Decision Ledger</a>
+            <a href="#authoritative-test-suite-verification-28-tests-across-9-modules" class="nav-item">03. Authoritative Test Suite Verification (28 Tests Across 9 Modules)</a>
+            <a href="#master-evidence-validation-matrix" class="nav-item">04. Master Evidence & Validation Matrix</a>
+            <a href="#comprehensive-4-tier-data-completeness-audit" class="nav-item">05. Comprehensive 4-Tier Data Completeness Audit</a>
+            <a href="#out-of-sample-verification-persistence-baseline-uncertainty" class="nav-item">06. Out-of-Sample Verification: Persistence Baseline & Uncertainty</a>
+            <a href="#experiment-registry" class="nav-item">07. Experiment Registry</a>
         </nav>
     </aside>
 
     <main class="main">
         <div class="top-meta">
             <span>Agri Telemetry &amp; Forecasting Platform</span>
-            <span>Last Edited: October 1, 2026 &nbsp; / &nbsp; Status: ACTIVE</span>
+            <span>Last Edited: October 2, 2026 &nbsp; / &nbsp; Status: ACTIVE</span>
         </div>
 
         <header class="hero">
@@ -484,7 +485,7 @@ a:hover { opacity: 0.8; }
         </header>
 
 <p><strong>Status:</strong> ACTIVE</p>
-<p><strong>Last Updated:</strong> October 1, 2026</p>
+<p><strong>Last Updated:</strong> October 2, 2026</p>
 <p><strong>Document:</strong> <code>Evidence & Validation/Evidence & Validation - Agri Telemetry & Forecasting Platform.md</code></p>
 
         <section id="document-authority-scientific-integrity" class="section">
@@ -521,12 +522,56 @@ flowchart TD
         S2 --> S3["9. Threshold & Lead-Time Evidence"]
     end
 </div>
-<ol><li><strong>Implementation Evidence:</strong> Verifies module existence, package installability, and interface compliance.</li><li><strong>Unit & Integration Test Evidence:</strong> Code execution assertions, boundary checks, and error handling.</li><li><strong>Event-Processing & Idempotency Evidence:</strong> Deduplication over duplicate streams, clock-drift handling, out-of-order event routing.</li><li><strong>Reproducibility Evidence:</strong> Deterministic replay runs with fixed seeds producing identical evaluation metrics.</li><li><strong>Data-Quality & QC Evidence:</strong> Audit of real in-situ station data (missingness, physical bounds, sensor flatlines).</li><li><strong>Anomaly Isolation Evidence:</strong> Proof that synthetic data-quality faults are quarantined and <strong>never</strong> trigger false-positive agronomic stress alerts.</li><li><strong>Forecast Evaluation Evidence:</strong> Walk-forward out-of-sample benchmark of persistence baseline vs. alternative models (MAE, RMSE).</li><li><strong>Uncertainty Calibration Evidence:</strong> Empirical prediction interval coverage probability (PICP) vs nominal coverage ($80\%$).</li><li><strong>Threshold & Lead-Time Evidence:</strong> Verification of actionable warning lead time before Management Allowable Depletion (MAD) breaches.</li></ol>
+</section>
+
+        <section id="authoritative-test-suite-verification-28-tests-across-9-modules" class="section">
+            <div class="section-header">
+                <div class="section-number">03</div>
+                <h2>Authoritative Test Suite Verification (28 Tests Across 9 Modules)</h2>
+            </div>
+<p>Authoritative pytest execution report (<code>python -m pytest -v</code>): <strong>28 passed in 40.35s</strong>.</p>
+<div class="table-wrap">
+<table>
+    <thead>
+        <tr><th>Test File</th><th>Test Item / Case</th><th>Scope & Assertion</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+<tr><td><code>tests/test_contracts.py</code></td><td><code>test_telemetry_event_valid</code></td><td>Draft 2020-12 schema validation on canonical TelemetryEvent</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_contracts.py</code></td><td><code>test_forecast_event_valid</code></td><td>Draft 2020-12 schema validation on ForecastEvent with quantiles</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_contracts.py</code></td><td><code>test_alert_event_valid</code></td><td>Draft 2020-12 schema validation on AlertEvent (<code>is_autonomous_actuation: false</code>)</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_contracts.py</code></td><td><code>test_schema_rejection_on_invalid_data</code></td><td>Negative test asserting explicit rejection of missing fields / actuation flag</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_idempotency.py</code></td><td><code>test_sqlite_telemetry_deduplication</code></td><td>SQLite deduplication: duplicate natural keys safely ignored without mutation</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_leakage.py</code></td><td><code>test_walk_forward_leak_free_split</code></td><td>Strict chronological walk-forward boundary: exactly 0 future timestamps leaked</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_persistence.py</code></td><td><code>test_persistence_model_predictions</code></td><td>Point forecast correctness: $\hat{Y}_{t+h\</td><td>t} = Y_t$ for all horizons</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_persistence.py</code></td><td><code>test_uncertainty_calibrator_quantiles</code></td><td>Empirical residual quantiles $q_{10} < q_{50} < q_{90}$ and bounded intervals</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_persistence.py</code></td><td><code>test_walk_forward_evaluator</code></td><td>Chronological backtest metrics (MAE, RMSE, MBE, Coverage, Skill)</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_persistence.py</code></td><td><code>test_forecasting_engine_and_contract_validation</code></td><td><code>ForecastingEngine</code> emits contract-compliant <code>ForecastEvent</code> instances</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_risk_evaluation.py</code></td><td><code>test_no_alert_when_moisture_adequate</code></td><td>Zero false alerts when depletion $D_r < D_{\text{MAD}}$</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_risk_evaluation.py</code></td><td><code>test_real_time_mad_breach</code></td><td>Correct <code>WARNING</code> alert emission when $D_r \ge D_{\text{MAD}}$ ($0.50$)</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_risk_evaluation.py</code></td><td><code>test_critical_wilting_proximity_alert</code></td><td>Correct <code>CRITICAL</code> alert emission when $D_r \ge 0.85$</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_risk_evaluation.py</code></td><td><code>test_quarantined_state_isolation</code></td><td>Quarantined states strictly produce 0 agronomic alerts</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_risk_evaluation.py</code></td><td><code>test_probabilistic_forward_forecast_alert</code></td><td>Probabilistic threshold crossing: triggers early advisory when $P(D_r \ge D_{\text{MAD}}) \ge \tau_{\text{risk}}$</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_state_builder.py</code></td><td><code>test_soil_profile_config</code></td><td>Validates soil hydraulic parameters ($\theta_{\text{FC}}, \theta_{\text{WP}}, \theta_{\text{SAT}}, TAW_{\text{mm}}$)</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_state_builder.py</code></td><td><code>test_depth_integration</code></td><td>Multi-depth layer thickness weighting and partial-layer renormalization</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_state_builder.py</code></td><td><code>test_depletion_and_storage_metrics</code></td><td>Formulations for $D_r$, $FAW$, storage (mm), and deficit (mm)</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_state_builder.py</code></td><td><code>test_state_builder_from_telemetry_event</code></td><td>End-to-end <code>SoilWaterState</code> object creation from valid <code>TelemetryEvent</code></td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_tier1_qc.py</code></td><td><code>test_physical_range_bounds</code></td><td>Rejection of values outside physical boundaries (e.g. VWC $> 0.60$)</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_tier1_qc.py</code></td><td><code>test_vwc_spike_detection</code></td><td>Rate-of-change filter: $</td><td>\Delta VWC</td><td>> 0.15\text{ /hr}$ without rain flagged as spike</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_tier1_qc.py</code></td><td><code>test_stuck_sensor_detection</code></td><td>Flatline filter: $\ge 12\text{h}$ invariant value on dynamic channels flagged</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_tier1_qc.py</code></td><td><code>test_qc_engine_processing_and_quarantine</code></td><td>Quarantine buffer captures corrupt payloads and emits <code>DATA_QUALITY_ALERT</code></td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_uscrn_ingestion.py</code></td><td><code>test_uscrn_parser_file_exists</code></td><td>Verifies real USCRN dataset cache presence in <code>data/uscrn/</code></td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_uscrn_ingestion.py</code></td><td><code>test_uscrn_parser_load</code></td><td>Fixed-width parser loads 8,760 hourly records into typed DataFrame</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_uscrn_ingestion.py</code></td><td><code>test_uscrn_data_audit</code></td><td>Ingestion audit calculations (cadence, duplicate, min/max/mean/std)</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_uscrn_ingestion.py</code></td><td><code>test_uscrn_normalization_and_schema_validation</code></td><td>Normalizer emits valid <code>TelemetryEvent</code> stream matching Draft 2020-12</td><td><strong>PASSED</strong></td></tr>
+<tr><td><code>tests/test_end_to_end.py</code></td><td><code>test_phase1_pipeline_end_to_end</code></td><td>Complete execution slice: ingestion $\to$ QC $\to$ state $\to$ forecast $\to$ risk $\to$ store $\to$ ledger</td><td><strong>PASSED</strong></td></tr>
+    </tbody>
+</table>
+</div>
 </section>
 
         <section id="master-evidence-validation-matrix" class="section">
             <div class="section-header">
-                <div class="section-number">03</div>
+                <div class="section-number">04</div>
                 <h2>Master Evidence & Validation Matrix</h2>
             </div>
 <div class="table-wrap">
@@ -539,77 +584,95 @@ flowchart TD
 <tr><td><strong>EVD-002</strong></td><td>Duplicate incoming events are deduplicated idempotently without state corruption.</td><td>Injected duplicate stream</td><td>Replay</td><td>SHA256 natural key matching in SQLite</td><td>Duplicate suppression rate</td><td>100% duplicate suppression</td><td><strong>100% Suppressed</strong> (Duplicate rejected, count=1)</td><td>Safe at-least-once ingestion</td><td><strong>TESTED</strong></td><td><code>tests/test_idempotency.py</code></td><td>Single SQLite database</td></tr>
 <tr><td><strong>EVD-003</strong></td><td>Injected synthetic sensor spikes/flatlines are isolated at Tier 1 and never trigger Tier 3 Agronomic Alerts.</td><td>Synthetic fault generator + USCRN</td><td>2023</td><td>Injected $0.35\text{ m}^3/\text{m}^3$ spike & unphysical bounds</td><td>Alert isolation rate</td><td>0% false agronomic alerts; 100% QC flag capture</td><td><strong>0 False Agronomic Alerts</strong>; 100% quarantined</td><td>Strict anomaly boundary preserved</td><td><strong>TESTED</strong></td><td><code>tests/test_tier1_qc.py</code>, <code>tests/test_risk_evaluation.py</code></td><td>Synthetic fault patterns</td></tr>
 <tr><td><strong>EVD-004</strong></td><td>Feature construction strictly prevents future-data leakage during walk-forward backtest.</td><td>USCRN Station records</td><td>2023</td><td>Walk-forward timestamp split assertion</td><td>Feature timestamp leakage rate</td><td>Exactly 0 leaked future timestamps</td><td><strong>0 Leaked Timestamps</strong> (Cutoff verified)</td><td>Temporal causality guaranteed</td><td><strong>TESTED</strong></td><td><code>tests/test_leakage.py</code></td><td>In-situ point sensor</td></tr>
-<tr><td><strong>EVD-005</strong></td><td>Persistence baseline establishes an empirical benchmark for 1h to 168h soil moisture forecast.</td><td>USCRN Lincoln 11 SW</td><td>2023 (8,760h)</td><td>Chronological Walk-Forward ($h=1\dots 168\text{h}$)</td><td>Out-of-sample MAE / RMSE</td><td>Establish empirical baseline benchmark</td><td><strong>MAE: 0.0007 (1h) to 0.0192 (168h)</strong>; Skill: +0.998 to +0.742</td><td>Persistence benchmark established on real data</td><td><strong>TESTED</strong></td><td><code>runs/RUN-20261001-152227-10fc74/</code></td><td>1-year single station</td></tr>
-<tr><td><strong>EVD-006</strong></td><td>80% prediction intervals achieve calibrated coverage across out-of-sample lead times.</td><td>USCRN Lincoln 11 SW</td><td>2023 (8,760h)</td><td>Residual quantile estimation ($q_{10}$ to $q_{90}$)</td><td>Prediction Interval Coverage (PICP)</td><td>Nominal 80% coverage</td><td><strong>1h: 85.5%, 6h: 81.9%, 12h: 82.3%, 24h: 72.7%</strong></td><td>Calibrated up to 12h; spread under-estimated at 168h</td><td><strong>TESTED</strong></td><td><code>runs/RUN-20261001-152227-10fc74/</code></td><td>Empirical residual quantiles</td></tr>
+<tr><td><strong>EVD-005</strong></td><td>Persistence baseline establishes an empirical benchmark for 1h to 168h soil moisture forecast.</td><td>USCRN Lincoln 11 SW</td><td>2023 (8,760h)</td><td>Chronological Walk-Forward ($h=1\dots 168\text{h}$)</td><td>Out-of-sample MAE / RMSE</td><td>Establish empirical baseline benchmark</td><td><strong>MAE: 0.0007 (1h) to 0.0192 (168h)</strong>; Skill vs Climatology: +0.998 to +0.742</td><td>Persistence benchmark established on real data</td><td><strong>TESTED</strong></td><td><code>runs/RUN-20261001-152227-10fc74/</code></td><td>1-year single station</td></tr>
+<tr><td><strong>EVD-006</strong></td><td>80% prediction intervals achieve empirical coverage across out-of-sample lead times.</td><td>USCRN Lincoln 11 SW</td><td>2023 (8,760h)</td><td>Residual quantile estimation ($q_{10}$ to $q_{90}$)</td><td>Prediction Interval Coverage (PICP)</td><td>Nominal 80% coverage</td><td><strong>1h: 85.5%, 6h: 81.9%, 12h: 82.3%, 24h: 72.7%, 168h: 60.9%</strong></td><td>Well-calibrated up to 12h; degrades at 7d due to summer drying variance</td><td><strong>TESTED</strong></td><td><code>runs/RUN-20261001-152227-10fc74/</code></td><td>Empirical residual quantiles</td></tr>
 <tr><td><strong>EVD-007</strong></td><td>Pipeline execution produces deterministic, verifiable outputs with stored run evidence.</td><td>USCRN Lincoln 11 SW</td><td>2023</td><td>End-to-end pipeline run with fixed seed</td><td>Summary ledger & database match</td><td>Complete end-to-end execution</td><td><strong>8,760 records ingested, 3,913 forecasts emitted, 0 crashes</strong></td><td>Minimum vertical slice reproducible</td><td><strong>TESTED</strong></td><td><code>tests/test_end_to_end.py</code></td><td>Python runtime environment</td></tr>
     </tbody>
 </table>
 </div>
 </section>
 
-        <section id="empirical-data-quality-ingestion-audit" class="section">
-            <div class="section-header">
-                <div class="section-number">04</div>
-                <h2>Empirical Data Quality & Ingestion Audit</h2>
-            </div>
-<h3>USCRN Station: <code>NE_Lincoln_11_SW</code> (WBAN 94996) — Year 2023</h3>
-<ul><li><strong>Observation Range</strong>: <code>2023-01-01T01:00:00+00:00</code> to <code>2024-01-01T00:00:00+00:00</code></li><li><strong>Total Ingested Records</strong>: <code>8,760</code></li><li><strong>Expected Hourly Steps</strong>: <code>8,760</code></li><li><strong>Missing Cadence Steps</strong>: <code>0</code> (0.00% cadence loss)</li><li><strong>Duplicate Timestamps</strong>: <code>0</code></li></ul>
-<div class="table-wrap">
-<table>
-    <thead>
-        <tr><th>Variable</th><th>Valid Records</th><th>Missing / Null</th><th>Null %</th><th>Min</th><th>Max</th><th>Mean ± Std</th></tr>
-    </thead>
-    <tbody>
-<tr><td><code>air_temp_c</code></td><td>8,756</td><td>4</td><td>0.0%</td><td>-17.100</td><td>39.000</td><td>11.92 ± 11.48</td></tr>
-<tr><td><code>precip_mm</code></td><td>8,760</td><td>0</td><td>0.0%</td><td>0.000</td><td>59.000</td><td>0.07 ± 0.99</td></tr>
-<tr><td><code>rh_percent</code></td><td>3,054</td><td>5,706</td><td>65.1%</td><td>2.000</td><td>99.000</td><td>65.92 ± 20.47</td></tr>
-<tr><td><code>soil_moisture_5cm</code></td><td>7,852</td><td>908</td><td>10.4%</td><td>0.111</td><td>0.394</td><td>0.21 ± 0.07</td></tr>
-<tr><td><code>soil_moisture_10cm</code></td><td>8,348</td><td>412</td><td>4.7%</td><td>0.150</td><td>0.469</td><td>0.24 ± 0.07</td></tr>
-<tr><td><code>soil_moisture_20cm</code></td><td>8,507</td><td>253</td><td>2.9%</td><td>0.119</td><td>0.343</td><td>0.20 ± 0.07</td></tr>
-<tr><td><code>soil_moisture_50cm</code></td><td>8,691</td><td>69</td><td>0.8%</td><td>0.127</td><td>0.319</td><td>0.19 ± 0.05</td></tr>
-<tr><td><code>soil_moisture_100cm</code></td><td>8,756</td><td>4</td><td>0.0%</td><td>0.179</td><td>0.298</td><td>0.21 ± 0.03</td></tr>
-<tr><td><code>soil_temp_5cm</code></td><td>8,756</td><td>4</td><td>0.0%</td><td>-5.200</td><td>33.100</td><td>12.35 ± 9.45</td></tr>
-<tr><td><code>soil_temp_10cm</code></td><td>8,756</td><td>4</td><td>0.0%</td><td>-1.900</td><td>27.600</td><td>12.29 ± 8.50</td></tr>
-<tr><td><code>soil_temp_20cm</code></td><td>8,756</td><td>4</td><td>0.0%</td><td>-1.000</td><td>26.600</td><td>12.44 ± 8.21</td></tr>
-<tr><td><code>soil_temp_50cm</code></td><td>8,756</td><td>4</td><td>0.0%</td><td>0.100</td><td>24.900</td><td>12.36 ± 7.67</td></tr>
-<tr><td><code>soil_temp_100cm</code></td><td>8,756</td><td>4</td><td>0.0%</td><td>1.700</td><td>22.700</td><td>12.15 ± 6.80</td></tr>
-<tr><td><code>solar_rad_wm2</code></td><td>8,760</td><td>0</td><td>0.0%</td><td>0.000</td><td>975.000</td><td>176.16 ± 264.28</td></tr>
-    </tbody>
-</table>
-</div>
-</section>
-
-        <section id="empirical-out-of-sample-verification-persistence-benchmark" class="section">
+        <section id="comprehensive-4-tier-data-completeness-audit" class="section">
             <div class="section-header">
                 <div class="section-number">05</div>
-                <h2>Empirical Out-of-Sample Verification: Persistence Benchmark</h2>
+                <h2>Comprehensive 4-Tier Data Completeness Audit</h2>
             </div>
-<h3>Execution Run: <code>RUN-20261001-152227-10fc74</code></h3>
-<ul><li><strong>Target Variable</strong>: <code>volumetric_water_content</code> ($\theta_{\text{rz}}$ over 100cm depth)</li><li><strong>Model</strong>: <code>PERSISTENCE_BASELINE</code> ($v1.0.0$, $\hat{Y}_{t+h|t} = Y_t$)</li><li><strong>Splitting Strategy</strong>: 50% chronological calibration / 50% out-of-sample test</li></ul>
+<h3>Station Profile: USCRN <code>NE_Lincoln_11_SW</code> (WBAN 94996) — Full Calendar Year 2023</h3>
+<ul><li><strong>Temporal Range</strong>: <code>2023-01-01T01:00:00Z</code> to <code>2024-01-01T00:00:00Z</code></li></ul>
+<h3>Tier A: Temporal Cadence Completeness</h3>
+<ul><li><strong>Expected Hourly Time Steps</strong>: <code>8,760</code></li><li><strong>Ingested Hourly Records</strong>: <code>8,760</code></li><li><strong>Missing Cadence Slots</strong>: <code>0</code> (<strong>100.0%</strong> temporal record continuity)</li><li><strong>Duplicate Timestamps</strong>: <code>0</code></li></ul>
+<h3>Tier B: Meteorological & Atmospheric Instrument Availability</h3>
 <div class="table-wrap">
 <table>
     <thead>
-        <tr><th>Horizon ($h$)</th><th>Test Samples ($N$)</th><th>MAE ($\text{m}^3/\text{m}^3$)</th><th>RMSE ($\text{m}^3/\text{m}^3$)</th><th>MBE ($\text{m}^3/\text{m}^3$)</th><th>80% PI Coverage</th><th>Skill vs Climatology</th></tr>
+        <tr><th>Variable</th><th>Valid (Non-Null) Records</th><th>Missing / Null</th><th>Availability %</th><th>Value Range</th><th>Mean ± Std</th></tr>
     </thead>
     <tbody>
-<tr><td><strong>1h</strong></td><td>3,912</td><td>0.0007</td><td>0.0024</td><td>+0.0000</td><td>85.5%</td><td>+0.998</td></tr>
-<tr><td><strong>6h</strong></td><td>3,907</td><td>0.0018</td><td>0.0065</td><td>+0.0000</td><td>81.9%</td><td>+0.986</td></tr>
-<tr><td><strong>12h</strong></td><td>3,901</td><td>0.0028</td><td>0.0091</td><td>+0.0001</td><td>82.3%</td><td>+0.972</td></tr>
-<tr><td><strong>24h</strong></td><td>3,889</td><td>0.0047</td><td>0.0123</td><td>+0.0002</td><td>72.7%</td><td>+0.950</td></tr>
-<tr><td><strong>48h</strong></td><td>3,865</td><td>0.0079</td><td>0.0166</td><td>+0.0004</td><td>69.8%</td><td>+0.909</td></tr>
-<tr><td><strong>72h</strong></td><td>3,841</td><td>0.0109</td><td>0.0198</td><td>+0.0006</td><td>68.6%</td><td>+0.870</td></tr>
-<tr><td><strong>168h (7d)</strong></td><td>3,745</td><td>0.0192</td><td>0.0283</td><td>+0.0014</td><td>60.9%</td><td>+0.742</td></tr>
+<tr><td>Precipitation (<code>precip_mm</code>)</td><td>8,760</td><td>0</td><td><strong>100.0%</strong></td><td>[0.0, 59.0] mm</td><td>0.07 ± 0.99 mm</td></tr>
+<tr><td>Solar Radiation (<code>solar_rad_wm2</code>)</td><td>8,760</td><td>0</td><td><strong>100.0%</strong></td><td>[0.0, 975.0] W/m²</td><td>176.16 ± 264.28 W/m²</td></tr>
+<tr><td>Air Temperature (<code>air_temp_c</code>)</td><td>8,756</td><td>4</td><td><strong>99.95%</strong></td><td>[-17.1, 39.0] °C</td><td>11.92 ± 11.48 °C</td></tr>
+<tr><td>Relative Humidity (<code>rh_percent</code>)</td><td>3,054</td><td>5,706</td><td><strong>34.86%</strong> *(65.14% missing)*</td><td>[2.0, 99.0] %</td><td>65.92 ± 20.47 %</td></tr>
     </tbody>
 </table>
 </div>
+<div class="principle"><strong>[!NOTE]</strong></div>
+<div class="principle"><strong>Relative humidity sensor data was uninstalled/unrecorded for 5,706 hours during 2023 at this specific station. Core soil moisture and precipitation channels remained operational.</strong></div>
+<h3>Tier C: Depth-Specific Soil Moisture & Soil Temperature Availability</h3>
+<div class="table-wrap">
+<table>
+    <thead>
+        <tr><th>Measurement Depth</th><th>VWC Valid Records</th><th>VWC Missing</th><th>VWC Availability %</th><th>Soil Temp Valid</th><th>Soil Temp Missing</th><th>Soil Temp Availability %</th></tr>
+    </thead>
+    <tbody>
+<tr><td><strong>5 cm Depth</strong></td><td>7,852</td><td>908</td><td><strong>89.63%</strong></td><td>8,756</td><td>4</td><td><strong>99.95%</strong></td></tr>
+<tr><td><strong>10 cm Depth</strong></td><td>8,348</td><td>412</td><td><strong>95.30%</strong></td><td>8,756</td><td>4</td><td><strong>99.95%</strong></td></tr>
+<tr><td><strong>20 cm Depth</strong></td><td>8,507</td><td>253</td><td><strong>97.11%</strong></td><td>8,756</td><td>4</td><td><strong>99.95%</strong></td></tr>
+<tr><td><strong>50 cm Depth</strong></td><td>8,691</td><td>69</td><td><strong>99.21%</strong></td><td>8,756</td><td>4</td><td><strong>99.95%</strong></td></tr>
+<tr><td><strong>100 cm Depth</strong></td><td>8,756</td><td>4</td><td><strong>99.95%</strong></td><td>8,756</td><td>4</td><td><strong>99.95%</strong></td></tr>
+    </tbody>
+</table>
+</div>
+<div class="principle"><strong>[!NOTE]</strong></div>
+<div class="principle"><strong>Topsoil moisture (5cm and 10cm) experienced ~908 hours of missing/quarantined data primarily during January–February winter soil freezing (soil temperatures down to $-5.2^\circ\text{C}$), where dielectric permittivity readings become non-representative of liquid water content.</strong></div>
+<h3>Tier D: Ingress QC & Soil-Water State Construction</h3>
+<ul><li><strong>Total Ingested Events</strong>: <code>8,760</code></li><li><strong>Quarantined Records (Isolated at Tier 1)</strong>: <code>880</code> (10.05%)</li><li><strong>Valid Root-Zone States Constructed ($\theta_{\text{rz}}$ reliable)</strong>: <code>7,826</code> (<strong>89.34%</strong> of year)</li><li><strong>Out-of-Sample Evaluation Records (H2 test split)</strong>: <code>3,913</code> valid state steps</li></ul>
 </section>
 
-        <section id="experiment-decision-ledger" class="section">
+        <section id="out-of-sample-verification-persistence-baseline-uncertainty" class="section">
             <div class="section-header">
                 <div class="section-number">06</div>
-                <h2>Experiment & Decision Ledger</h2>
+                <h2>Out-of-Sample Verification: Persistence Baseline & Uncertainty</h2>
             </div>
-<h3>6.1 Experiment Registry: EXP-20261001-001</h3>
+<h3>Execution Run: <code>RUN-20261001-152227-10fc74</code></h3>
+<ul><li><strong>Target Variable</strong>: Root-zone volumetric water content ($\theta_{\text{rz}}$ integrated across 0–100 cm profile)</li><li><strong>Model</strong>: <code>PERSISTENCE_BASELINE</code> ($v1.0.0$, $\hat{Y}_{t+h|t} = Y_t$)</li><li><strong>Splitting Strategy</strong>: Chronological Walk-Forward (Train/Calibration: Jan 1 – Jul 2, 2023; Out-of-Sample Test: Jul 2 – Dec 31, 2023)</li><li><strong>Skill Metric Definition</strong>:</li></ul>
+<div class="math-block">$$\text{Skill}_{\text{clim}} = 1 - \frac{\text{MSE}_{\text{persistence}}}{\text{MSE}_{\text{climatology}}}$$</div>
+<p>*Evaluates persistence error against a static historical climatological mean reference ($\bar{Y}_{\text{train}} = 0.228\text{ m}^3/\text{m}^3$). Against persistence itself, benchmark skill is identically 0.0.*</p>
+<div class="table-wrap">
+<table>
+    <thead>
+        <tr><th>Forecast Horizon ($h$)</th><th>Out-of-Sample Steps ($N$)</th><th>MAE ($\text{m}^3/\text{m}^3$)</th><th>RMSE ($\text{m}^3/\text{m}^3$)</th><th>MBE ($\text{m}^3/\text{m}^3$)</th><th>Empirical 80% PI Coverage</th><th>Skill vs Climatology Mean ($\text{Skill}_{\text{clim}}$)</th></tr>
+    </thead>
+    <tbody>
+<tr><td><strong>1h</strong></td><td>3,912</td><td><strong>0.0007</strong></td><td><strong>0.0024</strong></td><td>+0.0000</td><td><strong>85.5%</strong></td><td><strong>+0.998</strong></td></tr>
+<tr><td><strong>6h</strong></td><td>3,907</td><td><strong>0.0018</strong></td><td><strong>0.0065</strong></td><td>+0.0000</td><td><strong>81.9%</strong></td><td><strong>+0.986</strong></td></tr>
+<tr><td><strong>12h</strong></td><td>3,901</td><td><strong>0.0028</strong></td><td><strong>0.0091</strong></td><td>+0.0001</td><td><strong>82.3%</strong></td><td><strong>+0.972</strong></td></tr>
+<tr><td><strong>24h (1d)</strong></td><td>3,889</td><td><strong>0.0047</strong></td><td><strong>0.0123</strong></td><td>+0.0002</td><td><strong>72.7%</strong></td><td><strong>+0.950</strong></td></tr>
+<tr><td><strong>48h (2d)</strong></td><td>3,865</td><td><strong>0.0079</strong></td><td><strong>0.0166</strong></td><td>+0.0004</td><td><strong>69.8%</strong></td><td><strong>+0.909</strong></td></tr>
+<tr><td><strong>72h (3d)</strong></td><td>3,841</td><td><strong>0.0109</strong></td><td><strong>0.0198</strong></td><td>+0.0006</td><td><strong>68.6%</strong></td><td><strong>+0.870</strong></td></tr>
+<tr><td><strong>168h (7d)</strong></td><td>3,745</td><td><strong>0.0192</strong></td><td><strong>0.0283</strong></td><td>+0.0014</td><td><strong>60.9%</strong></td><td><strong>+0.742</strong></td></tr>
+    </tbody>
+</table>
+</div>
+<h3>Scientific Finding on Uncertainty Calibration:</h3>
+<ul><li><strong>Lead Times $\le 12\text{ hours}$</strong>: Empirical prediction intervals achieve nominal 80% coverage (82.3% – 85.5%), confirming that residual variance calibrated on H1 is sufficient for short-term persistence.</li><li><strong>Lead Times $\ge 24\text{ hours}$</strong>: Empirical coverage drops below nominal ($72.7\%$ at 24h, $60.9\%$ at 168h). This occurs because summer convective rainfall and rapid crop evapotranspiration introduce non-stationary variance expansion that static historical quantiles under-estimate.</li><li><strong>Conclusion</strong>: Documented strictly as an <strong>empirical test finding</strong>. Universal uncertainty calibration is <strong>not</strong> claimed; Phase 2 dynamic models must condition uncertainty on forecast atmospheric demand ($ET_0$) and precipitation.</li></ul>
+</section>
+
+        <section id="experiment-registry" class="section">
+            <div class="section-header">
+                <div class="section-number">07</div>
+                <h2>Experiment Registry</h2>
+            </div>
+<h3>EXP-20261001-001: Baseline Vertical Slice</h3>
 <pre><code>Experiment ID: EXP-20261001-001
 Date: 2026-10-01
 Investigator: Antigravity
@@ -621,16 +684,14 @@ Observed Metrics:
   - MAE (1h): 0.0007 m3/m3 | RMSE (1h): 0.0024 m3/m3 | 80% PICP: 85.5%
   - MAE (24h): 0.0047 m3/m3 | RMSE (24h): 0.0123 m3/m3 | 80% PICP: 72.7%
   - MAE (168h): 0.0192 m3/m3 | RMSE (168h): 0.0283 m3/m3 | 80% PICP: 60.9%
-  - Skill Score vs Mean: +0.998 (1h), +0.950 (24h), +0.742 (168h)
+  - Skill Score vs Climatology Mean: +0.998 (1h), +0.950 (24h), +0.742 (168h)
 Decision / Conclusion: ACCEPTED as the mandatory empirical benchmark baseline for Phase 1.
 Artefact Path: runs/RUN-20261001-152227-10fc74/summary.json</code></pre>
-<h3>6.2 Status Transition Log</h3>
-<ul><li><strong>2026-09-30:</strong> Initialized evidence framework. Schemas, contract, implementation plan, and baseline architecture defined under <code>DECIDED</code> and <code>IMPLEMENTED</code> statuses. Zero empirical claims marked as <code>VALIDATED</code> prior to verifiable test execution.</li><li><strong>2026-10-01:</strong> Executed Phase 1 Minimum Reproducible Vertical Slice on real 2023 USCRN telemetry. Verified 28 unit/integration tests (<code>TESTED</code>), completed comprehensive data audit on 8,760 hourly records, and recorded empirical persistence benchmark metrics in the master matrix.</li></ul>
 </section>
 
         <footer class="footer">
             CA-ENG // Agri Telemetry &amp; Forecasting Platform<br>
-            Evidence & Validation Framework &nbsp;&bull;&nbsp; Last Edited: October 1, 2026 &nbsp;&bull;&nbsp; Status: ACTIVE
+            Evidence & Validation Framework &nbsp;&bull;&nbsp; Last Edited: October 2, 2026 &nbsp;&bull;&nbsp; Status: ACTIVE
         </footer>
     </main>
 </body>
