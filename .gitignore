@@ -56,9 +56,15 @@ Thumbs.db
 *.log
 scratch/
 
+# Database & Local Binary Storage
+*.db
+*.sqlite
+*.sqlite3
+
 # Agent Guidelines & Internal Reference Scaffolding
 _agy_reference/
 *Agents.md*
 *agents.md*
 3. Agents.md/
 Agents/
+
