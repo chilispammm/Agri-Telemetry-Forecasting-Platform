@@ -15,18 +15,22 @@ from agri_telemetry.decision.taxonomy import PhysicalDeviationType
 
 @dataclass
 class PhysicalDeviationConfig:
-    """Configurable thresholds for physical deviation detection."""
-    max_forecast_residual: float = 0.020        # m3/m3 residual threshold for 1-hour forecast
-    max_hourly_drying_rate: float = 0.025       # m3/m3/hr max physical drying rate without drainage
-    min_unexplained_wetting_delta: float = 0.015 # m3/m3/hr wetting threshold without rain
-    precip_tolerance_mm: float = 0.2            # mm rain threshold below which wetting is unexplained
-    deep_inversion_delta: float = 0.015         # m3/m3/hr deep sensor jump without shallow wetting
+    """
+    Configurable operational thresholds for physical deviation detection.
+    These values represent domain-informed heuristics and site-calibrated rules,
+    not universal physical constants.
+    """
+    max_forecast_residual: float = 0.020        # m3/m3 configured residual threshold for 1-hour forecast
+    max_hourly_drying_rate: float = 0.025       # m3/m3/hr configured operational drying rate limit
+    min_unexplained_wetting_delta: float = 0.015 # m3/m3/hr configured wetting threshold without rain
+    precip_tolerance_mm: float = 0.2            # mm rain tolerance below which wetting is flagged for review
+    deep_inversion_delta: float = 0.015         # m3/m3/hr deep sensor wetting heuristic without shallow wetting
 
 
 class PhysicalDeviationDetector:
     """
-    Evaluates physical consistency of incoming soil-water telemetry against physical laws
-    and prior forecast expectations.
+    Evaluates physical consistency of incoming soil-water telemetry against domain-informed
+    heuristics, mass-balance expectations, and prior-step forecast baselines.
     """
 
     def __init__(self, config: Optional[PhysicalDeviationConfig] = None):

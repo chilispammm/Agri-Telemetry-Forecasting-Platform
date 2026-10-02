@@ -26,8 +26,8 @@ We must decide:
 
 1. **Establish a 3-Tier Anomaly & Isolation Boundary**:
    - **Tier 1 (Data-Quality Anomalies):** Handled by Tier-1 QC and Quarantine. Quarantined states are strictly isolated from the state builder and forecasting pipeline, guaranteeing a **100% mathematical barrier against data faults leaking into agronomic risk advisories**.
-   - **Tier 2 (Physical Deviations):** Handled by `PhysicalDeviationDetector`, evaluating 1-step forecast residuals ($|y_t - \hat{y}_{t|t-1}| > 0.020\ \text{m}^3/\text{m}^3$), unphysical drying rates ($> 0.025\ \text{m}^3/\text{m}^3/\text{h}$), unexplained infiltration ($+0.015\ \text{m}^3/\text{m}^3/\text{h}$ with $P \le 0.2\text{mm}$), and hydraulic inversions.
-   - **Tier 3 (Agronomic Water Risk):** Handled by `UncertaintyAwareRiskEvaluator`, evaluating real-time depletion $D_r(t)$ and multi-horizon forward forecast trajectories against configured MAD ($D_{\text{MAD}} = 0.50$) and Wilting Proximity ($D_{\text{wilt}} = 0.85$).
+   - **Tier 2 (Physical Deviations):** Handled by `PhysicalDeviationDetector`, evaluating domain-informed operational thresholds: 1-step forecast residuals ($|y_t - \hat{y}_{t|t-1}| > 0.020\ \text{m}^3/\text{m}^3$), configured drying rate limits ($> 0.025\ \text{m}^3/\text{m}^3/\text{h}$), unmetered wetting heuristics ($+0.015\ \text{m}^3/\text{m}^3/\text{h}$ with $P \le 0.2\text{mm}$), and hydraulic depth inversions. These represent configured engineering heuristics, not universal physical constants.
+   - **Tier 3 (Agronomic Water Risk):** Handled by `UncertaintyAwareRiskEvaluator`, evaluating real-time depletion $D_r(t)$ and multi-horizon forward forecast trajectories against configured MAD ($D_{\text{MAD}} = 0.50$, configured demonstration threshold) and Wilting Proximity ($D_{\text{wilt}} = 0.85$).
 
 2. **Deploy Uncertainty-Aware Risk Certainty Classification**:
    - Categorize forecast threshold crossings into four explainable levels:
@@ -49,8 +49,8 @@ We must decide:
 ## 3. Consequences & Trade-offs
 
 ### Positive:
-- **Zero Agronomic Contamination from Corrupted Data:** Tier-1 quarantine guarantees zero false drought alarms from dead or spiking sensors (verified across all 8 synthetic scenarios).
-- **Controlled Alert Burden:** Persistence filtering suppresses transient alert flapping while maintaining confirmed detection of sustained drought events.
+- **Zero Agronomic Contamination from Corrupted Data:** Tier-1 quarantine guarantees zero false drought alarms from dead or spiking sensors (verified in 8/8 synthetic benchmark scenarios).
+- **Suppression of Transient Noise:** Persistence filtering suppresses transient alert flapping while maintaining confirmed detection of sustained drought events.
 - **Transparent Explainability:** Every emitted advisory contains explicit causality: whether it is data-quality, physical deviation, or agronomic risk, with certainty labels and persistence verification.
 
 ### Negative / Trade-offs:

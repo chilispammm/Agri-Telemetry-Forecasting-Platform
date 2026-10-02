@@ -115,9 +115,9 @@ class UncertaintyAwareRiskEvaluator:
                     current_depletion_fraction=round(state.depletion_fraction, 4),
                 ),
                 actionable_guidance=(
-                    f"CRITICAL AGRONOMIC RISK: Root-zone soil moisture depletion ({state.depletion_fraction:.1%}) "
+                    f"CRITICAL AGRONOMIC RISK ADVISORY: Root-zone soil moisture depletion ({state.depletion_fraction:.1%}) "
                     f"has breached critical wilting threshold ({self.config.critical_wilting_depletion:.1%}). "
-                    "Severe crop water stress imminent. Urgent irrigation review required."
+                    "Severe crop water stress indicated. Review field soil-water conditions."
                 ),
             )
             alerts.append(alert)
@@ -142,9 +142,9 @@ class UncertaintyAwareRiskEvaluator:
                     current_depletion_fraction=round(state.depletion_fraction, 4),
                 ),
                 actionable_guidance=(
-                    f"AGRONOMIC RISK: Root-zone depletion ({state.depletion_fraction:.1%}) has crossed "
-                    f"Management Allowable Depletion threshold ({self.config.d_mad:.1%}). "
-                    "Irrigation replenishment recommended to prevent yield penalty."
+                    f"AGRONOMIC RISK ADVISORY: Root-zone depletion ({state.depletion_fraction:.1%}) has crossed "
+                    f"configured Management Allowable Depletion threshold ({self.config.d_mad:.1%}). "
+                    "Review irrigation planning and crop water status."
                 ),
             )
             alerts.append(alert)
@@ -211,8 +211,8 @@ class UncertaintyAwareRiskEvaluator:
                         ),
                         actionable_guidance=(
                             f"EARLY RISK ADVISORY [{certainty_str}]: Depletion predicted to cross "
-                            f"{self.config.d_mad:.0%} MAD at +{h}h (P = {prob_val:.1%}). "
-                            "Prepare irrigation application schedule."
+                            f"{self.config.d_mad:.0%} MAD threshold at +{h}h (P = {prob_val:.1%}). "
+                            "Review irrigation planning and weather forecast."
                         ),
                     )
                     alerts.append(alert)
