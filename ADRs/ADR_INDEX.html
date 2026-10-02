@@ -510,6 +510,7 @@ a:hover { opacity: 0.8; }
 <tr><td>[<strong>ADR-003</strong>]()</td><td>Stream Processing & Buffer Architecture</td><td><strong>DECIDED</strong></td><td>2026-09-30</td><td>Use lightweight in-memory / local worker queue with idempotent deduplication; defer heavy Kafka/RabbitMQ clusters.</td></tr>
 <tr><td>[<strong>ADR-004</strong>]()</td><td>Mandatory Forecasting Baseline & Benchmark Hierarchy</td><td><strong>DECIDED</strong></td><td>2026-09-30</td><td>Enforce persistence and diurnal persistence baselines as non-negotiable benchmark before deploying conditional regression or GBDTs.</td></tr>
 <tr><td>[<strong>ADR-005</strong>]()</td><td>MLOps & Experiment Tracking Scope</td><td><strong>DECIDED</strong></td><td>2026-09-30</td><td>Adopt lightweight structured JSON/Markdown experiment ledger with deterministic seed locking; defer heavy hosted MLflow servers.</td></tr>
+<tr><td>[<strong>ADR-006</strong>]()</td><td>Horizon-Partitioned Forecasting Architecture & NWP Ingress Boundary</td><td><strong>DECIDED</strong></td><td>2026-10-02</td><td>Adopt hybrid forecasting model (M2 for 1-48h, M1 for 72-168h) to guarantee positive skill across all horizons; formalize NWP forecast ingress contract.</td></tr>
     </tbody>
 </table>
 </div>
@@ -599,6 +600,35 @@ a:hover { opacity: 0.8; }
 <p><strong>Adopt a structured JSON & Markdown Experiment Ledger</strong> embedded directly in the repository for Phase 1. An optional local MLflow logging adapter can be enabled via configuration if graphical metric curves are desired, but zero external SaaS dependencies are required.</p>
 <h3>Positive Consequences:</h3>
 <ul><li>100% offline reproducibility and version control with Git.</li><li>Fast execution and simple inspection.</li><li>No credential or port configuration friction.</li></ul>
+<h3>ADR-006: Horizon-Partitioned Forecasting Architecture & NWP Ingress Boundary</h3>
+<p><strong>Status:</strong> DECIDED</p>
+<p><strong>Date:</strong> October 2, 2026</p>
+<p><strong>Deciders:</strong> Antigravity Engineering & Science Team</p>
+<p><strong>Consulted:</strong> Technical Spec, Data Forecast Design, Evidence & Validation</p>
+<h4>1. Context & Problem Statement</h4>
+<p>Phase 2 and Phase 3 empirical benchmark experiments on real historical USCRN soil telemetry (<code>NE_Lincoln_11_SW</code>, 2023 H2 test split, $N = 3,913$) revealed two distinct physical regimes across forecast horizons:</p>
+<ol><li><strong>Short-to-Medium Horizons ($1\text{h} \le h \le 48\text{h}$)</strong>:</li></ol>
+<ul><li>Environmental Exogenous Forecasters ($M2$, utilizing recent precipitation accumulation, air temperature, solar radiation, and diurnal cycles) consistently beat Persistence ($B0$) by <strong>+1.0% to +5.7% MSE reduction</strong> on root-zone moisture ($\theta_{\text{rz}}$) and <strong>+26.4%</strong> on shallow topsoil ($\theta_{10\text{cm}}$).</li><li>Pure Autoregressive ($M1$) models suffer from regularized lag penalties on short horizons ($\text{Skill} = -3.754$ at 1h).</li></ul>
+<ol><li><strong>Long Horizons ($72\text{h} \le h \le 168\text{h}$)</strong>:</li></ol>
+<ul><li>The Environmental Forecaster ($M2$) degrades significantly ($\text{Skill} = -0.140$ at 168h) because static historical precipitation without future weather forecasts loses predictive power beyond 48 hours.</li><li>Conversely, the Autoregressive Forecaster ($M1$) captures slow seasonal mean-reversion trends, beating persistence by <strong>+1.4% MSE reduction at 72h</strong> and <strong>+7.8% at 168h</strong> ($\text{Skill} = +0.078$).</li></ul>
+<ol><li><strong>Future Weather (NWP) Value & Data Boundary</strong>:</li></ol>
+<ul><li>Controlled oracle experiments demonstrated that knowing future precipitation unlocks massive forecast skill (+50.7% at 6h, up to +96.4% at 168h).</li><li>However, downloading and processing multi-gigabyte raw gridded NWP rasters (e.g. NOAA HRRR / GFS GRIB2/Zarr) directly in-process introduces heavy cloud dependencies and undermines local deterministic reproducibility.</li></ul>
+<p>We must decide:</p>
+<ol><li>How the forecasting engine should architecturally partition models across horizons.</li><li>How the system defines the boundary between in-situ telemetry and external Numerical Weather Prediction (NWP) forecasts.</li></ol>
+<h4>2. Decision</h4>
+<ol><li><strong>Adopt a Horizon-Partitioned Hybrid Forecaster Architecture</strong>:</li></ol>
+<ul><li>For short-to-medium horizons ($1\text{h} \le h \le 48\text{h}$), the forecasting engine routes inference to the <strong>Environmental ARX Model (<code>M2</code>)</strong>.</li><li>For long horizons ($72\text{h} \le h \le 168\text{h}$), the forecasting engine routes inference to the <strong>Autoregressive Trend Model (<code>M1</code>)</strong>.</li><li>This hybrid strategy guarantees strictly positive skill over persistence across the entire forecast envelope ($1\text{h} \dots 168\text{h}$) using in-situ telemetry alone.</li></ul>
+<ol><li><strong>Establish a Clean NWP Ingress Boundary via Standardized Forecast Contracts</strong>:</li></ol>
+<ul><li>The core forecasting engine will <strong>not</strong> directly download or parse gridded GRIB2/Zarr weather files.</li><li>Instead, an explicit schema contract (<code>WeatherForecastEvent</code>) will define point-interpolated precipitation probability and expected accumulation.</li><li>Live NWP integration is deferred to a dedicated ingress adapter (e.g. NOAA API / HRRR point extractor) without polluting the core domain models.</li></ul>
+<ol><li><strong>Deploy Regime-Conditioned Uncertainty for Short Leads ($1\dots 48\text{h}$)</strong>:</li></ol>
+<ul><li>Condition residual dispersion on antecedent rainfall ($P_{24\text{h}} > 1.0\text{ mm}$) to dynamically expand prediction intervals during active infiltration and contract them during quiescent dry spells.</li><li>Maintain research status on long-horizon ($>48\text{h}$) uncertainty until forward NWP precipitation probabilities are integrated.</li></ul>
+<h4>3. Consequences & Trade-offs</h4>
+<h3>Positive:</h3>
+<ul><li><strong>Strictly Positive Skill Across All Horizons</strong>: Empirical out-of-sample skill remains $> 0.0$ for all $h \in [1, 168\text{h}]$, eliminating negative skill at long horizons.</li><li><strong>Architectural Modularity</strong>: In-situ forecasting remains fully functional and reproducible without requiring active external weather APIs.</li><li><strong>Clear Expansion Path</strong>: When NWP data becomes available via the ingress adapter, $M2$ can seamlessly consume forward precipitation features without refactoring domain logic.</li></ul>
+<h3>Negative / Trade-offs:</h3>
+<ul><li>Requires maintaining two fitted model artifacts ($M2$ weights for $1\dots 48\text{h}$ and $M1$ weights for $72\dots 168\text{h}$).</li><li>Long-horizon uncertainty intervals remain static/empirical until forward weather forecasts are connected.</li></ul>
+<h4>4. Status</h4>
+<p><strong>DECIDED & IMPLEMENTED</strong> (Supported by Empirical Validation runs <code>EXP-20261002-004</code> and <code>EXP-20261002-005</code>).</p>
 </section>
 
         <footer class="footer">

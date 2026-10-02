@@ -160,6 +160,22 @@ class AutoregressiveForecaster:
             )
         return predictions
 
+    def predict_vectorized(
+        self,
+        X_test: np.ndarray,
+        horizon: int,
+        min_bound: float = 0.0,
+        max_bound: float = 0.60,
+    ) -> np.ndarray:
+        """
+        Fast vectorized prediction for a matrix of test feature rows.
+        """
+        if horizon not in self._models:
+            return np.clip(X_test[:, 0], min_bound, max_bound)
+        weights, bias = self._models[horizon]
+        raw_preds = X_test @ weights + bias
+        return np.clip(raw_preds, min_bound, max_bound)
+
     def predict(
         self,
         recent_target_series: List[float],
