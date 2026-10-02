@@ -470,7 +470,7 @@ a:hover { opacity: 0.8; }
             <a href="#out-of-sample-verification-persistence-baseline-uncertainty" class="nav-item">06. Out-of-Sample Verification: Persistence Baseline & Uncertainty</a>
             <a href="#experiment-registry" class="nav-item">07. Experiment Registry</a>
             <a href="#phase-2-forecasting-experiments-benchmark-ablation-findings" class="nav-item">08. Phase 2 Forecasting Experiments — Benchmark & Ablation Findings</a>
-            <a href="#phase-3-empirical-investigation-horizon-partitioning-future-weather-nwp-value-dynamic-uncertainty-calibration" class="nav-item">09. Phase 3 Empirical Investigation: Horizon Partitioning, Future Weather (NWP) Value, & Dynamic Uncertainty Calibration</a>
+            <a href="#phase-2-follow-up-recommendation-strengthening-horizon-partitioning-dynamic-uncertainty-calibration" class="nav-item">09. Phase 2 Follow-Up: Recommendation Strengthening, Horizon Partitioning, & Dynamic Uncertainty Calibration</a>
         </nav>
     </aside>
 
@@ -890,13 +890,13 @@ flowchart LR
 <ul><li>Uncertainty bounds must transition from static empirical quantiles to dynamic variance scaling conditioned on forecast precipitation and atmospheric evaporative demand ($ET_0$).</li></ul>
 </section>
 
-        <section id="phase-3-empirical-investigation-horizon-partitioning-future-weather-nwp-value-dynamic-uncertainty-calibration" class="section">
+        <section id="phase-2-follow-up-recommendation-strengthening-horizon-partitioning-dynamic-uncertainty-calibration" class="section">
             <div class="section-header">
                 <div class="section-number">09</div>
-                <h2>Phase 3 Empirical Investigation: Horizon Partitioning, Future Weather (NWP) Value, & Dynamic Uncertainty Calibration</h2>
+                <h2>Phase 2 Follow-Up: Recommendation Strengthening, Horizon Partitioning, & Dynamic Uncertainty Calibration</h2>
             </div>
 <h3>Executive Research Summary</h3>
-<p>This investigation empirically tested the four core hypotheses emerging from Phase 2:</p>
+<p>This investigation empirically evaluated the recommendations emerging from the Phase 2 forecasting benchmark:</p>
 <ol><li><strong>Can a Horizon-Partitioned Strategy ($M2 \to 1\dots 48\text{h}$, $M1 \to 72\dots 168\text{h}$) maintain strictly positive skill over persistence across all forecast horizons?</strong></li><li><strong>Does future precipitation information (NWP) restore positive predictive skill on multi-day horizons ($72\text{h} \dots 168\text{h}$)?</strong></li><li><strong>Can dynamic, regime-conditioned uncertainty dispersion scaling ($U2$) resolve short-term under-coverage during active precipitation events?</strong></li><li><strong>Do shallow topsoil ($\theta_{10\text{cm}}$), root-zone profile ($\theta_{\text{rz}}$), and depletion fraction ($D_r$) exhibit distinct physical forecasting limits?</strong></li></ol>
 <p>All experiments were executed under strict chronological walk-forward boundaries on the untouched H2 test split (<strong>July 2 – December 31, 2023</strong>, $N = 3,913$ hourly steps) of USCRN Station <code>NE_Lincoln_11_SW</code> after training/calibrating strictly on H1.</p>
 <h3>Experiment 1: Horizon-Partitioned Hybrid Forecaster vs Persistence Baseline</h3>
@@ -947,7 +947,7 @@ xychart-beta
     line [0.057, 0.563, 0.645, 0.744, 0.774, 0.798, 0.824]
 </div>
 <h3>NWP Feasibility & Data Limitation Findings:</h3>
-<ul><li><strong>Scientific Confirmation</strong>: Future precipitation is confirmed as the single dominant physical bottleneck preventing multi-day soil moisture forecast skill. If future rainfall is known, forecast MSE is reduced by up to <strong>+96.4% over persistence</strong> at 7 days ($RMSE = 0.0119\text{ vs }0.0283$).</li><li><strong>Data Ingress Feasibility</strong>: Incorporating raw historical NWP grids (e.g. NOAA HRRR AWS Zarr / GFS GRIB2) requires multi-gigabyte spatial rasters and bilinear interpolation that exceed in-situ station boundaries.</li><li><strong>Architectural Boundary (ADR-006)</strong>: Standardized point forecast contracts (<code>WeatherForecastEvent</code>) are formalized. In-process NWP scraping is rejected; ingestion is deferred to an external adapter.</li></ul>
+<ul><li><strong>Scientific Confirmation (Oracle-Validated)</strong>: The experiment confirms the theoretical value of knowing future precipitation; it does <strong>not</strong> demonstrate the operational performance of an actual Numerical Weather Prediction (NWP) forecast product. Knowing future precipitation unlocks up to <strong>+96.4% MSE skill gain</strong> at 7 days ($RMSE = 0.0119\text{ vs }0.0283$).</li><li><strong>Data Ingress Feasibility</strong>: Incorporating raw historical NWP grids (e.g. NOAA HRRR AWS Zarr / GFS GRIB2) requires multi-gigabyte spatial rasters and bilinear interpolation that exceed in-situ station boundaries.</li><li><strong>Architectural Boundary (ADR-006)</strong>: Standardized point forecast contracts (<code>WeatherForecastEvent</code>) are formalized. In-process NWP scraping is rejected; live NWP ingestion remains future work via an external adapter.</li></ul>
 <h3>Experiment 3: Uncertainty Calibration & Dynamic Dispersion Benchmark</h3>
 <p>Four interpretable uncertainty methods were evaluated on untouched H2 ($N = 3,913$):</p>
 <ul><li><strong>$U0$ Static Empirical Quantiles</strong>: $[q_{\alpha/2}, q_{1-\alpha/2}]$ residual percentiles per horizon.</li><li><strong>$U1$ Horizon Robust Dispersion</strong>: $\pm z \cdot \text{MAD}(e_h)$ scaled standard deviation.</li><li><strong>$U2$ Regime-Conditioned Dispersion</strong>: Partitioned by antecedent rainfall ($P_{24\text{h}} > 1.0\text{mm}$) and solar evaporative demand.</li><li><strong>$U3$ Power-Law Diffusion Expansion</strong>: $\sigma(h) = \sigma_1 h^\nu$.</li></ul>
@@ -1021,8 +1021,8 @@ xychart-beta
     </thead>
     <tbody>
 <tr><td><strong>Horizon-Partitioned Forecasting ($M2 \to 1\dots 48\text{h}, M1 \to 72\dots 168\text{h}$)</strong></td><td>Core Engine</td><td><strong>EMPIRICALLY SUPPORTED</strong></td><td>Strictly positive skill over persistence across all $h \in [1, 168\text{h}]$ (+1.0% to +7.8%).</td></tr>
-<tr><td><strong>NWP Future Rain Skill Unlock Hypothesis</strong></td><td>Science Spec</td><td><strong>EMPIRICALLY SUPPORTED</strong></td><td>Oracle ablation confirms up to +96.4% MSE skill gain at 168h when future rain is known.</td></tr>
-<tr><td><strong>In-Situ Ingress Boundary Architecture (ADR-006)</strong></td><td>System Architecture</td><td><strong>DECIDED & IMPLEMENTED</strong></td><td>Raw gridded NWP isolated behind standardized forecast contract; in-situ pipeline remains leak-free.</td></tr>
+<tr><td><strong>NWP Future Rain Skill Unlock Hypothesis</strong></td><td>Science Spec</td><td><strong>ORACLE-VALIDATED / RESEARCH HYPOTHESIS SUPPORTED</strong></td><td>Oracle ablation confirms up to +96.4% MSE skill gain at 168h when future rain is known. Demonstrates value of future rain; does not evaluate operational NWP model.</td></tr>
+<tr><td><strong>In-Situ Ingress Boundary Architecture (ADR-006)</strong></td><td>System Architecture</td><td><strong>DECIDED & IMPLEMENTED</strong></td><td>Raw gridded NWP isolated behind standardized forecast contract; live NWP ingestion remains future work.</td></tr>
 <tr><td><strong>Dynamic Regime Uncertainty ($U2$) for $1\dots 48\text{h}$</strong></td><td>Uncertainty Engine</td><td><strong>PARTIALLY SUPPORTED</strong></td><td>Resolves wet infiltration under-coverage (+4.4% coverage gain at 6h) with adaptive widths.</td></tr>
 <tr><td><strong>Static Residual Quantiles ($U0$) for $h > 48\text{h}$</strong></td><td>Uncertainty Engine</td><td><strong>REJECTED</strong></td><td>Fails nominal 80% coverage at 7 days (60.9%) due to unobserved future storm arrivals.</td></tr>
 <tr><td><strong>Long-Horizon ($>48\text{h}$) NWP-Conditioned Calibration</strong></td><td>Research Track</td><td><strong>RESEARCHING</strong></td><td>Requires forward NWP precipitation probabilities to achieve calibrated multi-day prediction intervals.</td></tr>

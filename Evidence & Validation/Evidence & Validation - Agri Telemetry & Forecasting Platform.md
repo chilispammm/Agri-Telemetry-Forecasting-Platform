@@ -408,11 +408,11 @@ $$\text{Skill}_{\text{vs\_persistence}} = 1 - \frac{\text{MSE}_{\text{model}}}{\
 
 ---
 
-## 9. Phase 3 Empirical Investigation: Horizon Partitioning, Future Weather (NWP) Value, & Dynamic Uncertainty Calibration
+## 9. Phase 2 Follow-Up: Recommendation Strengthening, Horizon Partitioning, & Dynamic Uncertainty Calibration
 
 ### Executive Research Summary
 
-This investigation empirically tested the four core hypotheses emerging from Phase 2:
+This investigation empirically evaluated the recommendations emerging from the Phase 2 forecasting benchmark:
 1. **Can a Horizon-Partitioned Strategy ($M2 \to 1\dots 48\text{h}$, $M1 \to 72\dots 168\text{h}$) maintain strictly positive skill over persistence across all forecast horizons?**
 2. **Does future precipitation information (NWP) restore positive predictive skill on multi-day horizons ($72\text{h} \dots 168\text{h}$)?**
 3. **Can dynamic, regime-conditioned uncertainty dispersion scaling ($U2$) resolve short-term under-coverage during active precipitation events?**
@@ -468,9 +468,9 @@ xychart-beta
 ```
 
 ### NWP Feasibility & Data Limitation Findings:
-- **Scientific Confirmation**: Future precipitation is confirmed as the single dominant physical bottleneck preventing multi-day soil moisture forecast skill. If future rainfall is known, forecast MSE is reduced by up to **+96.4% over persistence** at 7 days ($RMSE = 0.0119\text{ vs }0.0283$).
+- **Scientific Confirmation (Oracle-Validated)**: The experiment confirms the theoretical value of knowing future precipitation; it does **not** demonstrate the operational performance of an actual Numerical Weather Prediction (NWP) forecast product. Knowing future precipitation unlocks up to **+96.4% MSE skill gain** at 7 days ($RMSE = 0.0119\text{ vs }0.0283$).
 - **Data Ingress Feasibility**: Incorporating raw historical NWP grids (e.g. NOAA HRRR AWS Zarr / GFS GRIB2) requires multi-gigabyte spatial rasters and bilinear interpolation that exceed in-situ station boundaries.
-- **Architectural Boundary (ADR-006)**: Standardized point forecast contracts (`WeatherForecastEvent`) are formalized. In-process NWP scraping is rejected; ingestion is deferred to an external adapter.
+- **Architectural Boundary (ADR-006)**: Standardized point forecast contracts (`WeatherForecastEvent`) are formalized. In-process NWP scraping is rejected; live NWP ingestion remains future work via an external adapter.
 
 ---
 
@@ -538,8 +538,8 @@ Four interpretable uncertainty methods were evaluated on untouched H2 ($N = 3,91
 | Recommendation / Hypothesis | Target Scope | Evaluated Status | Empirical Justification |
 | :--- | :--- | :--- | :--- |
 | **Horizon-Partitioned Forecasting ($M2 \to 1\dots 48\text{h}, M1 \to 72\dots 168\text{h}$)** | Core Engine | **EMPIRICALLY SUPPORTED** | Strictly positive skill over persistence across all $h \in [1, 168\text{h}]$ (+1.0% to +7.8%). |
-| **NWP Future Rain Skill Unlock Hypothesis** | Science Spec | **EMPIRICALLY SUPPORTED** | Oracle ablation confirms up to +96.4% MSE skill gain at 168h when future rain is known. |
-| **In-Situ Ingress Boundary Architecture (ADR-006)** | System Architecture | **DECIDED & IMPLEMENTED** | Raw gridded NWP isolated behind standardized forecast contract; in-situ pipeline remains leak-free. |
+| **NWP Future Rain Skill Unlock Hypothesis** | Science Spec | **ORACLE-VALIDATED / RESEARCH HYPOTHESIS SUPPORTED** | Oracle ablation confirms up to +96.4% MSE skill gain at 168h when future rain is known. Demonstrates value of future rain; does not evaluate operational NWP model. |
+| **In-Situ Ingress Boundary Architecture (ADR-006)** | System Architecture | **DECIDED & IMPLEMENTED** | Raw gridded NWP isolated behind standardized forecast contract; live NWP ingestion remains future work. |
 | **Dynamic Regime Uncertainty ($U2$) for $1\dots 48\text{h}$** | Uncertainty Engine | **PARTIALLY SUPPORTED** | Resolves wet infiltration under-coverage (+4.4% coverage gain at 6h) with adaptive widths. |
 | **Static Residual Quantiles ($U0$) for $h > 48\text{h}$** | Uncertainty Engine | **REJECTED** | Fails nominal 80% coverage at 7 days (60.9%) due to unobserved future storm arrivals. |
 | **Long-Horizon ($>48\text{h}$) NWP-Conditioned Calibration** | Research Track | **RESEARCHING** | Requires forward NWP precipitation probabilities to achieve calibrated multi-day prediction intervals. |
