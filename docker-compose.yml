@@ -1,0 +1,37 @@
+services:
+  agri-pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agri_telemetry_pipeline
+    environment:
+      - AGRI_ENV=production
+      - AGRI_LOG_LEVEL=INFO
+      - AGRI_LOG_FORMAT=json
+      - AGRI_STREAM_BROKER=IN_MEMORY
+      - AGRI_DB_PATH=/app/data/agri_telemetry.db
+      - AGRI_RUNS_DIR=/app/runs
+    volumes:
+      - ./data:/app/data
+      - ./runs:/app/runs
+      - ./config:/app/config:ro
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "python", "-m", "agri_telemetry.cli", "show-metrics"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  redis:
+    image: redis:7-alpine
+    container_name: agri_redis_stream
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    profiles:
+      - distributed

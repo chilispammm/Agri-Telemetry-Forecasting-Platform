@@ -1,0 +1,50 @@
+name: CI Pipeline — Operational & Scientific Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-verify:
+    name: Test, Validate & Reproduce
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Code Quality & Syntax Verification
+        run: |
+          python -m py_compile $(git ls-files '*.py')
+
+      - name: Authoritative Test Suite Execution
+        run: |
+          python -m pytest -v --cov=agri_telemetry --cov-report=term-missing
+
+      - name: End-to-End Reproducibility Verification Experiment
+        run: |
+          python -m agri_telemetry.experiments.reproducibility_check
+
+      - name: Operational CLI Verification
+        run: |
+          python -m agri_telemetry.cli show-metrics
+          python -m agri_telemetry.cli audit --file data/uscrn/CRNH0203-2023-NE_Lincoln_11_SW.txt
+
+      - name: Verify Docker Container Build
+        run: |
+          docker build -t agri-telemetry:ci .

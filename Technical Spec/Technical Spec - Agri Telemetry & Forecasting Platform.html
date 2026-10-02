@@ -465,8 +465,8 @@ a:hover { opacity: 0.8; }
             <a href="#executive-summary-architectural-mission" class="nav-item">01. Executive Summary & Architectural Mission</a>
             <a href="#high-level-architecture-topology" class="nav-item">02. High-Level Architecture & Topology</a>
             <a href="#subsystem-breakdown" class="nav-item">03. Subsystem Breakdown</a>
-            <a href="#execution-runtime-persistence-strategy" class="nav-item">04. Execution Runtime & Persistence Strategy</a>
-            <a href="#failure-modes-mitigations" class="nav-item">05. Failure Modes & Mitigations</a>
+            <a href="#execution-runtime-operational-architecture-persistence-strategy" class="nav-item">04. Execution Runtime, Operational Architecture & Persistence Strategy</a>
+            <a href="#failure-modes-fault-tolerance-mitigations" class="nav-item">05. Failure Modes, Fault Tolerance & Mitigations</a>
         </nav>
     </aside>
 
@@ -555,30 +555,32 @@ flowchart TD
 <ul><li><strong>Non-Universal Thresholds (<code>DECIDED</code>):</strong> Management Allowable Depletion ($D_{\text{MAD}}$) and risk probability threshold ($\tau_{\text{risk}}$) are configurable parameters per crop, stage, and soil type (<strong>Rule #14</strong>).</li><li><strong>Evaluation Heuristic (<code>ASSUMPTION</code> / <code>CONFIGURABLE</code>):</strong></li><li>Exceedance probability: $\mathcal{P}_{\text{risk}}(t+h) = P(D_r(t+h) > D_{\text{MAD}} \mid \mathcal{F}_t)$.</li><li>Working baseline heuristic generates <code>AGRONOMIC_RISK</code> advisory when $\mathcal{P}_{\text{risk}} \ge \tau_{\text{risk}}$ (default: $\tau_{\text{risk}} = 0.75$, $D_{\text{MAD}} = 0.50$).</li><li><strong>Safety Enforcement (<code>DECIDED</code>):</strong> All alert events enforce <code>is_autonomous_actuation: false</code>.</li></ul>
 </section>
 
-        <section id="execution-runtime-persistence-strategy" class="section">
+        <section id="execution-runtime-operational-architecture-persistence-strategy" class="section">
             <div class="section-header">
                 <div class="section-number">04</div>
-                <h2>Execution Runtime & Persistence Strategy</h2>
+                <h2>Execution Runtime, Operational Architecture & Persistence Strategy</h2>
             </div>
-<ul><li><strong>Runtime Strategy (<code>DECIDED</code>):</strong> Self-contained Python 3.10+ package with zero required external daemons for test and baseline execution (<strong>ADR-003</strong>, <strong>ADR-005</strong>).</li><li><strong>State & Deduplication (<code>DECIDED</code>):</strong> In-memory and SQLite cache utilizing <code>event_id</code> and natural composite key $\text{SHA256}(\text{source\_id} \mathbin{\Vert} \text{event\_time} \mathbin{\Vert} \text{data\_class} \mathbin{\Vert} \text{schema\_version})$.</li><li><strong>Container Topology (<code>SUPPORTING</code> / <code>ASSUMPTION</code>):</strong> Docker Compose provided for optional local service containerization.</li></ul>
+<ul><li><strong>Configuration Management (<code>DECIDED</code> / <code>IMPLEMENTED</code>):</strong> Typed dataclass hierarchy (<code>AppConfig</code>) cleanly decoupling scientific hydraulic parameters (<code>SoilConfig</code>, <code>RiskConfig</code>, <code>ForecastingConfig</code>) from operational deployment settings (<code>StreamingConfig</code>, <code>ObservabilityConfig</code>, <code>StorageConfig</code>, <code>MLOpsConfig</code>, <code>ReliabilityConfig</code>). Supports declarative YAML profiles (<code>config/default.yaml</code>, <code>config/production.yaml</code>) with <code>AGRI_*</code> environment variable overrides (<strong>ADR-008</strong>).</li><li><strong>Operational Observability & Tracing (<code>DECIDED</code> / <code>IMPLEMENTED</code>):</strong> Structured JSON logging (<code>agri_telemetry/observability/logging.py</code>) with standard context fields (<code>correlation_id</code>, <code>run_id</code>, <code>stage</code>, <code>service</code>, <code>environment</code>), sub-millisecond stage duration tracing (<code>trace_stage</code>), and dual-domain metrics collection isolating operational throughput/latencies (p50/p90/p95/p99) from scientific forecast skill/depletion metrics (<strong>ADR-008</strong>).</li><li><strong>MLOps Lifecycle & Lineage Tracking (<code>DECIDED</code> / <code>IMPLEMENTED</code>):</strong> Unified <code>ExperimentTracker</code> (<code>agri_telemetry/mlops/experiment_tracker.py</code>) recording Git commit SHA, dataset metadata, hyperparameters, random seeds, split windows, metrics, and serialized <code>manifest.json</code> artifacts per run with pluggable MLflow adapter support (<strong>ADR-008</strong>).</li><li><strong>Event-Driven Streaming Architecture (<code>DECIDED</code> / <code>IMPLEMENTED</code>):</strong> Abstract <code>EventStreamBroker</code> interface with zero-dependency <code>InMemoryStreamBroker</code> for deterministic verification and production <code>RedisStreamBroker</code> (<code>XADD</code>, <code>XREADGROUP</code>, <code>XACK</code>). Decoupled <code>TelemetryStreamWorker</code> consumes telemetry, enforces Draft 2020-12 schema validation, builds states, generates forecasts, evaluates advisories, and publishes downstream events (<strong>ADR-008</strong>).</li><li><strong>State & Deduplication (<code>DECIDED</code> / <code>IMPLEMENTED</code>):</strong> In-memory and SQLite cache utilizing <code>event_id</code> and natural composite key $\text{SHA256}(\text{source\_id} \mathbin{\Vert} \text{event\_time} \mathbin{\Vert} \text{data\_class} \mathbin{\Vert} \text{schema\_version})$.</li><li><strong>Container Topology & CI/CD (<code>DECIDED</code> / <code>IMPLEMENTED</code>):</strong> Minimal multi-stage Python 3.11-slim container (<code>Dockerfile</code>, <code>docker-compose.yml</code>, <code>.dockerignore</code>) with non-root execution (<code>appuser:10001</code>) and automated GitHub Actions workflow (<code>.github/workflows/ci.yml</code>) enforcing code formatting, test suites, and bit-for-bit reproducibility checks (<strong>ADR-008</strong>).</li></ul>
 </section>
 
-        <section id="failure-modes-mitigations" class="section">
+        <section id="failure-modes-fault-tolerance-mitigations" class="section">
             <div class="section-header">
                 <div class="section-number">05</div>
-                <h2>Failure Modes & Mitigations</h2>
+                <h2>Failure Modes, Fault Tolerance & Mitigations</h2>
             </div>
 <div class="table-wrap">
 <table>
     <thead>
-        <tr><th>Failure Mode</th><th>Category</th><th>Detection Mechanism</th><th>Platform Mitigation</th><th>Status</th></tr>
+        <tr><th>Failure Mode</th><th>Category</th><th>Detection Mechanism</th><th>Platform Mitigation & Recovery Guarantee</th><th>Status</th></tr>
     </thead>
     <tbody>
-<tr><td><strong>Sensor Flatline / Freeze</strong></td><td>Data Quality</td><td>QC Flatline Filter ($\ge 12\text{h}$ static)</td><td>Tag <code>SUSPECT_STUCK</code>, route to dead-letter, hold prior valid state.</td><td><code>IMPLEMENTED</code></td></tr>
-<tr><td><strong>Late Packet Arrival</strong></td><td>Telemetry Ingestion</td><td><code>ingest_time - event_time &gt; tolerance</code></td><td>Route to out-of-order handler; update historical index without mutating live horizon cache.</td><td><code>IMPLEMENTED</code></td></tr>
-<tr><td><strong>Duplicate Transmission</strong></td><td>Ingestion Transport</td><td>Natural key / UUID collision</td><td>Suppress duplicate processing idempotently.</td><td><code>DECIDED</code></td></tr>
-<tr><td><strong>Temporal Data Leakage</strong></td><td>Forecasting / Features</td><td>Chronological timestamp assertion</td><td>Abort pipeline on feature timestamps $t > t_{\text{origin}}$.</td><td><code>DECIDED</code></td></tr>
-<tr><td><strong>False Agronomic Alarms</strong></td><td>Anomaly Classification</td><td>3-Tier isolation pipeline</td><td>Ingress QC failures are blocked from reaching the risk evaluator.</td><td><code>DECIDED</code></td></tr>
+<tr><td><strong>Poison / Corrupt Payload</strong></td><td>Telemetry Ingestion</td><td>JSON Schema Draft 2020-12 validator</td><td>Quarantines payload to <code>DeadLetterQueue</code> (<code>runs/dead_letter_queue.jsonl</code>) with full diagnostic exception trace; pipeline continues without stalling.</td><td><code>IMPLEMENTED</code></td></tr>
+<tr><td><strong>Duplicate Transmission</strong></td><td>Ingestion Transport</td><td>Natural key / UUID collision</td><td><code>EventDeduplicator</code> hash filter suppresses duplicate processing idempotently without state mutation.</td><td><code>IMPLEMENTED</code></td></tr>
+<tr><td><strong>Late / Inverted Packet Arrival</strong></td><td>Telemetry Ingestion</td><td><code>ingest_time - event_time &gt; tolerance</code></td><td><code>OutOfOrderSequencer</code> buffers sliding window and flushes in strict chronological <code>event_time</code> order.</td><td><code>IMPLEMENTED</code></td></tr>
+<tr><td><strong>Model Inference Failure</strong></td><td>Forecasting Engine</td><td>Model exception / inference timeout</td><td><code>ResilientForecastRouter</code> catches downstream error and safely falls back to deterministic Persistence Baseline (B0), guaranteeing advisory continuity.</td><td><code>IMPLEMENTED</code></td></tr>
+<tr><td><strong>Sensor Flatline / Freeze</strong></td><td>Data Quality</td><td>QC Flatline Filter ($\ge 12\text{h}$ static)</td><td>Tag <code>SUSPECT_STUCK</code>, route to dead-letter quarantine, hold prior valid state, emit <code>DATA_QUALITY_ALERT</code>.</td><td><code>IMPLEMENTED</code></td></tr>
+<tr><td><strong>Temporal Data Leakage</strong></td><td>Forecasting / Features</td><td>Chronological timestamp assertion</td><td>Walk-forward splits abort pipeline on feature timestamps $t > t_{\text{origin}}$.</td><td><code>IMPLEMENTED</code></td></tr>
+<tr><td><strong>False Agronomic Alarms</strong></td><td>Anomaly Classification</td><td>3-Tier isolation + Persistence filter</td><td>Ingress QC failures are blocked from reaching the risk evaluator; $k=2$ persistence suppresses transient flutter.</td><td><code>IMPLEMENTED</code></td></tr>
     </tbody>
 </table>
 </div>

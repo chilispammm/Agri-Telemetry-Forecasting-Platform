@@ -94,20 +94,26 @@ flowchart TD
 
 ---
 
-## 4. Execution Runtime & Persistence Strategy
+## 4. Execution Runtime, Operational Architecture & Persistence Strategy
 
-- **Runtime Strategy (`DECIDED`):** Self-contained Python 3.10+ package with zero required external daemons for test and baseline execution (**ADR-003**, **ADR-005**).
-- **State & Deduplication (`DECIDED`):** In-memory and SQLite cache utilizing `event_id` and natural composite key $\text{SHA256}(\text{source\_id} \mathbin{\Vert} \text{event\_time} \mathbin{\Vert} \text{data\_class} \mathbin{\Vert} \text{schema\_version})$.
-- **Container Topology (`SUPPORTING` / `ASSUMPTION`):** Docker Compose provided for optional local service containerization.
+- **Configuration Management (`DECIDED` / `IMPLEMENTED`):** Typed dataclass hierarchy (`AppConfig`) cleanly decoupling scientific hydraulic parameters (`SoilConfig`, `RiskConfig`, `ForecastingConfig`) from operational deployment settings (`StreamingConfig`, `ObservabilityConfig`, `StorageConfig`, `MLOpsConfig`, `ReliabilityConfig`). Supports declarative YAML profiles (`config/default.yaml`, `config/production.yaml`) with `AGRI_*` environment variable overrides (**ADR-008**).
+- **Operational Observability & Tracing (`DECIDED` / `IMPLEMENTED`):** Structured JSON logging (`agri_telemetry/observability/logging.py`) with standard context fields (`correlation_id`, `run_id`, `stage`, `service`, `environment`), sub-millisecond stage duration tracing (`trace_stage`), and dual-domain metrics collection isolating operational throughput/latencies (p50/p90/p95/p99) from scientific forecast skill/depletion metrics (**ADR-008**).
+- **MLOps Lifecycle & Lineage Tracking (`DECIDED` / `IMPLEMENTED`):** Unified `ExperimentTracker` (`agri_telemetry/mlops/experiment_tracker.py`) recording Git commit SHA, dataset metadata, hyperparameters, random seeds, split windows, metrics, and serialized `manifest.json` artifacts per run with pluggable MLflow adapter support (**ADR-008**).
+- **Event-Driven Streaming Architecture (`DECIDED` / `IMPLEMENTED`):** Abstract `EventStreamBroker` interface with zero-dependency `InMemoryStreamBroker` for deterministic verification and production `RedisStreamBroker` (`XADD`, `XREADGROUP`, `XACK`). Decoupled `TelemetryStreamWorker` consumes telemetry, enforces Draft 2020-12 schema validation, builds states, generates forecasts, evaluates advisories, and publishes downstream events (**ADR-008**).
+- **State & Deduplication (`DECIDED` / `IMPLEMENTED`):** In-memory and SQLite cache utilizing `event_id` and natural composite key $\text{SHA256}(\text{source\_id} \mathbin{\Vert} \text{event\_time} \mathbin{\Vert} \text{data\_class} \mathbin{\Vert} \text{schema\_version})$.
+- **Container Topology & CI/CD (`DECIDED` / `IMPLEMENTED`):** Minimal multi-stage Python 3.11-slim container (`Dockerfile`, `docker-compose.yml`, `.dockerignore`) with non-root execution (`appuser:10001`) and automated GitHub Actions workflow (`.github/workflows/ci.yml`) enforcing code formatting, test suites, and bit-for-bit reproducibility checks (**ADR-008**).
 
 ---
 
-## 5. Failure Modes & Mitigations
+## 5. Failure Modes, Fault Tolerance & Mitigations
 
-| Failure Mode | Category | Detection Mechanism | Platform Mitigation | Status |
-| :--- | :--- | :--- | :--- | :--- |
-| **Sensor Flatline / Freeze** | Data Quality | QC Flatline Filter ($\ge 12\text{h}$ static) | Tag `SUSPECT_STUCK`, route to dead-letter, hold prior valid state. | `IMPLEMENTED` |
-| **Late Packet Arrival** | Telemetry Ingestion | `ingest_time - event_time > tolerance` | Route to out-of-order handler; update historical index without mutating live horizon cache. | `IMPLEMENTED` |
-| **Duplicate Transmission** | Ingestion Transport | Natural key / UUID collision | Suppress duplicate processing idempotently. | `DECIDED` |
-| **Temporal Data Leakage** | Forecasting / Features | Chronological timestamp assertion | Abort pipeline on feature timestamps $t > t_{\text{origin}}$. | `DECIDED` |
-| **False Agronomic Alarms** | Anomaly Classification | 3-Tier isolation pipeline | Ingress QC failures are blocked from reaching the risk evaluator. | `DECIDED` |
+| Failure Mode | Category | Detection Mechanism | Platform Mitigation & Recovery Guarantee | Status |
+| :--- | :--- | :--- | :--- | :---: |
+| **Poison / Corrupt Payload** | Telemetry Ingestion | JSON Schema Draft 2020-12 validator | Quarantines payload to `DeadLetterQueue` (`runs/dead_letter_queue.jsonl`) with full diagnostic exception trace; pipeline continues without stalling. | `IMPLEMENTED` |
+| **Duplicate Transmission** | Ingestion Transport | Natural key / UUID collision | `EventDeduplicator` hash filter suppresses duplicate processing idempotently without state mutation. | `IMPLEMENTED` |
+| **Late / Inverted Packet Arrival** | Telemetry Ingestion | `ingest_time - event_time > tolerance` | `OutOfOrderSequencer` buffers sliding window and flushes in strict chronological `event_time` order. | `IMPLEMENTED` |
+| **Model Inference Failure** | Forecasting Engine | Model exception / inference timeout | `ResilientForecastRouter` catches downstream error and safely falls back to deterministic Persistence Baseline (B0), guaranteeing advisory continuity. | `IMPLEMENTED` |
+| **Sensor Flatline / Freeze** | Data Quality | QC Flatline Filter ($\ge 12\text{h}$ static) | Tag `SUSPECT_STUCK`, route to dead-letter quarantine, hold prior valid state, emit `DATA_QUALITY_ALERT`. | `IMPLEMENTED` |
+| **Temporal Data Leakage** | Forecasting / Features | Chronological timestamp assertion | Walk-forward splits abort pipeline on feature timestamps $t > t_{\text{origin}}$. | `IMPLEMENTED` |
+| **False Agronomic Alarms** | Anomaly Classification | 3-Tier isolation + Persistence filter | Ingress QC failures are blocked from reaching the risk evaluator; $k=2$ persistence suppresses transient flutter. | `IMPLEMENTED` |
+

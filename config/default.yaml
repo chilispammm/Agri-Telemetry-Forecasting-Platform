@@ -1,0 +1,61 @@
+# Default Configuration for Agri Telemetry & Forecasting Platform
+station_id: "USCRN_NE_Lincoln_11_SW"
+site_id: "FIELD_LINCOLN_01"
+
+soil:
+  theta_fc: 0.33
+  theta_wp: 0.13
+  theta_sat: 0.45
+  root_zone_depth_cm: 100.0
+  layer_depths_cm: [5, 10, 20, 50, 100]
+  layer_weights: [0.075, 0.075, 0.20, 0.35, 0.30]
+
+risk:
+  d_mad: 0.50
+  d_wilt: 0.85
+  tau_risk: 0.70
+  action_horizon_hours: 24
+
+forecasting:
+  horizons: [1, 6, 12, 24, 48, 72, 168]
+  target_variable: "volumetric_water_content"
+  model_strategy: "HORIZON_PARTITIONED"
+  uncertainty_method: "REGIME_CONDITIONED"
+  random_seed: 42
+
+streaming:
+  broker_type: "IN_MEMORY"
+  redis_host: "localhost"
+  redis_port: 6379
+  redis_db: 0
+  telemetry_stream: "stream:telemetry"
+  forecast_stream: "stream:forecasts"
+  alert_stream: "stream:alerts"
+  consumer_group: "agri_workers"
+  batch_size: 100
+
+observability:
+  log_level: "INFO"
+  log_format: "json"
+  service_name: "agri-telemetry-platform"
+  environment: "development"
+  enable_metrics: true
+  metrics_port: 9090
+
+storage:
+  db_path: "data/agri_telemetry.db"
+  runs_dir: "runs"
+  ledger_file: "runs/evidence_ledger.md"
+
+mlops:
+  tracking_enabled: true
+  tracking_backend: "LOCAL_LEDGER"
+  mlflow_tracking_uri: "file:./runs/mlruns"
+  experiment_name: "agri-telemetry-forecasting"
+
+reliability:
+  max_retries: 3
+  retry_backoff_sec: 1.0
+  dlq_enabled: true
+  fallback_to_persistence: true
+  persistence_filter_mode: "CONSECUTIVE_2"

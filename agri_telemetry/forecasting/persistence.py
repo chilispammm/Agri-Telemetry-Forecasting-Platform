@@ -30,7 +30,7 @@ class PersistenceModel:
     def predict(
         self,
         current_value: float,
-        origin_time: datetime,
+        origin_time: Optional[datetime] = None,
         unit: str = "m3/m3",
         min_bound: float = 0.0,
         max_bound: float = 0.60,
@@ -39,9 +39,11 @@ class PersistenceModel:
         Generates persistence point forecasts and calibrated prediction intervals for all horizons.
         """
         predictions: List[ForecastHorizonPrediction] = []
+        orig = origin_time or datetime.utcnow()
 
         for h in self.horizons:
-            valid_dt = origin_time + timedelta(hours=h)
+            valid_dt = orig + timedelta(hours=h)
+
             point = float(current_value)
 
             quantiles = self.calibrator.calculate_quantiles(

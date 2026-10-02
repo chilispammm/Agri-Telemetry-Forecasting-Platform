@@ -78,3 +78,19 @@ def assert_valid_payload(schema_key: str, payload: Dict[str, Any]) -> None:
         raise jsonschema.ValidationError(
             f"Schema validation failed for '{schema_key}':\n" + "\n".join(f" - {e}" for e in errors)
         )
+
+
+def validate_telemetry_event(payload: Dict[str, Any]) -> Tuple[bool, List[str]]:
+    """Validates payload against telemetry-event Draft 2020-12 schema."""
+    return validate_payload("telemetry", payload)
+
+
+def validate_forecast_event(payload: Dict[str, Any]) -> Tuple[bool, List[str]]:
+    """Validates payload against forecast-event Draft 2020-12 schema."""
+    return validate_payload("forecast", payload)
+
+
+def validate_alert_event(payload: Dict[str, Any]) -> Tuple[bool, List[str]]:
+    """Validates payload against alert-event Draft 2020-12 schema."""
+    return validate_payload("alert", payload)
+

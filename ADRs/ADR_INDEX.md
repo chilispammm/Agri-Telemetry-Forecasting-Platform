@@ -30,3 +30,5 @@ Every architectural decision that materially impacts system behavior, data integ
 | [**ADR-005**]() | MLOps & Experiment Tracking Scope | **DECIDED** | 2026-09-30 | Adopt lightweight structured JSON/Markdown experiment ledger with deterministic seed locking; defer heavy hosted MLflow servers. |
 | [**ADR-006**]() | Horizon-Partitioned Forecasting Architecture & NWP Ingress Boundary | **DECIDED** | 2026-10-02 | Adopt hybrid forecasting model (M2 for 1-48h, M1 for 72-168h) to guarantee positive skill across all horizons; formalize NWP forecast ingress contract. |
 | [**ADR-007**]() | Operational Anomaly Taxonomy, Multi-Horizon Water Risk Evaluation, and Alert Persistence Filter Architecture | **DECIDED** | 2026-10-02 | Establish 3-tier anomaly isolation boundary, uncertainty-aware risk certainty levels, and stateful persistence filtering to suppress false alarms. |
+| [**ADR-008**]() | Phase 4 Operational Architecture, Containerisation, Observability, and Stream Processing | **DECIDED** | 2026-10-02 | Establish unified configuration hierarchy, dual-domain metrics, structured tracing, MLOps lineage tracking, streaming broker workers, and DLQ resilience. |
+
