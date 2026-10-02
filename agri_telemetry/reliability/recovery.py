@@ -100,8 +100,11 @@ class OutOfOrderSequencer:
         self._buffer.append(event_dict)
 
     def flush_sorted(self) -> List[Dict[str, Any]]:
-        """Sorts buffer by event_time and flushes."""
-        sorted_events = sorted(self._buffer, key=lambda x: x.get("event_time", ""))
+        """Sorts buffer by event_time (or timestamp_utc) and flushes."""
+        sorted_events = sorted(
+            self._buffer,
+            key=lambda x: str(x.get("event_time") or x.get("timestamp_utc") or "")
+        )
         self._buffer.clear()
         return sorted_events
 

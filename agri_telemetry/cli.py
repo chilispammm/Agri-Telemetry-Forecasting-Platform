@@ -137,6 +137,89 @@ def reproducibility_cmd(args: argparse.Namespace) -> None:
         sys.exit(1)
 
 
+def run_phase5_cmd(args: argparse.Namespace) -> None:
+    print("================================================================================")
+    print("AGRI TELEMETRY & FORECASTING PLATFORM — PHASE 5 MULTI-SITE & EXTERNAL VALIDATION")
+    print("================================================================================")
+    from agri_telemetry.experiments.multisite_evaluation import MultiSiteEvaluator
+    from agri_telemetry.experiments.robustness_analysis import RobustnessAnalyzer
+
+    evaluator = MultiSiteEvaluator()
+    report = evaluator.run_multi_site_benchmark()
+
+    print("\n--------------------------------------------------------------------------------")
+    print("OUT-OF-SITE FORECAST & UNCERTAINTY VERIFICATION SUMMARY")
+    print("--------------------------------------------------------------------------------")
+    print(f"{'Station':<24} {'Climate Regime':<28} {'6h MSE Skill':<14} {'6h U2 Cov':<12} {'Outcome':<18}")
+    for stn, res in report.site_results.items():
+        h6 = res.horizon_metrics[6]
+        skill_str = f"{h6.m2_mse_skill*100:+.1f}%"
+        cov_str = f"{h6.u2_coverage_80*100:.1f}%"
+        print(f"{stn:<24} {res.climate_regime:<28} {skill_str:<14} {cov_str:<12} {res.generalisation_outcome:<18}")
+
+    print("\n--------------------------------------------------------------------------------")
+    print("ADVISORY TRANSFER & EPISODE GROUPING (G=6h Window)")
+    print("--------------------------------------------------------------------------------")
+    print(f"{'Station':<24} {'Total Records':<15} {'Raw Alerts':<12} {'Episodes (G=6h)':<18} {'Compression %':<15}")
+    for stn, res in report.site_results.items():
+        adm = res.advisory_metrics
+        print(f"{stn:<24} {adm.total_records:<15,} {adm.raw_alerts:<12,} {adm.episodes_g6h:<18} {adm.compression_pct:<15.1f}%")
+
+    print("\nRunning Robustness & Failure Analysis Suite...")
+    analyzer = RobustnessAnalyzer()
+    rob_report = analyzer.run_full_robustness_suite()
+    print(f"Robustness suite completed across {len(rob_report.packet_loss_results)} loss rates and 4 seasons.")
+    print("Results persisted to: runs/multisite_validation_report.json & runs/robustness_report.json")
+    print("================================================================================")
+
+
+def mqtt_simulate_cmd(args: argparse.Namespace) -> None:
+    print("================================================================================")
+    print("AGRI TELEMETRY & FORECASTING PLATFORM — ESP32 MQTT TELEMETRY SIMULATION")
+    print("================================================================================")
+    from datetime import datetime, timezone, timedelta
+    from agri_telemetry.simulation.esp32_simulator import ESP32TelemetrySimulator
+    from agri_telemetry.streaming.mqtt_adapter import MQTTTelemetryIngestAdapter
+    from agri_telemetry.streaming.broker import InMemoryStreamBroker
+    from agri_telemetry.streaming.worker import TelemetryStreamWorker
+
+    broker = InMemoryStreamBroker()
+    adapter = MQTTTelemetryIngestAdapter(broker=broker)
+    worker = TelemetryStreamWorker(broker=broker)
+
+    simulator = ESP32TelemetrySimulator(
+        device_id=args.device_id,
+        site_id=args.site_id,
+        random_seed=args.seed,
+    )
+
+    print(f"Device ID:     {args.device_id}")
+    print(f"Site ID:       {args.site_id}")
+    print(f"Packets:       {args.packets}")
+    print(f"Data Label:    SIMULATED_REPLAY (Explicit simulated provenance)")
+    print("--------------------------------------------------------------------------------")
+
+    start_t = datetime.now(timezone.utc)
+    for i in range(args.packets):
+        pkt = simulator.generate_packet(event_time=start_t + timedelta(hours=i))
+        msg_id = adapter.on_message(
+            topic=f"agri/telemetry/simulated/{args.site_id}/{args.device_id}",
+            payload_bytes=json.dumps(pkt).encode("utf-8"),
+        )
+        if i % 10 == 0 or i == args.packets - 1:
+            print(f"  [MQTT Ingest] Packet {i+1}/{args.packets} published -> Msg ID: {msg_id}")
+
+    # Process via worker
+    batch_res = worker.process_batch(batch_size=args.packets)
+    print("--------------------------------------------------------------------------------")
+    print(f"Worker Ingested:        {batch_res.events_processed}")
+    print(f"Valid States Built:     {batch_res.valid_states_built}")
+    print(f"Forecasts Emitted:      {batch_res.forecasts_emitted}")
+    print(f"Advisories Emitted:     {batch_res.advisories_emitted}")
+    print(f"DLQ Quarantined:        {batch_res.dlq_quarantined}")
+    print("================================================================================")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="agri-telemetry",
@@ -194,6 +277,17 @@ def main() -> None:
         help="Path to USCRN hourly data file",
     )
 
+    # run-phase5 / evaluate-multisite
+    p5_parser = subparsers.add_parser("run-phase5", help="Run Phase 5 multi-site generalisation and external validation")
+    p5_parser.add_argument("--seed", type=int, default=42, help="Random seed")
+    subparsers.add_parser("evaluate-multisite", help="Alias for run-phase5")
+
+    # mqtt-simulate
+    mqtt_parser = subparsers.add_parser("mqtt-simulate", help="Run simulated ESP32 edge telemetry ingress over MQTT")
+    mqtt_parser.add_argument("--device-id", default="ESP32-AGRI-NODE-001", help="Device identifier")
+    mqtt_parser.add_argument("--site-id", default="FIELD_SIM_01", help="Site identifier")
+    mqtt_parser.add_argument("--packets", type=int, default=48, help="Number of hourly packets to simulate")
+    mqtt_parser.add_argument("--seed", type=int, default=42, help="Random seed")
 
     args = parser.parse_args()
     if args.command == "run-phase1":
@@ -206,6 +300,10 @@ def main() -> None:
         show_metrics_cmd(args)
     elif args.command == "reproducibility-check":
         reproducibility_cmd(args)
+    elif args.command in ("run-phase5", "evaluate-multisite"):
+        run_phase5_cmd(args)
+    elif args.command == "mqtt-simulate":
+        mqtt_simulate_cmd(args)
     else:
         parser.print_help()
 

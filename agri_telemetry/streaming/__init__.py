@@ -12,6 +12,10 @@ from agri_telemetry.streaming.worker import (
     TelemetryStreamWorker,
     WorkerBatchResult,
 )
+from agri_telemetry.streaming.mqtt_adapter import (
+    MQTTTelemetryIngestAdapter,
+    MQTTMessage,
+)
 
 __all__ = [
     "EventStreamBroker",
@@ -20,4 +24,6 @@ __all__ = [
     "StreamMessage",
     "TelemetryStreamWorker",
     "WorkerBatchResult",
+    "MQTTTelemetryIngestAdapter",
+    "MQTTMessage",
 ]
