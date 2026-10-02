@@ -1238,7 +1238,7 @@ pie title "Risk Episodes Distribution (G=6h Window, N=172 Episodes)"
                 <div class="section-number">12</div>
                 <h2>Phase 4 Operational Architecture, Containerisation, Observability, and MLOps Verification Evidence</h2>
             </div>
-<p>Phase 4 operationalises the validated scientific forecasting and decision-support pipeline into a production-grade, observable, resilient, and containerised system adhering strictly to the principle: *"Build the evidence before building the complexity. What concrete engineering problem does this solve?"*</p>
+<p>Phase 4 operationalises the validated scientific forecasting and decision-support pipeline into an observable, resilient, and containerised engineering system adhering strictly to the principle: *"Build the evidence before building the complexity. What concrete engineering problem does this solve?"* Phase 4 is operationally packaged and locally verified; production deployment and field-scale operational validation remain outside the current evidence base.</p>
 <h3>12.1 Configuration Hierarchy & Decoupling Verification</h3>
 <div class="table-wrap">
 <table>
@@ -1317,7 +1317,7 @@ flowchart LR
     </thead>
     <tbody>
 <tr><td><strong><code>InMemoryStreamBroker</code></strong></td><td>Thread-safe in-memory stream buffer with consumer groups, offsets, and replay support.</td><td>Verified pub-sub and offset tracking in unit tests.</td><td><strong>VERIFIED</strong></td></tr>
-<tr><td><strong><code>RedisStreamBroker</code></strong></td><td>Production Redis Streams utilizing <code>XADD</code>, <code>XREADGROUP</code>, and <code>XACK</code>.</td><td>Validated distributed streaming abstraction.</td><td><strong>VERIFIED</strong></td></tr>
+<tr><td><strong><code>RedisStreamBroker</code></strong></td><td>Redis Streams broker utilizing <code>XADD</code>, <code>XREADGROUP</code>, and <code>XACK</code>.</td><td>Validated distributed streaming abstraction.</td><td><strong>VERIFIED</strong></td></tr>
 <tr><td><strong><code>TelemetryStreamWorker</code></strong></td><td>Decoupled worker executing validation, state building, forecasting, and advisory emission.</td><td>Processes batches with sub-millisecond per-event throughput.</td><td><strong>VERIFIED</strong></td></tr>
 <tr><td><strong>Schema Validation Boundary</strong></td><td>Draft 2020-12 schema validation on all incoming telemetry payloads.</td><td>Malformed payloads rejected before state construction.</td><td><strong>VERIFIED</strong></td></tr>
 <tr><td><strong>Dual Timestamp Semantics</strong></td><td>Explicit preservation of <code>event_time</code> (sensor capture) vs <code>ingest_time</code> (broker receipt).</td><td>Prevents event-time leakage or pipeline clock skew.</td><td><strong>VERIFIED</strong></td></tr>
@@ -1378,13 +1378,13 @@ flowchart LR
 <tr><td><strong>Event Streaming Architecture</strong></td><td>Decoupled broker & worker pipeline with Draft 2020-12 schema validation</td><td>In-memory and Redis Streams brokers with schema validation</td><td><strong>VERIFIED</strong></td></tr>
 <tr><td><strong>Reliability & Resilience</strong></td><td>DLQ, deduplication, resequencing, fail-safe persistence fallback</td><td>All resilience mechanisms implemented and verified</td><td><strong>VERIFIED</strong></td></tr>
 <tr><td><strong>Reproducibility Verification</strong></td><td>Exact bit-for-bit equivalence across clean workspaces</td><td><code>is_reproducible: true</code>, <code>max_mae_discrepancy: 0.0</code> across 8,760 records</td><td><strong>VERIFIED</strong></td></tr>
-<tr><td><strong>Containerisation & CI/CD</strong></td><td>Production container artifacts and automated CI workflow</td><td><code>Dockerfile</code>, <code>docker-compose.yml</code>, <code>ci.yml</code> complete</td><td><strong>VERIFIED</strong></td></tr>
+<tr><td><strong>Containerisation & CI/CD</strong></td><td>Container packaging artifacts and automated CI workflow</td><td><code>Dockerfile</code>, <code>docker-compose.yml</code>, <code>ci.yml</code> complete</td><td><strong>VERIFIED</strong></td></tr>
 <tr><td><strong>Authoritative Test Suite</strong></td><td>Authoritative pytest suite passing</td><td><strong>61 passed in 70.13s</strong> across 13 test modules</td><td><strong>VERIFIED</strong></td></tr>
     </tbody>
 </table>
 </div>
 <h3><strong>FINAL PHASE 4 GATE DECISION: FREEZE</strong></h3>
-<p>Phase 4 Operationalisation & MLOps Engineering is complete, fully tested, mathematically and operationally verified, and formally <strong>FROZEN</strong>.</p>
+<p>Phase 4 Operationalisation & MLOps Engineering is complete, fully tested, mathematically and operationally verified, and formally <strong>FROZEN</strong>. Phase 4 is operationally packaged and locally verified; production deployment and field-scale operational validation remain outside the current evidence base.</p>
 </section>
 
         <footer class="footer">

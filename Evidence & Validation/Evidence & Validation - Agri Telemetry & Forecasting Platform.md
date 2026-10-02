@@ -756,7 +756,7 @@ Phase 3 is mathematically sound, empirically verified, thoroughly documented, an
 
 ## 12. Phase 4 Operational Architecture, Containerisation, Observability, and MLOps Verification Evidence
 
-Phase 4 operationalises the validated scientific forecasting and decision-support pipeline into a production-grade, observable, resilient, and containerised system adhering strictly to the principle: *"Build the evidence before building the complexity. What concrete engineering problem does this solve?"*
+Phase 4 operationalises the validated scientific forecasting and decision-support pipeline into an observable, resilient, and containerised engineering system adhering strictly to the principle: *"Build the evidence before building the complexity. What concrete engineering problem does this solve?"* Phase 4 is operationally packaged and locally verified; production deployment and field-scale operational validation remain outside the current evidence base.
 
 ---
 
@@ -827,7 +827,7 @@ flowchart LR
 | Streaming Component | Protocol / Mechanism | Verification Scope | Status |
 | :--- | :--- | :--- | :---: |
 | **`InMemoryStreamBroker`** | Thread-safe in-memory stream buffer with consumer groups, offsets, and replay support. | Verified pub-sub and offset tracking in unit tests. | **VERIFIED** |
-| **`RedisStreamBroker`** | Production Redis Streams utilizing `XADD`, `XREADGROUP`, and `XACK`. | Validated distributed streaming abstraction. | **VERIFIED** |
+| **`RedisStreamBroker`** | Redis Streams broker utilizing `XADD`, `XREADGROUP`, and `XACK`. | Validated distributed streaming abstraction. | **VERIFIED** |
 | **`TelemetryStreamWorker`** | Decoupled worker executing validation, state building, forecasting, and advisory emission. | Processes batches with sub-millisecond per-event throughput. | **VERIFIED** |
 | **Schema Validation Boundary** | Draft 2020-12 schema validation on all incoming telemetry payloads. | Malformed payloads rejected before state construction. | **VERIFIED** |
 | **Dual Timestamp Semantics** | Explicit preservation of `event_time` (sensor capture) vs `ingest_time` (broker receipt). | Prevents event-time leakage or pipeline clock skew. | **VERIFIED** |
@@ -900,13 +900,13 @@ The reproducibility verification experiment (`agri_telemetry/experiments/reprodu
 | **Event Streaming Architecture** | Decoupled broker & worker pipeline with Draft 2020-12 schema validation | In-memory and Redis Streams brokers with schema validation | **VERIFIED** |
 | **Reliability & Resilience** | DLQ, deduplication, resequencing, fail-safe persistence fallback | All resilience mechanisms implemented and verified | **VERIFIED** |
 | **Reproducibility Verification** | Exact bit-for-bit equivalence across clean workspaces | `is_reproducible: true`, `max_mae_discrepancy: 0.0` across 8,760 records | **VERIFIED** |
-| **Containerisation & CI/CD** | Production container artifacts and automated CI workflow | `Dockerfile`, `docker-compose.yml`, `ci.yml` complete | **VERIFIED** |
+| **Containerisation & CI/CD** | Container packaging artifacts and automated CI workflow | `Dockerfile`, `docker-compose.yml`, `ci.yml` complete | **VERIFIED** |
 | **Authoritative Test Suite** | Authoritative pytest suite passing | **61 passed in 70.13s** across 13 test modules | **VERIFIED** |
 
 ---
 
 ### **FINAL PHASE 4 GATE DECISION: FREEZE**
-Phase 4 Operationalisation & MLOps Engineering is complete, fully tested, mathematically and operationally verified, and formally **FROZEN**.
+Phase 4 Operationalisation & MLOps Engineering is complete, fully tested, mathematically and operationally verified, and formally **FROZEN**. Phase 4 is operationally packaged and locally verified; production deployment and field-scale operational validation remain outside the current evidence base.
 
 
 

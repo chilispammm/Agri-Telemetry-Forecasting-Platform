@@ -12,11 +12,12 @@ Phases 1 through 3 established the scientific foundation and decision-support in
 - Tier-1 quality control with physical range, delta spike, and stuck sensor quarantine
 - Multi-layer root-zone state construction and soil hydraulic depletion tracking
 - Horizon-partitioned forecasting (Environmental Vector M2 for 1–48h, Statistical Autoregression M1 for 72–168h, Persistence Baseline B0 benchmark)
-- Dynamic regime-conditioned uncertainty estimation (U2)
+- Dynamic regime-conditioned uncertainty estimation (U2: short-horizon 1–48h evidence is partially supported; >48h calibration remains research)
 - Operational anomaly disambiguation (Tier-1 QC vs Physical Deviation vs Agronomic Water Risk)
 - Multi-horizon risk evaluation with alert persistence filtering to suppress transient alarm noise while preserving non-actuating advisory safety.
 
-Phase 4 transitions this validated scientific core into a **reproducible, observable, operationally resilient, and containerised engineering system** suited for production deployment. In accordance with the governing project principle (*"Build the evidence before building the complexity; What concrete engineering problem does this solve?"*), every operational component was introduced to address a specific production reliability, observability, or lifecycle requirement.
+Phase 4 transitions this validated scientific core into a **reproducible, observable, operationally resilient, and containerised engineering system**. Phase 4 is operationally packaged and locally verified; production deployment and field-scale operational validation remain outside the current evidence base. In accordance with the governing project principle (*"Build the evidence before building the complexity; What concrete engineering problem does this solve?"*), every operational component was introduced to address a specific reliability, observability, or lifecycle requirement.
+
 
 ---
 
@@ -52,7 +53,7 @@ We adopted a typed dataclass hierarchy (`AppConfig`) with clear separation of do
 - **Abstract Broker Interface:** Defined `EventStreamBroker` protocol with standard `publish`, `consume`, `acknowledge`, `replay`, and `reset` contracts.
 - **In-Memory & Redis Implementations:**
   - `InMemoryStreamBroker`: Zero-dependency, thread-safe, deterministic stream broker for unit testing, offline batch backtesting, and reproducibility verification.
-  - `RedisStreamBroker`: Production-ready distributed stream broker utilizing Redis Streams (`XADD`, `XREADGROUP`, `XACK`) with consumer group scaling.
+  - `RedisStreamBroker`: Distributed stream broker utilizing Redis Streams (`XADD`, `XREADGROUP`, `XACK`) with consumer group scaling.
 - **Stream Worker (`TelemetryStreamWorker`):** Decoupled worker consuming from `stream:telemetry`, executing Tier-1 QC and state construction, invoking forecast engines, evaluating advisories, and publishing to `stream:forecasts` and `stream:alerts`.
 
 ### 5. Reliability, Fault Tolerance & Graceful Degradation (`agri_telemetry.reliability.recovery`)
@@ -71,7 +72,7 @@ We adopted a typed dataclass hierarchy (`AppConfig`) with clear separation of do
 
 ### Positive
 - **Deterministic Reproducibility:** Verified zero discrepancy across independent runs on real historical data (`max_mae_discrepancy: 0.0`).
-- **Production Readiness:** Full observability into processing latencies, error states, and model performance.
+- **Operational Observability & Local Verification:** Full observability into processing latencies, error states, and model performance.
 - **Fail-Safe Operation:** Telemetry streams cannot be stalled by poison messages; forecasting failures degrade gracefully to persistence.
 - **Zero Cloud Lock-in:** The system runs identically in local Python environments, Docker containers, or distributed streaming clusters.
 
