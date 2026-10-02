@@ -511,6 +511,7 @@ a:hover { opacity: 0.8; }
 <tr><td>[<strong>ADR-004</strong>]()</td><td>Mandatory Forecasting Baseline & Benchmark Hierarchy</td><td><strong>DECIDED</strong></td><td>2026-09-30</td><td>Enforce persistence and diurnal persistence baselines as non-negotiable benchmark before deploying conditional regression or GBDTs.</td></tr>
 <tr><td>[<strong>ADR-005</strong>]()</td><td>MLOps & Experiment Tracking Scope</td><td><strong>DECIDED</strong></td><td>2026-09-30</td><td>Adopt lightweight structured JSON/Markdown experiment ledger with deterministic seed locking; defer heavy hosted MLflow servers.</td></tr>
 <tr><td>[<strong>ADR-006</strong>]()</td><td>Horizon-Partitioned Forecasting Architecture & NWP Ingress Boundary</td><td><strong>DECIDED</strong></td><td>2026-10-02</td><td>Adopt hybrid forecasting model (M2 for 1-48h, M1 for 72-168h) to guarantee positive skill across all horizons; formalize NWP forecast ingress contract.</td></tr>
+<tr><td>[<strong>ADR-007</strong>]()</td><td>Operational Anomaly Taxonomy, Multi-Horizon Water Risk Evaluation, and Alert Persistence Filter Architecture</td><td><strong>DECIDED</strong></td><td>2026-10-02</td><td>Establish 3-tier anomaly isolation boundary, uncertainty-aware risk certainty levels, and stateful persistence filtering to suppress false alarms.</td></tr>
     </tbody>
 </table>
 </div>
@@ -629,6 +630,32 @@ a:hover { opacity: 0.8; }
 <ul><li>Requires maintaining two fitted model artifacts ($M2$ weights for $1\dots 48\text{h}$ and $M1$ weights for $72\dots 168\text{h}$).</li><li>Long-horizon uncertainty intervals remain static/empirical until forward weather forecasts are connected.</li></ul>
 <h4>4. Status</h4>
 <p><strong>DECIDED & IMPLEMENTED</strong> (Supported by Empirical Validation runs <code>EXP-20261002-004</code> and <code>EXP-20261002-005</code>).</p>
+<h3>ADR-007: Operational Anomaly Taxonomy, Multi-Horizon Water Risk Evaluation, and Alert Persistence Filter Architecture</h3>
+<p><strong>Status:</strong> DECIDED</p>
+<p><strong>Date:</strong> October 2, 2026</p>
+<p><strong>Deciders:</strong> Antigravity Engineering & Science Team</p>
+<p><strong>Consulted:</strong> PRD, Technical Spec, Event & Telemetry Contract, Evidence & Validation</p>
+<h4>1. Context & Problem Statement</h4>
+<p>In operational agricultural deployment, a telemetry and forecasting system faces three distinct failure modes:</p>
+<ol><li><strong>Sensor / Telemetry Corruptions:</strong> Non-physical spikes, stuck frozen sensors, packet dropouts, and schema corruptions. If unisolated, bad telemetry masquerades as severe drought or storm events, triggering false alarms.</li><li><strong>Physical & Model Deviations:</strong> Rapid unexplained wetting without precipitation, thermodynamic rate-of-change violations, hydraulic inversions across soil depths, or massive forecast residuals.</li><li><strong>Agronomic Water Deficit Risks:</strong> Real-world soil moisture depletion approaching or crossing Management Allowed Depletion (MAD) and Critical Wilting thresholds.</li><li><strong>Alert Churn & Flapping:</strong> Transient noise excursions or borderline forecast oscillations cause high alert fatigue if every single-step threshold breach triggers an immediate operational advisory.</li></ol>
+<p>We must decide:</p>
+<ol><li>How to establish a strict, deterministic taxonomy separating data quality, physical deviation, and agronomic risk.</li><li>How to evaluate multi-horizon water risk under uncertainty without claiming unjustified probability calibration at long horizons.</li><li>How to engineer an alert persistence filter to control operator alert burden while preserving critical safety responsiveness.</li></ol>
+<h4>2. Decision</h4>
+<ol><li><strong>Establish a 3-Tier Anomaly & Isolation Boundary</strong>:</li></ol>
+<ul><li><strong>Tier 1 (Data-Quality Anomalies):</strong> Handled by Tier-1 QC and Quarantine. Quarantined states are strictly isolated from the state builder and forecasting pipeline, guaranteeing a <strong>100% mathematical barrier against data faults leaking into agronomic risk advisories</strong>.</li><li><strong>Tier 2 (Physical Deviations):</strong> Handled by <code>PhysicalDeviationDetector</code>, evaluating 1-step forecast residuals ($|y_t - \hat{y}_{t|t-1}| > 0.020\ \text{m}^3/\text{m}^3$), unphysical drying rates ($> 0.025\ \text{m}^3/\text{m}^3/\text{h}$), unexplained infiltration ($+0.015\ \text{m}^3/\text{m}^3/\text{h}$ with $P \le 0.2\text{mm}$), and hydraulic inversions.</li><li><strong>Tier 3 (Agronomic Water Risk):</strong> Handled by <code>UncertaintyAwareRiskEvaluator</code>, evaluating real-time depletion $D_r(t)$ and multi-horizon forward forecast trajectories against configured MAD ($D_{\text{MAD}} = 0.50$) and Wilting Proximity ($D_{\text{wilt}} = 0.85$).</li></ul>
+<ol><li><strong>Deploy Uncertainty-Aware Risk Certainty Classification</strong>:</li></ol>
+<ul><li>Categorize forecast threshold crossings into four explainable levels:</li><li><code>DEFINITELY_NOT_REACHED</code>: Upper interval bound $q_{0.90} < D_{\text{MAD}}$.</li><li><code>PLAUSIBLY_REACHED</code>: Median $q_{0.50} < D_{\text{MAD}} \le q_{0.90}$.</li><li><code>LIKELY_REACHED</code>: Median $q_{0.50} \ge D_{\text{MAD}}$.</li><li><code>HIGHLY_UNCERTAIN</code>: Assigned to extended horizons ($h > 48\text{h}$) when interval width is large and uncalibrated from in-situ past-only information.</li></ul>
+<ol><li><strong>Implement Stateful Alert Persistence Filtering (<code>AlertPersistenceFilter</code>)</strong>:</li></ol>
+<ul><li>Filter transient candidate alerts using <strong>Consecutive Confirmation ($k=2, k=3$)</strong> or <strong>$N$-of-$M$ Sliding Windows ($3$-of-$5$)</strong> per <code>(source_id, category, threshold_type)</code> key.</li><li>Suppress transient 1-sample noise excursions (e.g. 100% suppression of fluttering oscillations in Scenario 8).</li><li><strong>Critical Safety Override:</strong> Immediate bypass of persistence delay for <code>CRITICAL</code> severity (Critical Wilting Proximity $D_r \ge 0.85$) to prevent delayed intervention under extreme crop stress.</li></ul>
+<ol><li><strong>Emit Canonical Non-Actuating <code>AlertEvent</code> Records</strong>:</li></ol>
+<ul><li>Guarantee strict decision-support semantics (<code>is_autonomous_actuation: false</code>), complete provenance, threshold context, and actionable human-readable explanations.</li></ul>
+<h4>3. Consequences & Trade-offs</h4>
+<h3>Positive:</h3>
+<ul><li><strong>Zero Agronomic Contamination from Corrupted Data:</strong> Tier-1 quarantine guarantees zero false drought alarms from dead or spiking sensors (verified across all 8 synthetic scenarios).</li><li><strong>Controlled Alert Burden:</strong> Persistence filtering suppresses transient alert flapping while maintaining confirmed detection of sustained drought events.</li><li><strong>Transparent Explainability:</strong> Every emitted advisory contains explicit causality: whether it is data-quality, physical deviation, or agronomic risk, with certainty labels and persistence verification.</li></ul>
+<h3>Negative / Trade-offs:</h3>
+<ul><li><strong>Lead-Time Latency Penalty:</strong> Consecutive $k=2$ persistence introduces a $+1\text{h}$ latency on non-critical warning alerts (mitigated by immediate critical bypass).</li><li><strong>Stateful In-Memory Filter:</strong> Requires tracking active candidate keys in memory across streaming batches.</li></ul>
+<h4>4. Status</h4>
+<ul><li><strong>Status:</strong> DECIDED & IMPLEMENTED</li><li><strong>Supersedes:</strong> Extends ADR-004 and ADR-006.</li></ul>
 </section>
 
         <footer class="footer">

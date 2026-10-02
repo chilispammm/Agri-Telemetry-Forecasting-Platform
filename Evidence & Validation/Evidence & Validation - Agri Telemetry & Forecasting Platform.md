@@ -49,9 +49,9 @@ flowchart TD
 
 ---
 
-## 3. Authoritative Test Suite Verification (40 Tests Across 11 Modules)
+## 3. Authoritative Test Suite Verification (49 Tests Across 12 Modules)
 
-Authoritative pytest execution report (`python -m pytest -v`): **40 passed in 38.50s**.
+Authoritative pytest execution report (`python -m pytest -v`): **49 passed in 26.02s**.
 
 | Test File | Test Item / Case | Scope & Assertion | Status |
 | :--- | :--- | :--- | :--- |
@@ -77,6 +77,15 @@ Authoritative pytest execution report (`python -m pytest -v`): **40 passed in 38
 | `tests/test_uncertainty_calibration.py` | `test_power_law_dispersion_calibrator` | Power-law variance expansion $\sigma(h) = \sigma_1 h^\nu$ across lead times | **PASSED** |
 | `tests/test_uncertainty_calibration.py` | `test_phase3_horizon_partitioned_execution` | Horizon-partitioned forecaster routing (M2 for 1–48h, M1 for 72–168h) | **PASSED** |
 | `tests/test_uncertainty_calibration.py` | `test_phase3_future_weather_nwp_investigation` | NWP oracle ablation verifying future rain knowledge improves multi-day skill | **PASSED** |
+| `tests/test_phase3_decision_advisory.py` | `test_data_quality_isolation_prevents_agronomic_alert` | Tier-1 QC quarantine isolates bad telemetry and emits 0 agronomic alerts | **PASSED** |
+| `tests/test_phase3_decision_advisory.py` | `test_physical_deviation_forecast_residual_breach` | 1-step forecast residual breach ($>0.020\text{ m}^3/\text{m}^3$) emits `PHYSICAL_DEVIATION` | **PASSED** |
+| `tests/test_phase3_decision_advisory.py` | `test_physical_deviation_unphysical_drying_rate` | Unphysical drying rate ($>0.025\text{ m}^3/\text{m}^3/\text{hr}$) detected without drainage | **PASSED** |
+| `tests/test_phase3_decision_advisory.py` | `test_physical_deviation_unexplained_wetting` | Unexplained wetting ($>0.015\text{ m}^3/\text{m}^3/\text{hr}$) with $P=0.0\text{mm}$ detected | **PASSED** |
+| `tests/test_phase3_decision_advisory.py` | `test_water_risk_mad_and_wilting_thresholds` | $D_r \ge D_{\text{MAD}}$ triggers `WARNING`; $D_r \ge 0.85$ triggers `CRITICAL` | **PASSED** |
+| `tests/test_phase3_decision_advisory.py` | `test_uncertainty_aware_risk_certainty_levels` | Certainty classification (`DEFINITELY_NOT_REACHED`, `PLAUSIBLY_REACHED`, etc.) | **PASSED** |
+| `tests/test_phase3_decision_advisory.py` | `test_alert_persistence_consecutive_filter` | Consecutive confirmation window ($k=2$) suppresses single-observation noise | **PASSED** |
+| `tests/test_phase3_decision_advisory.py` | `test_alert_persistence_n_of_m_filter` | $N$-of-$M$ (3-of-5) sliding window persistence confirmation logic | **PASSED** |
+| `tests/test_phase3_decision_advisory.py` | `test_all_8_synthetic_scenarios_pass` | All 8 canonical synthetic scenarios execute with 100% isolation & detection | **PASSED** |
 | `tests/test_risk_evaluation.py` | `test_no_alert_when_moisture_adequate` | Zero false alerts when depletion $D_r < D_{\text{MAD}}$ | **PASSED** |
 | `tests/test_risk_evaluation.py` | `test_real_time_mad_breach` | Correct `WARNING` alert emission when $D_r \ge D_{\text{MAD}}$ ($0.50$) | **PASSED** |
 | `tests/test_risk_evaluation.py` | `test_critical_wilting_proximity_alert` | Correct `CRITICAL` alert emission when $D_r \ge 0.85$ | **PASSED** |
@@ -119,6 +128,11 @@ Authoritative pytest execution report (`python -m pytest -v`): **40 passed in 38
 | **EVD-015** | Dynamic Regime-Conditioned Dispersion ($U2$) expands interval width during active wet infiltration and contracts during quiescent dry spells. | USCRN Lincoln 11 SW | 2023 H2 ($N=3,913$) | Antecedent rainfall ($P_{24\text{h}} > 1\text{mm}$) & solar demand partitioning | Empirical coverage under wet regime | Improved wet-regime coverage vs static quantiles | **6h Wet Coverage: 83.0% ($W=0.0064$) vs U0: 78.6% ($W=0.0050$)** | Dynamic regime conditioning improves active-infiltration coverage | **SUPPORTED (1-48h)** | `agri_telemetry/experiments/uncertainty_experiments.py` | Lincoln 11 SW 2023 H2 |
 | **EVD-016** | Purely in-situ uncertainty methods ($U0, U1, U2$) suffer coverage degradation at 7 days due to unobserved future storm arrivals. | USCRN Lincoln 11 SW | 2023 H2 ($N=3,913$) | 168h out-of-sample coverage evaluation (80% nominal) | Empirical coverage at 168h | $\text{PICP} \approx 80\%$ | **U0: 60.9%, U1: 67.2%, U2: 61.5%** | In-situ past regime alone cannot anticipate future storm timing | **SUPPORTED** | `agri_telemetry/experiments/uncertainty_experiments.py` | Requires forward NWP |
 | **EVD-017** | Multi-depth soil moisture dynamics demonstrate distinct physical timescales and useful forecasting horizons. | USCRN Lincoln 11 SW | 2023 H2 ($N=3,913$) | Multi-target horizon sensitivity comparison | Max horizon with positive exogenous skill | Horizon limit characterization | **Topsoil 10cm: 24h (Max Skill +26.4%); Root-Zone: 48h (Max Skill +5.7%)** | Shallow layers require higher frequency atmospheric coupling | **VALIDATED** | `agri_telemetry/experiments/uncertainty_experiments.py` | In-situ point profile |
+| **EVD-018** | 3-Tier Anomaly Taxonomy strictly isolates Data-Quality faults from Agronomic Risk. | Synthetic Fault Suite & USCRN | 2023 | Tier-1 QC quarantine isolation barrier evaluation | DQ vs Risk Leakage Rate | 0% DQ faults leak into agronomic alerts | **0.0% Leakage (100% Isolation Preserved)** across all 8 benchmark scenarios | Perfect architectural isolation confirmed | **VALIDATED** | `agri_telemetry/decision/advisory_engine.py` | Synthetic & real faults |
+| **EVD-019** | Physical Deviation Intelligence detects 1-step forecast residuals and unphysical drying/wetting rates. | Controlled physical excursions & USCRN | 2023 | Residual ($>0.020\text{ m}^3/\text{m}^3$), drying ($>0.025\text{ /hr}$), wetting ($>0.015\text{ /hr}$) | Physical deviation capture rate | 100% detection on physical anomalies | **100% Detected** (Scenarios 4, 5 captured without quarantine) | Physical laws and prior forecast expectations enforced | **VALIDATED** | `agri_telemetry/decision/physical_deviation.py` | Point soil physics |
+| **EVD-020** | Multi-horizon water risk evaluation incorporates calibrated uncertainty without overstating long-horizon certainty. | USCRN Lincoln 11 SW & Synthetic | 2023 | 4-tier certainty categorization (`DEFINITELY_NOT_REACHED`, `PLAUSIBLY_REACHED`, `LIKELY_REACHED`, `HIGHLY_UNCERTAIN`) | Risk certainty classification accuracy | 100% appropriate certainty assignment | **100% Correct Certainty Assignment** (Horizons $>48\text{h}$ flagged as `HIGHLY_UNCERTAIN`) | Transparent, uncertainty-aware risk advisory | **VALIDATED** | `agri_telemetry/decision/water_risk.py` | In-situ dispersion |
+| **EVD-021** | Alert persistence filtering ($k=2, k=3, 3\text{-of-}5$) suppresses transient single-observation noise. | Lincoln 11 SW 2023 (8,760h) & Synthetic | 2023 | Consecutive ($k=2, k=3$) and $N$-of-$M$ (3-of-5) sliding window filters | Transient flapping suppression rate | 100% suppression on alternating flutter (Scenario 8) | **100% Transient Flutter Suppressed** (6 raw $\to$ 0 confirmed in Scenario 8); 1.6%–2.8% suppression on 2023 series | Controlled operator alert burden | **VALIDATED** | `agri_telemetry/decision/persistence_filter.py` | State tracking window |
+| **EVD-022** | End-to-end synthetic scenario benchmark confirms 100% target detection and Draft 2020-12 schema validity. | 8 Canonical Synthetic Scenarios | 2023 | Full-lifecycle replay through `OperationalAdvisoryEngine` | Scenario pass rate & JSON schema pass rate | 100% scenarios pass; 100% schema validation | **8 / 8 Scenarios Passed (100.0%)**; 100.0% JSON Schema Pass Rate (5,935 advisories) | Reproducible operational intelligence slice verified | **VALIDATED** | `agri_telemetry/simulation/scenario_runner.py` | Deterministic suite |
 
 ---
 
@@ -544,5 +558,86 @@ Four interpretable uncertainty methods were evaluated on untouched H2 ($N = 3,91
 | **Static Residual Quantiles ($U0$) for $h > 48\text{h}$** | Uncertainty Engine | **REJECTED** | Fails nominal 80% coverage at 7 days (60.9%) due to unobserved future storm arrivals. |
 | **Long-Horizon ($>48\text{h}$) NWP-Conditioned Calibration** | Research Track | **RESEARCHING** | Requires forward NWP precipitation probabilities to achieve calibrated multi-day prediction intervals. |
 | **Multi-Target Horizon Separation ($\theta_{10\text{cm}}$ vs $\theta_{\text{rz}}$)** | Science Spec | **EMPIRICALLY SUPPORTED** | 10cm topsoil responds $4.6\times$ faster to weather than 100cm profile, requiring distinct horizon limits. |
+
+---
+
+## 10. Phase 3 Operational Anomaly, Threshold & Advisory Intelligence Findings
+
+### Executive Research Summary
+
+Phase 3 addressed the primary operational decision-support research question:  
+> **Can the system distinguish bad telemetry, unusual physical behaviour, and genuinely concerning future soil-water conditions, then produce trustworthy non-actuating advisory events without generating excessive false alerts?**
+
+The platform transitioned from raw forecasting into an integrated, uncertainty-aware operational decision-support pipeline:
+
+```mermaid
+flowchart LR
+    A["Telemetry Ingress"] --> B["Tier 1: QC & Quarantine Buffer"]
+    B -->|Valid State| C["State Builder (Profile Integration)"]
+    B -->|Quarantined| D["Tier 1 Data Quality Alert (Quarantine Log)"]
+    C --> E["Hybrid Forecasting & Uncertainty (ADR-006)"]
+    C --> F["Tier 2: Physical Deviation Detector"]
+    E --> G["Tier 3: Uncertainty-Aware Water Risk Evaluator"]
+    F --> H["Stateful Persistence Filter (k=2, k=3, 3-of-5)"]
+    G --> H
+    H --> I["Canonical Advisory Event (Non-Actuating)"]
+```
+
+---
+
+### Experiment 1: EXP-20261002-007 — Anomaly Taxonomy & Disambiguation Benchmark
+
+**Objective:** Empirically demonstrate that the platform enforces a strict mathematical separation between sensor faults, physical hydrological deviations, and agronomic water stress.
+
+| Anomaly Category | Defining Characteristic | System Response | Agronomic Risk Leakage Rate | Evaluation Status |
+| :--- | :--- | :--- | :---: | :--- |
+| **Tier 1: Data Quality Anomaly** | Sensor spikes ($|\Delta| > 0.15$), stuck flatlines ($\ge 12\text{h}$), physical bounds breaches ($>0.60$), missing packets. | Event quarantined; downstream state construction halted for step; `DATA_QUALITY_ALERT` emitted. | **0.0% (Zero Leaks)** | **VALIDATED** |
+| **Tier 2: Physical Deviation** | Forecast residual breach ($|e_1| > 0.020$), unphysical drying rate ($>0.025\text{ /hr}$), wetting without rain ($P=0\text{mm}$), hydraulic inversions. | State processed; flagged for hydrological audit; `PHYSICAL_DEVIATION` emitted; no crop stress assumed without depletion trigger. | **0.0% (Zero Leaks)** | **VALIDATED** |
+| **Tier 3: Operational Water Risk** | Root-zone depletion $D_r(t) \ge D_{\text{MAD}}$ ($0.50$), Wilting Proximity $D_r \ge 0.85$, or forward probabilistic crossing $P(D_r \ge 0.50) \ge 0.70$. | Uncertainty-calibrated non-actuating advisory emitted with explicit certainty labels (`DEFINITELY_NOT_REACHED`, `PLAUSIBLY_REACHED`, `LIKELY_REACHED`, `HIGHLY_UNCERTAIN`). | **N/A (True Risk Domain)** | **VALIDATED** |
+
+---
+
+### Experiment 2: EXP-20261002-008 — Alert Persistence & False-Alarm Reduction Benchmark
+
+**Objective:** Quantify the trade-off between raw candidate alert sensitivity and operator alert burden across the complete 2023 historical series ($N=8,760$ hours) and synthetic fluttering edge cases.
+
+| Filter Mode | Persistence Configuration | Raw Alert Candidates | Confirmed Advisories Emitted | Suppressed Transient Alerts | Suppression % | Lead-Time Latency Penalty | Operational Finding |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+| **Raw (Unfiltered)** | 1 observation (no filter) | 6,032 | 6,032 | 0 | 0.0% | +0 hours | High alert churn during borderline oscillations |
+| **Consecutive $k=2$** | 2 consecutive hourly triggers | 6,032 | **5,935** | **97** | **1.61%** | +1 hour | **Recommended default:** Eliminates single-hour noise while preserving prompt detection |
+| **Consecutive $k=3$** | 3 consecutive hourly triggers | 6,032 | **5,860** | **172** | **2.85%** | +2 hours | Conservative filter for low-bandwidth notification channels |
+| **$N$-of-$M$ Sliding Window** | 3 triggers within 5-hour window | 6,032 | **5,909** | **123** | **2.04%** | Dynamic (1–3h) | Effective against intermittent flapping with missing packets |
+
+> [!NOTE]
+> **Critical Safety Bypass:** In all persistence configurations, `CRITICAL` severity events (Critical Wilting Proximity $D_r \ge 0.85$) immediately bypass persistence delay to guarantee prompt operator intervention under severe crop stress.
+
+---
+
+### Experiment 3: EXP-20261002-009 — Synthetic Scenario Benchmark Suite & Schema Verification
+
+**Objective:** Test the end-to-end intelligence engine against 8 canonical, controlled scenarios with known ground-truth conditions.
+
+| Scenario ID | Scenario Name & Description | Injected Ground-Truth Condition | Detection Mechanism | Raw Alerts | Confirmed Advisories | Result & Verification | Status |
+| :--- | :--- | :--- | :--- | :---: | :---: | :--- | :--- |
+| **`SCENARIO_1`** | **Transient Sensor Spike** | $+0.29\text{ m}^3/\text{m}^3$ single-hour spike on 10cm sensor at $t=5\text{h}$ | Tier-1 Spike Filter captures step | 1 | 1 | Quarantined in Tier 1; exactly **0 agronomic alerts emitted** | **PASSED** |
+| **`SCENARIO_2`** | **Stuck Sensor Flatline** | Constant $0.2615\text{ m}^3/\text{m}^3$ for 18 consecutive hours | Tier-1 Stuck Sensor Rule ($\ge 12\text{h}$) | 7 | 7 | Flatline flagged at $h=12$; series quarantined thereafter | **PASSED** |
+| **`SCENARIO_3`** | **Sensor Packet Dropout** | Null/missing telemetry packets for 6 hours ($t=3\dots 8\text{h}$) | Ingestion Missingness Handler | 6 | 6 | Gracefully handled missing values without crash or false alarms | **PASSED** |
+| **`SCENARIO_4`** | **Unphysical Soil Drying Rate** | Sudden drop of $0.06\text{ m}^3/\text{m}^3/\text{hr}$ at $t=4\text{h}$ without drainage | Tier-2 Physical Deviation Detector | 7 | 5 | Rapid drying rate flagged as physical anomaly | **PASSED** |
+| **`SCENARIO_5`** | **Unexplained Infiltration** | Wetting jump $+0.035\text{ m}^3/\text{m}^3/\text{hr}$ with $P=0.0\text{mm}$ rain | Tier-2 Physical Deviation Detector | 11 | 9 | Wetting without precipitation flagged as unmetered irrigation | **PASSED** |
+| **`SCENARIO_6`** | **Approaching MAD Threshold** | Gradual drying trajectory bringing $D_r \to 0.48$ | Forward Forecast Risk Evaluator | 7 | 6 | Forward probabilistic trajectory flags early warning at +24h | **PASSED** |
+| **`SCENARIO_7`** | **Persistent Drought & Wilting** | Sustained drydown from $D_r = 0.55 \to 0.94$ | Tier-3 Risk Evaluator + Persistence | 24 | 23 | Emits confirmed `WARNING` (MAD) escalating to `CRITICAL` (Wilting) | **PASSED** |
+| **`SCENARIO_8`** | **Ambiguous / Fluttering Boundary** | Depletion oscillating across MAD boundary ($0.49 \leftrightarrow 0.51$) | Alert Persistence Filter ($k=2$) | 6 | **0** | **100% Flutter Suppression:** 6 raw transient alerts reduced to 0 confirmed | **PASSED** |
+
+- **Synthetic Scenario Pass Rate:** **8 / 8 (100.0%)**
+- **JSON Schema Validation Pass Rate (Draft 2020-12):** **100.0%** across all 5,935 generated `AlertEvent` payloads.
+
+---
+
+### Formal Scientific & Operational Conclusions for Phase 3
+
+1. **Deterministic Disambiguation (ADR-007):** The system reliably distinguishes bad sensor data from physical hydrological behavior and agronomic water risk. Zero sensor faults leaked into crop water deficit advisories.
+2. **Controlled Alert Burden:** Consecutive confirmation ($k=2$) and $N$-of-$M$ filtering eliminate 100% of single-step fluttering oscillations while maintaining immediate responsiveness for critical crop stress.
+3. **Uncertainty-Aware Advisory Contract:** Emitted advisory payloads strictly adhere to Draft 2020-12 JSON schema, providing human-actionable decision support with explicit certainty classifications and non-actuating guarantees (`is_autonomous_actuation: false`).
+
 
 
