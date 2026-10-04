@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CA-ENG Editorial Design System — Phase 6 Operational Cockpit
+   CA-ENG Editorial Design System — Agri Telemetry & Forecasting Platform
    Research Publication × Agricultural Intelligence × Boutique Data Product
    ========================================================================== */
 
@@ -12,13 +12,14 @@
   --border: #d3cec0;
   --border-light: #e5e0d4;
   --dark: #151515;
-  --dark-surface: #1e1e1e;
-  --blue: #2563eb;
+  --dark-border: #333333;
+  
+  /* Restrained semantic colors */
   --green: #34785a;
   --amber: #b7791f;
   --red: #991b1b;
-  --purple: #6b21a8;
-
+  --blue: #2563eb;
+  
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 }
@@ -38,298 +39,134 @@ body {
   color: var(--ink);
   font-family: var(--font-sans);
   line-height: 1.6;
-  font-size: 13.5px;
+  font-size: 13px;
   -webkit-font-smoothing: antialiased;
 }
 
-.app-container {
-  max-width: 1240px;
+.editorial-container {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2.5rem 2rem 5rem;
+  padding: 3rem 2.5rem 6rem;
   display: flex;
   flex-direction: column;
-  gap: 2.25rem;
+  gap: 2.75rem;
 }
 
 /* ==========================================================================
-   Top Header & Provenance Bar
+   1. Masthead / Identity
    ========================================================================== */
 
-.top-header {
+.masthead {
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--ink);
+}
+
+.masthead-top {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--ink);
+  gap: 2.5rem;
   flex-wrap: wrap;
 }
 
-.header-left {
+.masthead-brand {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  max-width: 650px;
 }
 
-.brand-eyebrow {
+.eyebrow {
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-.brand-title {
-  font-size: 1.75rem;
+.platform-title {
+  font-size: 1.65rem;
   font-weight: 600;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
   line-height: 1.15;
   color: var(--ink);
+  margin: 0.15rem 0;
 }
 
-.brand-subtitle {
-  font-size: 13px;
+.platform-subtitle {
+  font-size: 12.5px;
   color: var(--muted);
-  max-width: 580px;
+  line-height: 1.5;
 }
 
-.header-right {
+.masthead-meta {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
-.header-controls-row {
+.meta-row {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
+  gap: 0.65rem;
+  font-size: 11px;
 }
 
-.provenance-pill {
-  display: inline-block;
+.meta-label {
   font-size: 9.5px;
   font-weight: 700;
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  padding: 3px 9px;
-  border: 1px solid var(--amber);
-  color: var(--amber);
-  background: transparent;
-  white-space: nowrap;
-}
-
-.provenance-pill.observed {
-  border-color: var(--green);
-  color: var(--green);
-}
-
-.site-select-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 11px;
-  font-weight: 600;
   color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
-.site-select {
+.meta-mono {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 11px;
+}
+
+.station-select {
   background: var(--surface);
   color: var(--ink);
   border: 1px solid var(--border);
-  padding: 5px 10px;
+  border-radius: 0;
+  padding: 4px 8px;
   font-family: var(--font-sans);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 500;
   cursor: pointer;
   outline: none;
-  transition: border-color 0.15s ease;
 }
 
-.site-select:hover, .site-select:focus {
+.station-select:hover, .station-select:focus {
   border-color: var(--ink);
 }
 
-.timestamp-box {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.ts-label {
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-size: 10px;
-  font-weight: 600;
-}
-
-.ts-val {
-  font-family: var(--font-mono);
-  font-weight: 600;
-  color: var(--ink);
-}
-
-/* ==========================================================================
-   Editorial Mission Callout (System Purpose)
-   ========================================================================== */
-
-.principle-banner {
-  background: var(--dark);
-  color: white;
-  padding: 1.35rem 1.75rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.principle-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.principle-label {
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  color: #a3a3a3;
-}
-
-.principle-headline {
-  font-size: 14px;
-  font-weight: 500;
-  color: #f5f5f5;
-  letter-spacing: -0.01em;
-}
-
-.principle-meta {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: #a3a3a3;
-  text-align: right;
-  line-height: 1.5;
-}
-
-/* ==========================================================================
-   Section Headers (CA-ENG Index Style)
-   ========================================================================== */
-
-.section-block {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding-top: 0.85rem;
-  border-top: 1px solid var(--ink);
-  margin-bottom: 0.5rem;
-}
-
-.section-title-group {
-  display: flex;
-  align-items: baseline;
-  gap: 0.75rem;
-}
-
-.section-num {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  color: var(--ink);
-}
-
-.section-title {
-  font-size: 1.15rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-  text-transform: uppercase;
-}
-
-.section-subtitle {
-  font-size: 11.5px;
-  color: var(--muted);
-}
-
-/* ==========================================================================
-   Metrics Grid (01 / Real-Time Soil-Water State)
-   ========================================================================== */
-
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
-}
-
-.metric-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.card-eyebrow {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--muted);
-  border-bottom: 1px solid var(--border-light);
-  padding-bottom: 0.5rem;
-}
-
-.card-value-group {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  margin: 0.35rem 0;
-}
-
-.primary-num {
-  font-family: var(--font-mono);
-  font-size: 2.25rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  color: var(--ink);
-}
-
-.unit-tag {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--muted);
-  font-weight: 500;
-}
-
-/* Status Badges */
+/* Restrained Badges */
 .badge {
   display: inline-block;
-  padding: 2px 7px;
+  padding: 1px 6px;
   border: 1px solid currentColor;
+  border-radius: 0;
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.7px;
+  letter-spacing: 0.6px;
   text-transform: uppercase;
   white-space: nowrap;
   background: transparent;
+  color: var(--green);
+  border-color: var(--green);
+}
+
+.badge.badge-provenance {
+  color: var(--amber);
+  border-color: var(--amber);
+}
+
+.badge.badge-provenance.observed {
   color: var(--green);
   border-color: var(--green);
 }
@@ -344,211 +181,250 @@ body {
   border-color: var(--red);
 }
 
-/* Progress / Gauge Bar */
-.progress-bar-wrap {
-  position: relative;
-  width: 100%;
-  height: 8px;
-  background: var(--border-light);
-  border: 1px solid var(--border);
-  margin: 0.25rem 0 0.5rem;
+.badge.quarantined {
+  color: var(--red);
+  border-color: var(--red);
 }
 
-.progress-bar-fill {
-  height: 100%;
-  background: var(--ink);
-  transition: width 0.3s ease;
+.badge.valid {
+  color: var(--green);
+  border-color: var(--green);
 }
 
-.progress-bar-fill.warning {
-  background: var(--amber);
+/* ==========================================================================
+   Editorial Section Structural Headers
+   ========================================================================== */
+
+.editorial-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
 }
 
-.progress-bar-fill.critical {
-  background: var(--red);
+.section-rule {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--ink);
 }
 
-.mad-marker {
-  position: absolute;
-  top: -4px;
-  bottom: -4px;
-  width: 2px;
-  background: var(--amber);
-  z-index: 2;
-}
-
-.card-footer-meta {
+.section-tag {
   font-size: 11px;
-  color: var(--muted);
-  line-height: 1.5;
-  border-top: 1px solid var(--border-light);
-  padding-top: 0.65rem;
-}
-
-.card-footer-meta strong {
-  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.5px;
   color: var(--ink);
-  font-weight: 600;
+  min-width: 24px;
 }
 
-/* Advisory Card Custom Styling */
-.advisory-card {
+.section-heading {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.section-subtext {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-left: auto;
+}
+
+/* ==========================================================================
+   2. Primary State (Editorial Data Blocks)
+   ========================================================================== */
+
+.state-editorial-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.state-block {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-left: 4px solid var(--ink);
-  padding: 1.5rem;
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 0.75rem;
 }
 
-.advisory-card.warning {
-  border-left-color: var(--amber);
-}
-
-.advisory-card.critical {
-  border-left-color: var(--red);
-}
-
-.advisory-header-row {
+.block-label {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-}
-
-.severity-pill {
-  display: inline-block;
-  padding: 2px 7px;
-  border: 1px solid currentColor;
-  font-size: 9px;
+  align-items: baseline;
+  font-size: 9.5px;
   font-weight: 700;
   letter-spacing: 0.8px;
   text-transform: uppercase;
-}
-
-.severity-pill.normal {
-  color: var(--green);
-  border-color: var(--green);
-}
-
-.severity-pill.warning {
-  color: var(--amber);
-  border-color: var(--amber);
-}
-
-.severity-pill.critical {
-  color: var(--red);
-  border-color: var(--red);
-}
-
-.certainty-tag {
-  font-size: 9.5px;
-  font-family: var(--font-mono);
   color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 0.4rem;
 }
 
-.advisory-guidance {
-  font-size: 13.5px;
+.block-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  margin: 0.2rem 0;
+}
+
+.block-num {
+  font-family: var(--font-mono);
+  font-size: 2rem;
   font-weight: 600;
-  line-height: 1.45;
+  letter-spacing: -0.03em;
+  line-height: 1;
   color: var(--ink);
 }
 
-.advisory-subtext {
+.block-unit {
+  font-family: var(--font-mono);
   font-size: 11.5px;
   color: var(--muted);
-  line-height: 1.5;
 }
 
-.advisory-assurance-tag {
-  font-size: 9.5px;
-  font-weight: 600;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+.block-submeta {
+  font-size: 11px;
   color: var(--muted);
+  line-height: 1.5;
   border-top: 1px solid var(--border-light);
   padding-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.block-submeta strong {
+  font-family: var(--font-mono);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* Thin Depletion Meter */
+.depletion-track {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  background: var(--border-light);
+  border: 1px solid var(--border);
+  margin: 0.2rem 0 0.4rem;
+}
+
+.depletion-bar {
+  height: 100%;
+  background: var(--ink);
+  transition: width 0.25s ease;
+}
+
+.depletion-bar.warning {
+  background: var(--amber);
+}
+
+.depletion-bar.critical {
+  background: var(--red);
+}
+
+.mad-line-indicator {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: var(--amber);
+  z-index: 2;
+}
+
+.qc-status-text {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ink);
+  min-height: 38px;
 }
 
 /* ==========================================================================
-   Trajectory & Forecast Section
+   3. Main Analytical Chart (The Visual Centrepiece)
    ========================================================================== */
 
-.chart-panel {
+.chart-box {
   background: var(--surface);
   border: 1px solid var(--border);
-  padding: 1.5rem 1.5rem 1.25rem;
+  padding: 1.25rem 1.25rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.85rem;
 }
 
-.chart-legend-bar {
+.chart-header-bar {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 1.25rem;
-  flex-wrap: wrap;
-  padding-bottom: 0.75rem;
+  padding-bottom: 0.65rem;
   border-bottom: 1px solid var(--border-light);
+}
+
+.chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+  flex-wrap: wrap;
   font-size: 10.5px;
   color: var(--muted);
 }
 
-.legend-entry {
+.legend-chip {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.4rem;
   font-weight: 500;
 }
 
 .legend-swatch {
   display: inline-block;
-  width: 14px;
-  height: 4px;
+  width: 12px;
+  height: 3px;
 }
 
-.legend-swatch.obs {
+.legend-swatch.swatch-obs {
   background: var(--ink);
   height: 3px;
 }
 
-.legend-swatch.fc {
+.legend-swatch.swatch-fc {
   background: var(--blue);
   height: 3px;
 }
 
-.legend-swatch.ribbon-sup {
-  background: rgba(37, 99, 235, 0.25);
-  height: 9px;
+.legend-swatch.swatch-sup {
+  background: rgba(37, 99, 235, 0.2);
   border: 1px solid var(--blue);
+  height: 8px;
 }
 
-.legend-swatch.ribbon-res {
+.legend-swatch.swatch-res {
   background: rgba(98, 96, 90, 0.15);
-  height: 9px;
   border: 1px dashed var(--muted);
+  height: 8px;
 }
 
-.legend-swatch.ref-fc {
+.legend-swatch.swatch-fc-ref {
   background: var(--blue);
   height: 2px;
 }
 
-.legend-swatch.ref-mad {
+.legend-swatch.swatch-mad-ref {
   background: var(--amber);
   height: 2px;
 }
 
-.legend-swatch.ref-wp {
+.legend-swatch.swatch-wp-ref {
   background: var(--red);
   height: 2px;
 }
 
-.canvas-container {
+.canvas-wrapper {
   width: 100%;
   overflow-x: auto;
 }
@@ -562,108 +438,164 @@ body {
 }
 
 /* ==========================================================================
-   QC & Pipeline Resilience Section
+   4. Decision Support Panel
    ========================================================================== */
 
-.status-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 1.25rem;
-}
-
-.status-card {
+.decision-support-panel {
   background: var(--surface);
   border: 1px solid var(--border);
-  padding: 1.25rem 1.5rem;
+  border-left: 3px solid var(--ink);
+  padding: 1.35rem 1.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   gap: 0.85rem;
 }
 
-.status-card-header {
+.decision-support-panel.warning {
+  border-left-color: var(--amber);
+}
+
+.decision-support-panel.critical {
+  border-left-color: var(--red);
+}
+
+.advisory-top-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   border-bottom: 1px solid var(--border-light);
   padding-bottom: 0.5rem;
 }
 
-.status-card-title {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.status-badge {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  padding: 2px 7px;
-  border: 1px solid currentColor;
-}
-
-.status-badge.valid {
-  color: var(--green);
-  border-color: var(--green);
-}
-
-.status-badge.quarantined {
-  color: var(--red);
-  border-color: var(--red);
-}
-
-.status-description {
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--ink);
-}
-
-.counters-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem 1.25rem;
-  font-size: 11.5px;
-  color: var(--muted);
-}
-
-.counter-cell {
+.advisory-status-group {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 0.25rem 0;
-  border-bottom: 1px dashed var(--border-light);
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 11px;
 }
 
-.counter-num {
+.advisory-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.certainty-text {
   font-family: var(--font-mono);
+  font-size: 10.5px;
   font-weight: 600;
   color: var(--ink);
-  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.advisory-actuation-badge {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.advisory-main-message {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.advisory-guidance-box {
+  background: #f0ebe0;
+  border: 1px solid var(--border);
+  padding: 0.75rem 1rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  font-size: 12px;
+}
+
+.guidance-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.guidance-text {
+  color: var(--ink);
+  font-weight: 500;
 }
 
 /* ==========================================================================
-   Collapsible Diagnostics & Event Audit Log Drawer
+   5. Telemetry & Ingress Resilience Table
    ========================================================================== */
 
-.diagnostics-drawer {
+.counters-table-wrap {
   background: var(--surface);
   border: 1px solid var(--border);
-  padding: 0;
+  overflow-x: auto;
 }
 
-.drawer-summary {
-  padding: 1.1rem 1.5rem;
-  font-size: 11px;
+.editorial-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.editorial-table th, .editorial-table td {
+  padding: 0.85rem 1.25rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.editorial-table th {
+  font-size: 9.5px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: #f0ebe0;
+  border-bottom: 1px solid var(--border);
+}
+
+.editorial-table tr:last-child td {
+  border-bottom: none;
+}
+
+.mono-num {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ==========================================================================
+   6. Demo Controls (Secondary Demonstration Harness)
+   ========================================================================== */
+
+.demo-section {
+  margin-top: 0.5rem;
+}
+
+.demo-accordion {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.demo-summary {
+  padding: 0.85rem 1.25rem;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
   color: var(--ink);
   cursor: pointer;
-  background: var(--surface);
+  background: #f0ebe0;
   border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
@@ -671,174 +603,158 @@ body {
   user-select: none;
 }
 
-.drawer-summary:hover {
-  background: #f1ede3;
+.demo-summary:hover {
+  background: #eae4d7;
 }
 
-.drawer-hint {
-  font-size: 10.5px;
+.demo-sub {
+  font-size: 10px;
   font-weight: 400;
   color: var(--muted);
   text-transform: none;
   letter-spacing: 0;
 }
 
-.drawer-body {
-  padding: 1.5rem;
+.demo-drawer-body {
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
-.controls-toolbar {
+.demo-control-toolbar {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-}
-
-.control-row {
-  display: flex;
-  align-items: center;
   gap: 0.75rem;
-  flex-wrap: wrap;
 }
 
-.control-heading {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--muted);
-  min-width: 100px;
-}
-
-.btn-group {
+.toolbar-group {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
 }
 
-.btn {
+.toolbar-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--muted);
+  min-width: 120px;
+}
+
+.btn-editorial {
   background: var(--surface);
   color: var(--ink);
   border: 1px solid var(--border);
+  border-radius: 0;
   font-family: var(--font-sans);
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 600;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
-  padding: 6px 13px;
+  padding: 5px 11px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.12s ease;
 }
 
-.btn:hover {
+.btn-editorial:hover {
   background: var(--ink);
   color: #faf8f3;
   border-color: var(--ink);
 }
 
-.btn.btn-primary {
-  background: var(--ink);
-  color: #faf8f3;
-  border-color: var(--ink);
-}
-
-.btn.btn-primary:hover {
-  background: #333333;
-}
-
-.btn.btn-fault:hover {
+.btn-editorial.btn-fault:hover {
   background: var(--red);
   color: white;
   border-color: var(--red);
 }
 
-.btn.btn-reset {
+.btn-editorial.btn-reset {
   margin-left: auto;
   border-color: var(--muted);
 }
 
-.btn.btn-reset:hover {
+.btn-editorial.btn-reset:hover {
   background: var(--muted);
   color: white;
 }
 
 /* Event Log Terminal */
-.event-log-wrapper {
+.log-panel {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.35rem;
 }
 
-.log-eyebrow {
-  font-size: 10px;
+.log-label {
+  font-size: 9.5px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-.event-log-terminal {
+.log-terminal {
   background: var(--dark);
-  color: #e5e5e5;
+  color: #d4d4d4;
   font-family: var(--font-mono);
-  font-size: 11.5px;
-  line-height: 1.65;
-  padding: 1.25rem;
+  font-size: 11px;
+  line-height: 1.6;
+  padding: 1rem 1.15rem;
   border: 1px solid var(--ink);
-  max-height: 220px;
+  max-height: 180px;
   overflow-y: auto;
 }
 
-.log-line {
+.log-entry {
   padding: 2px 0;
   border-bottom: 1px solid #262626;
   display: flex;
-  gap: 0.65rem;
+  gap: 0.6rem;
   align-items: baseline;
 }
 
-.log-line:last-child {
+.log-entry:last-child {
   border-bottom: none;
 }
 
-.log-ts {
+.log-time {
   color: #888888;
   white-space: nowrap;
 }
 
-.log-tag {
+.log-stage {
   font-weight: 700;
   color: #60a5fa;
-  min-width: 90px;
+  min-width: 85px;
 }
 
-.log-line.warn .log-tag {
+.log-entry.warn .log-stage {
   color: #fbbf24;
 }
 
-.log-line.error .log-tag {
+.log-entry.error .log-stage {
   color: #f87171;
 }
 
-.log-text {
-  color: #d4d4d4;
+.log-msg {
+  color: #e5e5e5;
   overflow-wrap: anywhere;
 }
 
 /* ==========================================================================
-   Footer
+   Editorial Footer
    ========================================================================== */
 
-.app-footer {
+.editorial-footer {
   padding-top: 1.75rem;
   border-top: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 600;
   letter-spacing: 0.8px;
   text-transform: uppercase;
@@ -851,18 +767,23 @@ body {
    Responsive Adaptations
    ========================================================================== */
 
-@media (max-width: 1024px) {
-  .metrics-grid {
-    grid-template-columns: 1fr;
+@media (max-width: 960px) {
+  .state-editorial-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
-  .status-grid {
-    grid-template-columns: 1fr;
-  }
-  .top-header {
+  .masthead-top {
     flex-direction: column;
-    align-items: stretch;
   }
-  .header-right {
+  .masthead-meta {
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .state-editorial-grid {
+    grid-template-columns: 1fr;
+  }
+  .editorial-container {
+    padding: 1.5rem 1rem 3rem;
   }
 }

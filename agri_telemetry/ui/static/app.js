@@ -24,9 +24,9 @@ function renderDashboard(data) {
   const provBadge = document.getElementById("provenanceBadge");
   provBadge.textContent = site.data_class || "SIMULATED REPLAY";
   if (site.is_simulated) {
-    provBadge.className = "provenance-pill";
+    provBadge.className = "badge badge-provenance";
   } else {
-    provBadge.className = "provenance-pill observed";
+    provBadge.className = "badge badge-provenance observed";
   }
 
   const siteSel = document.getElementById("siteSelector");
@@ -61,26 +61,26 @@ function renderDashboard(data) {
   if (drPct >= 85.0) {
     depBadge.textContent = "CRITICAL WILTING";
     depBadge.className = "badge critical";
-    depBar.className = "progress-bar-fill critical";
+    depBar.className = "depletion-bar critical";
   } else if (drPct >= 50.0) {
     depBadge.textContent = "MAD BREACHED (WARNING)";
     depBadge.className = "badge warning";
-    depBar.className = "progress-bar-fill warning";
+    depBar.className = "depletion-bar warning";
   } else {
     depBadge.textContent = "OPTIMAL";
     depBadge.className = "badge";
-    depBar.className = "progress-bar-fill";
+    depBar.className = "depletion-bar";
   }
 
-  // 3. Advisory Card
+  // 3. Advisory Panel
   const adv = data.advisory || {};
   const advisoryCard = document.getElementById("advisoryCard");
   const sevBadge = document.getElementById("advisorySeverity");
   
   const sev = (adv.severity ? adv.severity.toLowerCase() : "normal");
   sevBadge.textContent = adv.severity || "NORMAL";
-  sevBadge.className = "severity-pill " + sev;
-  advisoryCard.className = "advisory-card " + (sev !== "normal" ? sev : "");
+  sevBadge.className = "badge " + (sev !== "normal" ? sev : "");
+  advisoryCard.className = "decision-support-panel " + (sev !== "normal" ? sev : "");
 
   document.getElementById("advisoryCertainty").textContent = adv.certainty_level || "CONFIRMED";
   document.getElementById("advisoryMsg").textContent = adv.message || "Root-zone soil moisture is adequate. No moisture stress expected.";
@@ -91,11 +91,11 @@ function renderDashboard(data) {
   const qcDetails = document.getElementById("qcDetails");
   if (cur.qc_status === "QUARANTINED") {
     qcBadge.textContent = "QUARANTINED (ISOLATED)";
-    qcBadge.className = "status-badge quarantined";
+    qcBadge.className = "badge quarantined";
     qcDetails.textContent = cur.quarantine_reason || "Data quality anomaly detected. Quarantine active; no false agronomic alarm emitted.";
   } else {
     qcBadge.textContent = "VALID / PASS";
-    qcBadge.className = "status-badge valid";
+    qcBadge.className = "badge valid";
     qcDetails.textContent = "All multi-depth soil moisture and meteorological channels within physical range bounds.";
   }
 
@@ -111,8 +111,8 @@ function renderDashboard(data) {
   logContainer.innerHTML = "";
   (data.event_log || []).forEach(item => {
     const row = document.createElement("div");
-    row.className = "log-line " + (item.level ? item.level.toLowerCase() : "info");
-    row.innerHTML = `<span class="log-ts">[${item.time}]</span> <span class="log-tag">[${item.stage}]</span> <span class="log-text">${item.message}</span>`;
+    row.className = "log-entry " + (item.level ? item.level.toLowerCase() : "info");
+    row.innerHTML = `<span class="log-time">[${item.time}]</span> <span class="log-stage">[${item.stage}]</span> <span class="log-msg">${item.message}</span>`;
     logContainer.appendChild(row);
   });
 
@@ -312,7 +312,7 @@ function renderChart(data) {
 
     // Dots on forecast points
     points.forEach((p, idx) => {
-      ctx.fillStyle = idx === 0 ? "#151515" : (p.h > 48 ? "#6b21a8" : "#2563eb");
+      ctx.fillStyle = idx === 0 ? "#151515" : (p.h > 48 ? "#62605a" : "#2563eb");
       ctx.beginPath();
       ctx.arc(p.x, getY(p.pt), 3, 0, Math.PI * 2);
       ctx.fill();
