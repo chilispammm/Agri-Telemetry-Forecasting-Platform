@@ -8,157 +8,240 @@
 </head>
 <body>
   <div class="app-container">
-    <!-- Top Header & Provenance Banner -->
+    
+    <!-- Top Header & Provenance Bar -->
     <header class="top-header">
       <div class="header-left">
-        <div class="brand-title">AGRI TELEMETRY & FORECASTING PLATFORM</div>
-        <div class="brand-subtitle">Operational Early-Warning Cockpit & Decision Support</div>
+        <div class="brand-eyebrow">CA-ENG // AGRI TELEMETRY & FORECASTING PLATFORM</div>
+        <h1 class="brand-title">Operational Early-Warning Cockpit</h1>
+        <p class="brand-subtitle">Continuous in-situ root-zone moisture tracking, multi-horizon probabilistic forecasting (1–168h), and non-actuating decision support.</p>
       </div>
       <div class="header-right">
-        <div class="provenance-pill" id="provenanceBadge">SIMULATED REPLAY</div>
-        <div class="site-select-wrapper">
-          <label for="siteSelector">Site / Node:</label>
-          <select id="siteSelector" onchange="onSiteChange()">
-            <option value="SIMULATED_ESP32">ESP32-AGRI-NODE-001 (Simulated Wokwi Node)</option>
-            <option value="IL_Champaign_9_SW">Champaign 9 SW (Midwest Corn Belt)</option>
-            <option value="NE_Lincoln_11_SW">Lincoln 11 SW (Humid Continental Plains)</option>
-            <option value="SD_Sioux_Falls_14_NNE">Sioux Falls 14 NNE (Northern Great Plains)</option>
-            <option value="NM_Las_Cruces_20_N">Las Cruces 20 N (Arid Desert Southwest)</option>
-            <option value="GA_Watkinsville_5_SSE">Watkinsville 5 SSE (Humid Subtropical)</option>
-            <option value="CO_Nunn_7_NNE">Nunn 7 NNE (Semi-Arid High Plains)</option>
-          </select>
+        <div class="header-controls-row">
+          <div class="provenance-pill" id="provenanceBadge">SIMULATED REPLAY</div>
+          <div class="site-select-wrapper">
+            <label for="siteSelector">Station Node:</label>
+            <select id="siteSelector" class="site-select" onchange="onSiteChange()">
+              <option value="SIMULATED_ESP32">ESP32-AGRI-NODE-001 (Simulated Edge Node)</option>
+              <option value="IL_Champaign_9_SW">IL Champaign 9 SW (Midwest Corn Belt)</option>
+              <option value="NE_Lincoln_11_SW">NE Lincoln 11 SW (Humid Continental Plains)</option>
+              <option value="SD_Sioux_Falls_14_NNE">SD Sioux Falls 14 NNE (Northern Great Plains)</option>
+              <option value="NM_Las_Cruces_20_N">NM Las Cruces 20 N (Arid Desert Southwest)</option>
+              <option value="GA_Watkinsville_5_SSE">GA Watkinsville 5 SSE (Humid Subtropical)</option>
+              <option value="CO_Nunn_7_NNE">CO Nunn 7 NNE (Semi-Arid High Plains)</option>
+            </select>
+          </div>
         </div>
         <div class="timestamp-box">
-          <span class="ts-label">Latest Telemetry:</span>
+          <span class="ts-label">Telemetry Timestamp:</span>
           <span class="ts-val" id="lastTimestamp">--:--:-- UTC</span>
         </div>
       </div>
     </header>
 
-    <!-- Main Overview Row (10-Second Agronomic Story) -->
-    <section class="metrics-grid">
-      <!-- Card 1: Root-Zone Moisture -->
-      <div class="metric-card">
-        <div class="card-label">ROOT-ZONE SOIL MOISTURE (θ<sub>rz</sub>)</div>
-        <div class="card-value-row">
-          <span class="primary-value" id="currentTheta">0.000</span>
-          <span class="unit-label">m³/m³</span>
+    <!-- Editorial Principle / Mission Callout -->
+    <section class="principle-banner">
+      <div class="principle-text">
+        <div class="principle-label">System Governing Principle</div>
+        <div class="principle-headline">"Build the evidence before building the complexity."</div>
+      </div>
+      <div class="principle-meta">
+        <div>Architecture: Event-Driven Streaming // Tier-1 QC Quarantine</div>
+        <div>Uncertainty: Dynamic 1–48h (Partially Supported) // &gt;48h (Research)</div>
+      </div>
+    </section>
+
+    <!-- Section 01: Core Real-Time Agronomic State -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title-group">
+          <span class="section-num">01</span>
+          <h2 class="section-title">Real-Time Soil-Water State</h2>
         </div>
-        <div class="card-footer-meta">
-          <span>FC: <strong id="valFC">--</strong></span> | 
-          <span>WP: <strong id="valWP">--</strong></span> | 
-          <span>Storage: <strong id="valStorage">--</strong> mm</span>
-        </div>
+        <span class="section-subtitle">Multi-layer root-zone integration (0–100 cm)</span>
       </div>
 
-      <!-- Card 2: Depletion Fraction -->
-      <div class="metric-card">
-        <div class="card-label">SOIL WATER DEPLETION FRACTION (D<sub>r</sub>)</div>
-        <div class="card-value-row">
-          <span class="primary-value" id="currentDepletion">0.0%</span>
-          <span class="badge" id="depletionBadge">OPTIMAL</span>
+      <div class="metrics-grid">
+        <!-- Card 1: Root-Zone Moisture -->
+        <div class="metric-card">
+          <div class="card-eyebrow">
+            <span>Root-Zone Volumetric Water Content</span>
+            <span>θ<sub>rz</sub></span>
+          </div>
+          <div class="card-value-group">
+            <span class="primary-num" id="currentTheta">0.000</span>
+            <span class="unit-tag">m³/m³</span>
+          </div>
+          <div class="card-footer-meta">
+            Field Capacity θ<sub>fc</sub>: <strong id="valFC">--</strong> &nbsp;|&nbsp; 
+            Wilting Point θ<sub>wp</sub>: <strong id="valWP">--</strong><br>
+            Available Water Storage: <strong id="valStorage">--</strong> mm
+          </div>
         </div>
-        <div class="progress-bar-container">
-          <div class="progress-bar-fill" id="depletionBar" style="width: 0%;"></div>
-          <div class="mad-marker" id="madMarker" style="left: 50%;" title="MAD Threshold (50%)"></div>
-        </div>
-        <div class="card-footer-meta">
-          <span>MAD Threshold: <strong id="valMAD">50.0% (θ = --)</strong></span> | 
-          <span>Deficit: <strong id="valDeficit">--</strong> mm</span>
-        </div>
-      </div>
 
-      <!-- Card 3: Active Advisory & Risk Status -->
-      <div class="metric-card" id="advisoryCard">
-        <div class="card-label">ACTIVE ADVISORY & DECISION SUPPORT</div>
-        <div class="card-value-row">
-          <span class="severity-badge normal" id="advisorySeverity">NORMAL</span>
-          <span class="certainty-pill" id="advisoryCertainty">CONFIRMED</span>
+        <!-- Card 2: Depletion Fraction -->
+        <div class="metric-card">
+          <div class="card-eyebrow">
+            <span>Soil Water Depletion Fraction</span>
+            <span class="badge" id="depletionBadge">OPTIMAL</span>
+          </div>
+          <div class="card-value-group">
+            <span class="primary-num" id="currentDepletion">0.0%</span>
+            <span class="unit-tag">D<sub>r</sub></span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="depletionBar" style="width: 0%;"></div>
+            <div class="mad-marker" id="madMarker" style="left: 50%;" title="MAD Threshold (50%)"></div>
+          </div>
+          <div class="card-footer-meta">
+            MAD Threshold: <strong id="valMAD">50.0% (θ = --)</strong><br>
+            Cumulative Water Deficit: <strong id="valDeficit">--</strong> mm
+          </div>
         </div>
-        <div class="advisory-message" id="advisoryMsg">Moisture is adequate. No moisture stress expected.</div>
-        <div class="advisory-action">
-          <span>Guidance:</span> <strong id="advisoryAction">No irrigation action required at this time.</strong>
+
+        <!-- Card 3: Active Advisory & Risk Status -->
+        <div class="advisory-card" id="advisoryCard">
+          <div class="advisory-header-row">
+            <span class="severity-pill normal" id="advisorySeverity">NORMAL</span>
+            <span class="certainty-tag" id="advisoryCertainty">CONFIRMED</span>
+          </div>
+          <div class="advisory-guidance" id="advisoryMsg">Root-zone soil moisture is adequate. No moisture stress expected.</div>
+          <div class="advisory-subtext">
+            <span>Actionable Guidance:</span> <strong id="advisoryAction">No irrigation action required at this time.</strong>
+          </div>
+          <div class="advisory-assurance-tag">Non-Actuating Advisory // Human Decision Support</div>
         </div>
       </div>
     </section>
 
-    <!-- Central Trajectory & Probabilistic Forecast Chart -->
-    <section class="chart-section">
-      <div class="section-header-row">
-        <div class="section-title">SOIL-WATER TRAJECTORY & MULTI-HORIZON FORECAST</div>
-        <div class="chart-legend">
-          <span class="legend-item"><span class="legend-dot observed"></span> Observed (Past 48h)</span>
-          <span class="legend-item"><span class="legend-dot forecast"></span> Point Forecast (1–168h)</span>
-          <span class="legend-item"><span class="legend-box interval-supported"></span> 1–48h: 80% Prediction Interval (Partially Supported)</span>
-          <span class="legend-item"><span class="legend-box interval-research"></span> 72–168h: Empirical Interval (Research)</span>
-          <span class="legend-item"><span class="legend-line fc-line"></span> FC</span>
-          <span class="legend-item"><span class="legend-line mad-line"></span> MAD</span>
-          <span class="legend-item"><span class="legend-line wp-line"></span> WP</span>
+    <!-- Section 02: Multi-Horizon Trajectory & Probabilistic Forecast -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title-group">
+          <span class="section-num">02</span>
+          <h2 class="section-title">Trajectory &amp; Multi-Horizon Forecast</h2>
         </div>
+        <span class="section-subtitle">Walk-forward observed history (48h) + calibrated 7-horizon forecast (1–168h)</span>
       </div>
-      <div class="chart-wrapper">
-        <canvas id="trajectoryCanvas" width="1100" height="340"></canvas>
+
+      <div class="chart-panel">
+        <div class="chart-legend-bar">
+          <div class="legend-entry"><span class="legend-swatch obs"></span> Observed History (Past 48h)</div>
+          <div class="legend-entry"><span class="legend-swatch fc"></span> Hybrid Point Forecast (1–168h)</div>
+          <div class="legend-entry"><span class="legend-swatch ribbon-sup"></span> 1–48h: 80% Prediction Interval (Partially Supported)</div>
+          <div class="legend-entry"><span class="legend-swatch ribbon-res"></span> 72–168h: Empirical Uncertainty (Research)</div>
+          <div class="legend-entry"><span class="legend-swatch ref-fc"></span> Field Capacity (θ<sub>fc</sub>)</div>
+          <div class="legend-entry"><span class="legend-swatch ref-mad"></span> MAD Limit (θ<sub>mad</sub>)</div>
+          <div class="legend-entry"><span class="legend-swatch ref-wp"></span> Wilting Point (θ<sub>wp</sub>)</div>
+        </div>
+        <div class="canvas-container">
+          <canvas id="trajectoryCanvas" width="1160" height="340"></canvas>
+        </div>
       </div>
     </section>
 
-    <!-- Bottom Status Row: QC & Telemetry Health -->
-    <section class="bottom-status-row">
-      <div class="qc-status-card">
-        <div class="qc-header">
-          <span>DATA QUALITY & INGRESS HEALTH</span>
-          <span class="qc-badge valid" id="qcBadge">VALID / PASS</span>
+    <!-- Section 03: QC Health & Ingress Stream Resilience -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title-group">
+          <span class="section-num">03</span>
+          <h2 class="section-title">Quality Control &amp; Ingress Resilience</h2>
         </div>
-        <div class="qc-details" id="qcDetails">All multi-depth soil moisture and meteorological channels within physical range bounds.</div>
+        <span class="section-subtitle">Tier-1 anomaly isolation barrier and idempotent packet counters</span>
       </div>
-      <div class="resilience-summary-card">
-        <div class="counter-item">Packets Ingested: <strong id="cntIngested">0</strong></div>
-        <div class="counter-item">States Built: <strong id="cntStates">0</strong></div>
-        <div class="counter-item">DLQ Quarantines: <strong id="cntDLQ">0</strong></div>
-        <div class="counter-item">Duplicates Dropped: <strong id="cntDuplicates">0</strong></div>
+
+      <div class="status-grid">
+        <div class="status-card">
+          <div class="status-card-header">
+            <span class="status-card-title">Tier-1 Quality Control &amp; Quarantine</span>
+            <span class="status-badge valid" id="qcBadge">VALID / PASS</span>
+          </div>
+          <div class="status-description" id="qcDetails">All multi-depth soil moisture and meteorological channels within physical range bounds.</div>
+        </div>
+
+        <div class="status-card">
+          <div class="status-card-header">
+            <span class="status-card-title">Resilience Ledger &amp; Telemetry Counters</span>
+          </div>
+          <div class="counters-grid">
+            <div class="counter-cell">
+              <span>Packets Ingested:</span>
+              <span class="counter-num" id="cntIngested">0</span>
+            </div>
+            <div class="counter-cell">
+              <span>States Constructed:</span>
+              <span class="counter-num" id="cntStates">0</span>
+            </div>
+            <div class="counter-cell">
+              <span>DLQ Quarantines:</span>
+              <span class="counter-num" id="cntDLQ">0</span>
+            </div>
+            <div class="counter-cell">
+              <span>Duplicates Suppressed:</span>
+              <span class="counter-num" id="cntDuplicates">0</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- Collapsible Demo & Diagnostics Drawer -->
-    <details class="diagnostics-drawer" open>
-      <summary class="drawer-summary">
-        <span>DEMO CONTROLS & EVENT STREAM DIAGNOSTICS</span>
-        <span class="drawer-hint">(Click to expand/collapse interactive simulator controls)</span>
-      </summary>
-      <div class="drawer-content">
-        <!-- Interactive Controls -->
-        <div class="control-actions">
-          <div class="control-group">
-            <span class="control-label">Stream Step:</span>
-            <button class="btn btn-primary" onclick="stepStream(1)">Step +1 Hour</button>
-            <button class="btn btn-secondary" onclick="stepStream(6)">Advance +6h</button>
-            <button class="btn btn-secondary" onclick="stepStream(24)">Advance +24h (Drydown)</button>
-          </div>
-          <div class="control-group">
-            <span class="control-label">Fault Injection:</span>
-            <button class="btn btn-fault" onclick="injectFault('spike')">Inject Spike (0.88 m³/m³)</button>
-            <button class="btn btn-fault" onclick="injectFault('duplicate')">Inject Duplicate Packet</button>
-            <button class="btn btn-fault" onclick="injectFault('stuck')">Inject Flatline</button>
-            <button class="btn btn-fault" onclick="injectFault('nan')">Inject Missing Value</button>
-            <button class="btn btn-reset" onclick="resetSession()">Reset Demo</button>
-          </div>
+    <!-- Section 04: Interactive Simulator Controls & Event Stream Audit -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title-group">
+          <span class="section-num">04</span>
+          <h2 class="section-title">Interactive Controls &amp; Event Stream Audit</h2>
         </div>
-
-        <!-- Live Ingestion Event Stream Log -->
-        <div class="event-log-container">
-          <div class="log-title">REAL-TIME INGESTION & PIPELINE EVENT LOG</div>
-          <div class="log-entries" id="eventLogEntries">
-            <div class="log-row info">Loading operational stream...</div>
-          </div>
-        </div>
+        <span class="section-subtitle">Simulate real-time ingestion, advance drydown cycles, or inject edge anomalies</span>
       </div>
-    </details>
+
+      <details class="diagnostics-drawer" open>
+        <summary class="drawer-summary">
+          <span>Simulation Controls &amp; Ingestion Event Ledger</span>
+          <span class="drawer-hint">(Click to expand / collapse interactive console)</span>
+        </summary>
+        <div class="drawer-body">
+          <div class="controls-toolbar">
+            <div class="control-row">
+              <span class="control-heading">Advance Stream:</span>
+              <div class="btn-group">
+                <button class="btn btn-primary" onclick="stepStream(1)">Step +1 Hour</button>
+                <button class="btn" onclick="stepStream(6)">Advance +6 Hours</button>
+                <button class="btn" onclick="stepStream(24)">Advance +24h (Drydown)</button>
+              </div>
+            </div>
+            <div class="control-row">
+              <span class="control-heading">Fault Injection:</span>
+              <div class="btn-group">
+                <button class="btn btn-fault" onclick="injectFault('spike')" title="Inject unphysical 0.88 m3/m3 spike">Inject Spike (0.88 m³/m³)</button>
+                <button class="btn btn-fault" onclick="injectFault('duplicate')" title="Replay identical packet">Inject Duplicate Packet</button>
+                <button class="btn btn-fault" onclick="injectFault('stuck')" title="Simulate 12h frozen sensor flatline">Inject Stuck Sensor</button>
+                <button class="btn btn-fault" onclick="injectFault('nan')" title="Inject missing/corrupt measurement">Inject Missing Value</button>
+                <button class="btn btn-reset" onclick="resetSession()" title="Reset session state to baseline">Reset Session</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="event-log-wrapper">
+            <div class="log-eyebrow">Real-Time Event Stream Log</div>
+            <div class="event-log-terminal" id="eventLogEntries">
+              <div class="log-line">
+                <span class="log-ts">[00:00:00]</span>
+                <span class="log-tag">[INIT]</span>
+                <span class="log-text">Initializing operational telemetry stream...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
 
     <!-- Footer -->
     <footer class="app-footer">
-      <span>Agri Telemetry & Forecasting Platform v1.0.0</span> | 
-      <span>Non-Actuating Human Decision Support Cockpit</span> | 
-      <span>Edge Telemetry Simulated via ESP32/Wokwi MQTT; In-Situ Evaluation via NOAA USCRN</span>
+      <div>CA-ENG // Agri Telemetry &amp; Forecasting Platform</div>
+      <div>Phase 6 Operational Demonstration Cockpit &nbsp;&bull;&nbsp; Non-Actuating Decision Support</div>
     </footer>
+
   </div>
 
   <script src="/app.js"></script>
