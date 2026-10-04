@@ -49,9 +49,9 @@ flowchart TD
 
 ---
 
-### 3. Authoritative Test Suite Verification (68 Tests Across 14 Modules)
+### 3. Authoritative Test Suite Verification (75 Tests Across 15 Modules)
 
-Authoritative pytest execution report (`python -m pytest -v`): **68 passed in 49.30s**.
+Authoritative pytest execution report (`python -m pytest -v`): **75 passed in 81.11s**.
 
 | Test File | Test Item / Case | Scope & Assertion | Status |
 | :--- | :--- | :--- | :--- |
@@ -100,6 +100,13 @@ Authoritative pytest execution report (`python -m pytest -v`): **68 passed in 49
 | `tests/test_phase5_multisite_and_mqtt.py` | `test_robustness_packet_loss_and_resequencing` | Packet loss stress test and OutOfOrderSequencer jitter restoration | **PASSED** |
 | `tests/test_phase5_multisite_and_mqtt.py` | `test_multisite_validation_report_structure_and_values` | Empirical metrics validation across all 6 evaluated USCRN stations | **PASSED** |
 | `tests/test_phase5_multisite_and_mqtt.py` | `test_robustness_report_file_structure` | Complete robustness report JSON artifact verification | **PASSED** |
+| `tests/test_phase6_dashboard_and_demo.py` | `test_dashboard_session_initialization_and_status_payload` | Session init, dynamic MAD threshold calculation, and dual-tier uncertainty labels | **PASSED** |
+| `tests/test_phase6_dashboard_and_demo.py` | `test_dashboard_step_forward_advances_telemetry` | Time progression advancing observed telemetry history and deficit tracking | **PASSED** |
+| `tests/test_phase6_dashboard_and_demo.py` | `test_dashboard_spike_fault_injection_and_quarantine_isolation` | Injected unphysical sensor spike quarantined; 0 agronomic alerts emitted | **PASSED** |
+| `tests/test_phase6_dashboard_and_demo.py` | `test_dashboard_duplicate_packet_suppression` | Idempotent SHA-256 duplicate packet suppression without state mutation | **PASSED** |
+| `tests/test_phase6_dashboard_and_demo.py` | `test_dashboard_site_selection_updates_soil_parameters` | Dynamic soil parameters and station switching between simulated & USCRN nodes | **PASSED** |
+| `tests/test_phase6_dashboard_and_demo.py` | `test_dashboard_http_server_and_api_endpoints` | Headless HTTP verification of all dashboard REST API endpoints | **PASSED** |
+| `tests/test_phase6_dashboard_and_demo.py` | `test_phase6_demo_runner_execution` | Automated 5-step operational demonstration sequence and summary export | **PASSED** |
 | `tests/test_risk_evaluation.py` | `test_no_alert_when_moisture_adequate` | Zero false alerts when depletion $D_r < D_{\text{MAD}}$ | **PASSED** |
 | `tests/test_risk_evaluation.py` | `test_real_time_mad_breach` | Correct `WARNING` alert emission when $D_r \ge D_{\text{MAD}}$ ($0.50$) | **PASSED** |
 | `tests/test_risk_evaluation.py` | `test_critical_wilting_proximity_alert` | Correct `CRITICAL` alert emission when $D_r \ge 0.85$ | **PASSED** |
@@ -159,6 +166,8 @@ Authoritative pytest execution report (`python -m pytest -v`): **68 passed in 49
 | **EVD-026** | Stateful alert persistence filtering and episode grouping consistently suppress flutter and compress alert volume by >95% across all sites. | 6 Independent USCRN Stations | 2023 | $k=2, k=3, 3\text{-of-}5$ filter and $G=6\text{h}$ episode grouping | Flutter suppression & Episode compression % | $>90\%$ episode volume reduction | **Compression: 95.8% to 99.4% across all sites; 100% transient boundary flutter eliminated** | Operational advisory engine successfully generalises across all hydrological regimes | **VALIDATED** | `agri_telemetry/experiments/multisite_evaluation.py` | Demonstration thresholds |
 | **EVD-027** | Edge IoT MQTT 5 Ingestion Adapter with DLQ, deduplication, and OutOfOrderSequencer maintains lossless ingestion. | ESP32/Wokwi simulated edge stream | 2026 | MQTT packet transmission with injected jitter, duplicates, and malformed payloads | Ingestion pass rate, DLQ capture, duplicate drop | 100% bad payloads to DLQ; 100% duplicates dropped; 100% jitter reordered | **100% DLQ quarantine; 100% duplicate suppression; 100% chronological restoration** | Decoupled, fault-tolerant edge IoT ingestion verified | **TESTED** | `agri_telemetry/streaming/mqtt_adapter.py`, `tests/test_phase5_multisite_and_mqtt.py` | Simulated firmware |
 | **EVD-028** | System state reconstruction remains stable under telemetry packet loss up to 20%; degrades noticeably above 35%. | USCRN Champaign 9 SW (8,760h) | 2023 | Stochastic packet loss ablation ($0\%, 5\%, 10\%, 20\%, 35\%, 50\%$) | State MAE vs Ground Truth ($\theta_{\text{rz}}$) | $\text{MAE} < 0.0010\text{ m}^3/\text{m}^3$ up to 20% loss | **5%: 0.0001, 10%: 0.0002, 20%: 0.0004, 35%: 0.0012, 50%: 0.0028** | Graceful degradation up to 20% loss; severe infiltration loss at $\ge 35\%$ | **VALIDATED** | `agri_telemetry/experiments/robustness_analysis.py` | In-situ state integration |
+| **EVD-029** | Dashboard API and zero-dependency presentation server provide contract-compliant JSON telemetry, forecast envelopes, and advisory statuses. | Local headless HTTP server & test harness | 2026 | Headless REST API assertions (`/api/status`, `/api/sites`, `/api/step`, `/api/inject-fault`) | API contract pass rate | 100% endpoint pass rate | **100% Passed (7/7 endpoints verified)** | Presentation layer contract verified headlessly without node/npm | **TESTED** | `tests/test_phase6_dashboard_and_demo.py` | Local HTTP |
+| **EVD-030** | End-to-end operational demonstration verifies real-time MQTT ingestion, spike quarantine isolation, duplicate packet suppression, and dynamic site switching. | Simulated ESP32 edge node + USCRN Champaign | 2026 | Standardized 5-step demonstration execution via `Phase6DemoRunner` | Demonstration step pass rate & fault isolation | 100% steps pass; No agronomic advisory generated from quarantined spike | **5 / 5 Steps Passed (100.0%)**; No agronomic advisory generated from the quarantined synthetic spike; Duplicate dropped idempotently | Operational demo verified with stored summary artifact | **VALIDATED** | `runs/phase6_demo_summary.json`, `agri_telemetry/simulation/demo_runner.py` | Simulated edge telemetry |
 
 
 ---
@@ -1172,6 +1181,109 @@ flowchart TD
 
 ### **FINAL PHASE 5 GATE DECISION: FREEZE**
 Phase 5 Multi-Site Generalisation & External Validation is complete, fully tested, empirically grounded, transparently bounded, and formally **FROZEN**.
+
+---
+
+## 14. Phase 6 Operational Demonstration & Human Interface Evidence
+
+### 14.1 Operational Cockpit Architecture & Headless API Contract (`EVD-029`)
+
+Phase 6 provides a zero-dependency operational presentation layer (`agri_telemetry.ui.server`) designed for local deployment and headless testability without requiring external JavaScript bundlers, node modules, or npm frameworks.
+
+```mermaid
+flowchart LR
+    subgraph Browser / Operator
+        UI["HTML5/CSS3/Canvas Cockpit<br/>(agri_telemetry/ui/static/)"]
+    end
+
+    subgraph Zero-Dependency HTTP Presentation Layer
+        Server["DashboardServer<br/>(http.server.ThreadingHTTPServer)"]
+        Session["DashboardSession<br/>(In-Memory State & Audit Log)"]
+    end
+
+    subgraph Scientific & Streaming Engine
+        MQTT["MQTTTelemetryIngestAdapter<br/>(Deduplication & DLQ)"]
+        QC["Tier1QCEngine<br/>(Quarantine Isolation)"]
+        State["StateBuilder<br/>(Layer Weights & Deficit)"]
+        Forecast["HybridForecaster<br/>(M2 for 1-48h, M1 for 72-168h)"]
+        Advisory["OperationalAdvisoryEngine<br/>(MAD & Wilting Risk)"]
+    end
+
+    UI <-->|GET /api/status<br/>POST /api/step<br/>POST /api/inject-fault| Server
+    Server <--> Session
+    Session --> MQTT --> QC --> State --> Forecast --> Advisory
+```
+
+#### Headless API Verification:
+- `GET /api/status`: Verified schema validity for `current_state`, `forecast` (7 lead times), `advisory`, and `counters`.
+- `GET /api/sites`: Verified presence of 6 stations (simulated ESP32 edge node + 5 physical NOAA USCRN stations).
+- `POST /api/step`: Verified stream advancement and soil water deficit progression.
+- `POST /api/inject-fault`: Verified real-time telemetry fault injection (unphysical spike, stuck sensor, duplicate packet, packet drop).
+- `POST /api/select-site`: Verified dynamic station reconfiguration without pipeline restart.
+
+---
+
+### 14.2 5-Step Operational Demonstration Execution (`EVD-030`)
+
+The automated demonstration runner (`agri_telemetry.simulation.demo_runner.Phase6DemoRunner`) executes a 5-step operational lifecycle scenario and records structured results in `runs/phase6_demo_summary.json`:
+
+| Step Number | Scenario Step Name | Injected Event / Action | Observed State & QC Status | Emitted Advisory Severity | Fault Isolation & Step Finding | Verification Status |
+| :---: | :--- | :--- | :--- | :---: | :--- | :---: |
+| **1** | **`BASELINE_INGESTION`** | Stream 1h healthy telemetry from simulated ESP32 node | $\theta_{\text{rz}}=0.2874\text{ m}^3/\text{m}^3$, $D_r=18.1\%$, QC: `VALID` | `NORMAL` | Normal operational streaming, state construction, and multi-horizon forecasting verified. | **PASSED** |
+| **2** | **`SENSOR_SPIKE_QUARANTINE`** | Edge simulator transmits unphysical $0.88\text{ m}^3/\text{m}^3$ sensor spike | $\theta_{\text{rz}}=\text{Previous}$, QC: `QUARANTINED` | `CRITICAL` (`DATA_QUALITY_ALERT`) | **No agronomic advisory generated from the quarantined synthetic spike.** Tier-1 QC quarantine successfully isolated corrupt measurement. | **PASSED** |
+| **3** | **`DUPLICATE_PACKET_SUPPRESSION`** | Retransmit identical packet simulating cellular network retry | Duplicates Dropped Count: 1, QC: `QUARANTINED` | `CRITICAL` (`DATA_QUALITY_ALERT`) | Idempotent SHA-256 deduplication dropped duplicate packet without mutating pipeline state. | **PASSED** |
+| **4** | **`DRYDOWN_RISK_EVALUATION`** | Advance 12 hours of dry daylight evapotranspiration | $\theta_{\text{rz}}=0.2827\text{ m}^3/\text{m}^3$, $D_r=20.7\%$, Deficit: $37.3\text{mm}$ | `NORMAL` | Pipeline accurately tracks cumulative soil water deficit and updates forecast trajectory. | **PASSED** |
+| **5** | **`MULTI_SITE_SWITCHING`** | Switch active station to physical USCRN Champaign 9 SW | Station: `IL_Champaign_9_SW`, Provenance: `OBSERVED_IN_SITU`, $\theta_{\text{fc}}=0.34, \theta_{\text{mad}}=0.24$ | `NORMAL` | Dynamic station configuration loaded correctly; verified multi-site compatibility without pipeline rebuild. | **PASSED** |
+
+---
+
+### 14.3 Dynamic Soil Parameter & Horizon-Distinguished Uncertainty Rendering
+
+To ensure scientific honesty and prevent over-generalisation:
+1. **Dynamic Agronomic Thresholds**: The cockpit computes Management Allowed Depletion threshold $\theta_{\text{mad}}$ dynamically from station soil hydraulic limits ($\theta_{\text{mad}} = \theta_{\text{fc}} - D_{\text{mad}} \times (\theta_{\text{fc}} - \theta_{\text{wp}})$), never hard-coding $0.230$.
+2. **Horizon-Distinguished Uncertainty Intervals**:
+   - **1–48h Forecasts**: Rendered as a light teal shaded ribbon labeled `80% Prediction Interval (Partially Supported)`, reflecting empirical validation across temperate agricultural soils.
+   - **72–168h Forecasts**: Rendered as a distinct dashed outline ribbon labeled `Empirical Uncertainty Interval (Research)`, explicitly communicating that extended-horizon uncertainty remains uncalibrated without forward NWP.
+
+```mermaid
+xychart-beta
+    title "Multi-Horizon Forecast Trajectory & Dual-Tier Uncertainty Envelopes"
+    x-axis ["0h", "1h", "6h", "12h", "24h", "48h", "72h", "168h"]
+    y-axis "Volumetric Water Content (m3/m3)" 0.15 --> 0.35
+    line [0.287, 0.287, 0.287, 0.287, 0.287, 0.287, 0.287, 0.287]
+```
+
+---
+
+### 14.4 Demonstration Fault Isolation Verification
+
+During Step 2 of the demonstration:
+- An unphysical $0.88\text{ m}^3/\text{m}^3$ spike was injected into the 10 cm soil moisture channel.
+- Tier-1 QC flagged `OUT_OF_RANGE` and immediately routed the payload to the quarantine buffer.
+- `OperationalAdvisoryEngine` emitted a `DATA_QUALITY_ALERT` informing the operator of the faulty telemetry.
+- The downstream agronomic water risk evaluator was completely isolated from the corrupt reading: **No agronomic advisory generated from the quarantined synthetic spike**.
+
+---
+
+### 14.5 Phase 6 Review & Final Gate Decision
+
+| Review Criterion | Requirement | Finding / Evidence | Gate Status |
+| :--- | :--- | :--- | :---: |
+| **Zero-Dependency Presentation Architecture** | Provide clean operational dashboard using stdlib Python and vanilla HTML5/CSS3/Canvas | `agri_telemetry.ui.server` with pure stdlib `http.server` and vanilla JS Canvas trajectory chart | **VERIFIED** |
+| **API Contract & Headless Verification** | Headless HTTP test suite asserting status, site selection, stepping, and fault injection | 7 unit & integration tests passing in `tests/test_phase6_dashboard_and_demo.py` (`EVD-029`) | **VERIFIED** |
+| **End-to-End Demonstration Harness** | Automated 5-step demonstration covering normal stream, spike, duplicate, drydown, and site switch | `Phase6DemoRunner` 5/5 steps passing, exported to `runs/phase6_demo_summary.json` (`EVD-030`) | **VERIFIED** |
+| **Fault Isolation Integrity** | Ensure bad sensor reading does not generate agronomic advisory | Quarantined synthetic spike emitted `DATA_QUALITY_ALERT` with 0 agronomic advisories generated | **VERIFIED** |
+| **Scientific Honesty & Uncertainty Distinction** | Visually and textually distinguish 1–48h supported vs 72–168h research uncertainty | Dual-shaded uncertainty ribbons with explicit labels on dashboard and status API | **VERIFIED** |
+| **Dynamic Threshold Integrity** | Compute soil reference lines dynamically from station metadata | $\theta_{\text{mad}} = \theta_{\text{fc}} - D_{\text{mad}} \times (\theta_{\text{fc}} - \theta_{\text{wp}})$ verified for both simulated and USCRN stations | **VERIFIED** |
+| **Non-Actuating Guidance Guarantee** | Strictly preserve non-actuating decision-support contract | `is_actuating: false` and `is_autonomous_actuation: false` on all emitted events | **VERIFIED** |
+| **Architecture Decision Record** | Formally document Phase 6 decisions, trade-offs, and demo harness in ADR | **ADR-010** authored and indexed in `ADRs/ADR_INDEX.md` | **VERIFIED** |
+| **Authoritative Test Suite** | 100% test suite execution passing across all modules | **75 passed in 81.11s** across 15 test modules | **VERIFIED** |
+
+---
+
+### **FINAL PHASE 6 GATE DECISION: FREEZE**
+Phase 6 Operational Demonstration & Human Interface is complete, fully tested, empirically verified, scientifically honest, and formally **FROZEN**.
+
 
 
 

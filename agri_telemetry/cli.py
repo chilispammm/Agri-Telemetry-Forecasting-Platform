@@ -220,6 +220,34 @@ def mqtt_simulate_cmd(args: argparse.Namespace) -> None:
     print("================================================================================")
 
 
+def dashboard_cmd(args: argparse.Namespace) -> None:
+    from agri_telemetry.ui.server import run_dashboard_server
+    print("================================================================================")
+    print("AGRI TELEMETRY & FORECASTING PLATFORM — OPERATIONAL COCKPIT DASHBOARD")
+    print("================================================================================")
+    print(f"Host: http://{args.host}:{args.port}")
+    print("Press Ctrl+C to stop the dashboard server.")
+    print("--------------------------------------------------------------------------------")
+    run_dashboard_server(host=args.host, port=args.port, block=True)
+
+
+def demo_cmd(args: argparse.Namespace) -> None:
+    from agri_telemetry.simulation.demo_runner import Phase6DemoRunner
+    print("================================================================================")
+    print("AGRI TELEMETRY & FORECASTING PLATFORM — PHASE 6 OPERATIONAL DEMONSTRATION")
+    print("================================================================================")
+    runner = Phase6DemoRunner()
+    report = runner.run_demonstration(save_report=True)
+    print("--------------------------------------------------------------------------------")
+    print(f"Total Steps:   {report.total_steps}")
+    print(f"Passed Steps:  {report.passed_steps}")
+    print(f"Success State: {'PASSED' if report.is_successful else 'FAILED'}")
+    print("Key Findings:")
+    for f in report.key_findings:
+        print(f"  - {f}")
+    print("================================================================================")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="agri-telemetry",
@@ -289,6 +317,14 @@ def main() -> None:
     mqtt_parser.add_argument("--packets", type=int, default=48, help="Number of hourly packets to simulate")
     mqtt_parser.add_argument("--seed", type=int, default=42, help="Random seed")
 
+    # dashboard
+    dash_parser = subparsers.add_parser("dashboard", help="Start the operational cockpit dashboard server")
+    dash_parser.add_argument("--host", default="127.0.0.1", help="Host interface to bind")
+    dash_parser.add_argument("--port", type=int, default=8080, help="Port to listen on")
+
+    # demo
+    subparsers.add_parser("demo", help="Run automated Phase 6 end-to-end operational demonstration")
+
     args = parser.parse_args()
     if args.command == "run-phase1":
         run_phase1_cmd(args)
@@ -304,6 +340,10 @@ def main() -> None:
         run_phase5_cmd(args)
     elif args.command == "mqtt-simulate":
         mqtt_simulate_cmd(args)
+    elif args.command == "dashboard":
+        dashboard_cmd(args)
+    elif args.command == "demo":
+        demo_cmd(args)
     else:
         parser.print_help()
 

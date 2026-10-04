@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-10-04T17:33:25.165868Z",
+  "total_steps": 5,
+  "passed_steps": 5,
+  "is_successful": true,
+  "step_results": [
+    {
+      "step_number": 1,
+      "step_name": "BASELINE_INGESTION",
+      "action_description": "Stream 1 hour of healthy telemetry from simulated ESP32 edge node.",
+      "observed_status": "theta_rz=0.2874, Dr=18.1%",
+      "qc_health": "VALID",
+      "active_advisory_severity": "NORMAL",
+      "advisory_message": "Root-zone soil moisture is adequate. No moisture stress expected.",
+      "passed": true,
+      "notes": "Normal operational streaming, state construction, and multi-horizon forecasting verified."
+    },
+    {
+      "step_number": 2,
+      "step_name": "SENSOR_SPIKE_QUARANTINE",
+      "action_description": "Edge simulator transmits 0.88 m3/m3 unphysical spike.",
+      "observed_status": "QC Status: QUARANTINED",
+      "qc_health": "QUARANTINED",
+      "active_advisory_severity": "CRITICAL",
+      "advisory_message": "Data quality alert: Sensor observation quarantined due to Physical range breach on ESP32-AGRI-NODE-001-soil_moisture_10cm (value=0.88 m3/m3). Downstream agronomic risk evaluation is isolated from this payload.",
+      "passed": true,
+      "notes": "No agronomic advisory generated from the quarantined synthetic spike. Tier-1 QC quarantine successfully isolated bad telemetry."
+    },
+    {
+      "step_number": 3,
+      "step_name": "DUPLICATE_PACKET_SUPPRESSION",
+      "action_description": "Retransmit identical sequence packet simulating cellular retry.",
+      "observed_status": "Duplicates Dropped Count: 1",
+      "qc_health": "QUARANTINED",
+      "active_advisory_severity": "CRITICAL",
+      "advisory_message": "Data quality alert: Sensor observation quarantined due to Physical range breach on ESP32-AGRI-NODE-001-soil_moisture_10cm (value=0.88 m3/m3). Downstream agronomic risk evaluation is isolated from this payload.",
+      "passed": true,
+      "notes": "Idempotent SHA-256 deduplication dropped duplicate packet without mutating pipeline state."
+    },
+    {
+      "step_number": 4,
+      "step_name": "DRYDOWN_RISK_EVALUATION",
+      "action_description": "Advance 12 hours of dry daylight evapotranspiration.",
+      "observed_status": "theta_rz=0.2827, Dr=20.7%, Deficit=37.3mm",
+      "qc_health": "VALID",
+      "active_advisory_severity": "NORMAL",
+      "advisory_message": "Root-zone soil moisture is adequate. No moisture stress expected.",
+      "passed": true,
+      "notes": "Pipeline accurately tracks cumulative soil water deficit and updates forecast trajectory."
+    },
+    {
+      "step_number": 5,
+      "step_name": "MULTI_SITE_SWITCHING",
+      "action_description": "Switch active site to USCRN Champaign 9 SW.",
+      "observed_status": "Site: IL_Champaign_9_SW, Data Class: OBSERVED_IN_SITU, FC=0.34, MAD=0.24",
+      "qc_health": "VALID",
+      "active_advisory_severity": "NORMAL",
+      "advisory_message": "Root-zone soil moisture is adequate. No moisture stress expected.",
+      "passed": true,
+      "notes": "Dynamic station configuration loaded correctly; verified multi-site compatibility without pipeline rebuild."
+    }
+  ],
+  "key_findings": [
+    "Finding 1 (Isolation Integrity): No agronomic advisory generated from the quarantined synthetic spike.",
+    "Finding 2 (Idempotency): Duplicate MQTT packets are dropped idempotently with zero state mutation.",
+    "Finding 3 (Scientific Honesty): Horizon uncertainty intervals visually and textually separate 1-48h partially supported intervals from 72-168h research intervals.",
+    "Finding 4 (Dynamic Thresholds): MAD threshold theta (0.235 m3/m3 in Champaign, 0.230 m3/m3 in Lincoln) is calculated dynamically from soil profile configuration.",
+    "Finding 5 (Multi-Site Readiness): Operational cockpit seamlessly switches between simulated edge IoT nodes and physical NOAA USCRN stations."
+  ]
+}

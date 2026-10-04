@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agri Telemetry & Forecasting Platform — Operational Cockpit</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Header & Provenance Banner -->
+    <header class="top-header">
+      <div class="header-left">
+        <div class="brand-title">AGRI TELEMETRY & FORECASTING PLATFORM</div>
+        <div class="brand-subtitle">Operational Early-Warning Cockpit & Decision Support</div>
+      </div>
+      <div class="header-right">
+        <div class="provenance-pill" id="provenanceBadge">SIMULATED REPLAY</div>
+        <div class="site-select-wrapper">
+          <label for="siteSelector">Site / Node:</label>
+          <select id="siteSelector" onchange="onSiteChange()">
+            <option value="SIMULATED_ESP32">ESP32-AGRI-NODE-001 (Simulated Wokwi Node)</option>
+            <option value="IL_Champaign_9_SW">Champaign 9 SW (Midwest Corn Belt)</option>
+            <option value="NE_Lincoln_11_SW">Lincoln 11 SW (Humid Continental Plains)</option>
+            <option value="SD_Sioux_Falls_14_NNE">Sioux Falls 14 NNE (Northern Great Plains)</option>
+            <option value="NM_Las_Cruces_20_N">Las Cruces 20 N (Arid Desert Southwest)</option>
+            <option value="GA_Watkinsville_5_SSE">Watkinsville 5 SSE (Humid Subtropical)</option>
+            <option value="CO_Nunn_7_NNE">Nunn 7 NNE (Semi-Arid High Plains)</option>
+          </select>
+        </div>
+        <div class="timestamp-box">
+          <span class="ts-label">Latest Telemetry:</span>
+          <span class="ts-val" id="lastTimestamp">--:--:-- UTC</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Overview Row (10-Second Agronomic Story) -->
+    <section class="metrics-grid">
+      <!-- Card 1: Root-Zone Moisture -->
+      <div class="metric-card">
+        <div class="card-label">ROOT-ZONE SOIL MOISTURE (θ<sub>rz</sub>)</div>
+        <div class="card-value-row">
+          <span class="primary-value" id="currentTheta">0.000</span>
+          <span class="unit-label">m³/m³</span>
+        </div>
+        <div class="card-footer-meta">
+          <span>FC: <strong id="valFC">--</strong></span> | 
+          <span>WP: <strong id="valWP">--</strong></span> | 
+          <span>Storage: <strong id="valStorage">--</strong> mm</span>
+        </div>
+      </div>
+
+      <!-- Card 2: Depletion Fraction -->
+      <div class="metric-card">
+        <div class="card-label">SOIL WATER DEPLETION FRACTION (D<sub>r</sub>)</div>
+        <div class="card-value-row">
+          <span class="primary-value" id="currentDepletion">0.0%</span>
+          <span class="badge" id="depletionBadge">OPTIMAL</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" id="depletionBar" style="width: 0%;"></div>
+          <div class="mad-marker" id="madMarker" style="left: 50%;" title="MAD Threshold (50%)"></div>
+        </div>
+        <div class="card-footer-meta">
+          <span>MAD Threshold: <strong id="valMAD">50.0% (θ = --)</strong></span> | 
+          <span>Deficit: <strong id="valDeficit">--</strong> mm</span>
+        </div>
+      </div>
+
+      <!-- Card 3: Active Advisory & Risk Status -->
+      <div class="metric-card" id="advisoryCard">
+        <div class="card-label">ACTIVE ADVISORY & DECISION SUPPORT</div>
+        <div class="card-value-row">
+          <span class="severity-badge normal" id="advisorySeverity">NORMAL</span>
+          <span class="certainty-pill" id="advisoryCertainty">CONFIRMED</span>
+        </div>
+        <div class="advisory-message" id="advisoryMsg">Moisture is adequate. No moisture stress expected.</div>
+        <div class="advisory-action">
+          <span>Guidance:</span> <strong id="advisoryAction">No irrigation action required at this time.</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Central Trajectory & Probabilistic Forecast Chart -->
+    <section class="chart-section">
+      <div class="section-header-row">
+        <div class="section-title">SOIL-WATER TRAJECTORY & MULTI-HORIZON FORECAST</div>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-dot observed"></span> Observed (Past 48h)</span>
+          <span class="legend-item"><span class="legend-dot forecast"></span> Point Forecast (1–168h)</span>
+          <span class="legend-item"><span class="legend-box interval-supported"></span> 1–48h: 80% Prediction Interval (Partially Supported)</span>
+          <span class="legend-item"><span class="legend-box interval-research"></span> 72–168h: Empirical Interval (Research)</span>
+          <span class="legend-item"><span class="legend-line fc-line"></span> FC</span>
+          <span class="legend-item"><span class="legend-line mad-line"></span> MAD</span>
+          <span class="legend-item"><span class="legend-line wp-line"></span> WP</span>
+        </div>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="trajectoryCanvas" width="1100" height="340"></canvas>
+      </div>
+    </section>
+
+    <!-- Bottom Status Row: QC & Telemetry Health -->
+    <section class="bottom-status-row">
+      <div class="qc-status-card">
+        <div class="qc-header">
+          <span>DATA QUALITY & INGRESS HEALTH</span>
+          <span class="qc-badge valid" id="qcBadge">VALID / PASS</span>
+        </div>
+        <div class="qc-details" id="qcDetails">All multi-depth soil moisture and meteorological channels within physical range bounds.</div>
+      </div>
+      <div class="resilience-summary-card">
+        <div class="counter-item">Packets Ingested: <strong id="cntIngested">0</strong></div>
+        <div class="counter-item">States Built: <strong id="cntStates">0</strong></div>
+        <div class="counter-item">DLQ Quarantines: <strong id="cntDLQ">0</strong></div>
+        <div class="counter-item">Duplicates Dropped: <strong id="cntDuplicates">0</strong></div>
+      </div>
+    </section>
+
+    <!-- Collapsible Demo & Diagnostics Drawer -->
+    <details class="diagnostics-drawer" open>
+      <summary class="drawer-summary">
+        <span>DEMO CONTROLS & EVENT STREAM DIAGNOSTICS</span>
+        <span class="drawer-hint">(Click to expand/collapse interactive simulator controls)</span>
+      </summary>
+      <div class="drawer-content">
+        <!-- Interactive Controls -->
+        <div class="control-actions">
+          <div class="control-group">
+            <span class="control-label">Stream Step:</span>
+            <button class="btn btn-primary" onclick="stepStream(1)">Step +1 Hour</button>
+            <button class="btn btn-secondary" onclick="stepStream(6)">Advance +6h</button>
+            <button class="btn btn-secondary" onclick="stepStream(24)">Advance +24h (Drydown)</button>
+          </div>
+          <div class="control-group">
+            <span class="control-label">Fault Injection:</span>
+            <button class="btn btn-fault" onclick="injectFault('spike')">Inject Spike (0.88 m³/m³)</button>
+            <button class="btn btn-fault" onclick="injectFault('duplicate')">Inject Duplicate Packet</button>
+            <button class="btn btn-fault" onclick="injectFault('stuck')">Inject Flatline</button>
+            <button class="btn btn-fault" onclick="injectFault('nan')">Inject Missing Value</button>
+            <button class="btn btn-reset" onclick="resetSession()">Reset Demo</button>
+          </div>
+        </div>
+
+        <!-- Live Ingestion Event Stream Log -->
+        <div class="event-log-container">
+          <div class="log-title">REAL-TIME INGESTION & PIPELINE EVENT LOG</div>
+          <div class="log-entries" id="eventLogEntries">
+            <div class="log-row info">Loading operational stream...</div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <span>Agri Telemetry & Forecasting Platform v1.0.0</span> | 
+      <span>Non-Actuating Human Decision Support Cockpit</span> | 
+      <span>Edge Telemetry Simulated via ESP32/Wokwi MQTT; In-Situ Evaluation via NOAA USCRN</span>
+    </footer>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
