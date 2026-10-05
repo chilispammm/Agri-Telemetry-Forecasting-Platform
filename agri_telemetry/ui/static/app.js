@@ -5,6 +5,15 @@
 
 let stateCache = null;
 
+function formatEnumTitle(raw) {
+  if (!raw) return "--";
+  return String(raw)
+    .toLowerCase()
+    .split("_")
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
 async function fetchStatus() {
   try {
     const res = await fetch("/api/status");
@@ -82,7 +91,8 @@ function renderDashboard(data) {
   sevBadge.className = "badge " + (sev !== "normal" ? sev : "");
   advisoryCard.className = "decision-support-panel " + (sev !== "normal" ? sev : "");
 
-  document.getElementById("advisoryCertainty").textContent = adv.certainty_level || "CONFIRMED";
+  const rawCertainty = adv.certainty_level || "CONFIRMED";
+  document.getElementById("advisoryCertainty").textContent = formatEnumTitle(rawCertainty);
   document.getElementById("advisoryMsg").textContent = adv.message || "Root-zone soil moisture is adequate. No moisture stress expected.";
   document.getElementById("advisoryAction").textContent = adv.human_action || "No irrigation action required at this time.";
 
@@ -205,7 +215,24 @@ function renderChart(data) {
   ctx.fillText("-24h", padding.left + (t0_x - padding.left) * 0.5, height - padding.bottom + 18);
   ctx.fillText("-48h", padding.left, height - padding.bottom + 18);
   ctx.fillText("+24h", t0_x + (width - padding.right - t0_x) * (24 / 168), height - padding.bottom + 18);
-  ctx.fillText("+48h", t0_x + (width - padding.right - t0_x) * (48 / 168), height - padding.bottom + 18);
+  
+  // +48h Model Boundary Marker
+  const x_48h = t0_x + (width - padding.right - t0_x) * (48 / 168);
+  ctx.save();
+  ctx.strokeStyle = "rgba(98, 96, 90, 0.45)";
+  ctx.setLineDash([3, 3]);
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(x_48h, padding.top);
+  ctx.lineTo(x_48h, height - padding.bottom);
+  ctx.stroke();
+  
+  ctx.fillStyle = "#62605a";
+  ctx.font = "600 9px IBM Plex Mono, monospace";
+  ctx.textAlign = "center";
+  ctx.fillText("+48h BOUNDARY", x_48h, height - padding.bottom + 18);
+  ctx.restore();
+
   ctx.fillText("+72h", t0_x + (width - padding.right - t0_x) * (72 / 168), height - padding.bottom + 18);
   ctx.fillText("+168h (7d)", width - padding.right - 10, height - padding.bottom + 18);
 
@@ -321,7 +348,18 @@ function renderChart(data) {
 }
 
 // Interactive API Calls
-async function stepStream(hours) {
+async function stepStream(hours, btnEl) {
+  let btn = btnEl;
+  if (!btn && window.event && window.event.target) {
+    btn = window.event.target.closest("button");
+  }
+  const origText = btn ? (btn.dataset.origText || btn.textContent) : null;
+  if (btn) {
+    if (!btn.dataset.origText) btn.dataset.origText = origText;
+    btn.textContent = "STEPPING...";
+    btn.disabled = true;
+    btn.classList.add("btn-loading");
+  }
   try {
     const res = await fetch("/api/step", {
       method: "POST",
@@ -332,13 +370,45 @@ async function stepStream(hours) {
       const data = await res.json();
       stateCache = data;
       renderDashboard(data);
+      if (btn) {
+        btn.textContent = "PROCESSED";
+        btn.classList.remove("btn-loading");
+        btn.classList.add("btn-queued");
+        setTimeout(() => {
+          btn.textContent = btn.dataset.origText;
+          btn.classList.remove("btn-queued");
+          btn.disabled = false;
+        }, 800);
+      }
+    } else {
+      if (btn) {
+        btn.textContent = btn.dataset.origText;
+        btn.classList.remove("btn-loading");
+        btn.disabled = false;
+      }
     }
   } catch (err) {
     console.error("Step stream error:", err);
+    if (btn) {
+      btn.textContent = btn.dataset.origText;
+      btn.classList.remove("btn-loading");
+      btn.disabled = false;
+    }
   }
 }
 
-async function injectFault(faultType) {
+async function injectFault(faultType, btnEl) {
+  let btn = btnEl;
+  if (!btn && window.event && window.event.target) {
+    btn = window.event.target.closest("button");
+  }
+  const origText = btn ? (btn.dataset.origText || btn.textContent) : null;
+  if (btn) {
+    if (!btn.dataset.origText) btn.dataset.origText = origText;
+    btn.textContent = "INJECTING...";
+    btn.disabled = true;
+    btn.classList.add("btn-loading");
+  }
   try {
     const res = await fetch("/api/inject-fault", {
       method: "POST",
@@ -349,9 +419,36 @@ async function injectFault(faultType) {
       const data = await res.json();
       stateCache = data;
       renderDashboard(data);
+      if (btn) {
+        btn.textContent = "QUEUED";
+        btn.classList.remove("btn-loading");
+        btn.classList.add("btn-queued");
+        setTimeout(() => {
+          btn.textContent = btn.dataset.origText;
+          btn.classList.remove("btn-queued");
+          btn.disabled = false;
+        }, 1100);
+      }
+    } else {
+      if (btn) {
+        btn.textContent = "FAILED";
+        btn.classList.remove("btn-loading");
+        setTimeout(() => {
+          btn.textContent = btn.dataset.origText;
+          btn.disabled = false;
+        }, 1100);
+      }
     }
   } catch (err) {
     console.error("Inject fault error:", err);
+    if (btn) {
+      btn.textContent = "ERROR";
+      btn.classList.remove("btn-loading");
+      setTimeout(() => {
+        btn.textContent = btn.dataset.origText;
+        btn.disabled = false;
+      }, 1100);
+    }
   }
 }
 
@@ -374,16 +471,48 @@ async function onSiteChange() {
   }
 }
 
-async function resetSession() {
+async function resetSession(btnEl) {
+  let btn = btnEl;
+  if (!btn && window.event && window.event.target) {
+    btn = window.event.target.closest("button");
+  }
+  const origText = btn ? (btn.dataset.origText || btn.textContent) : null;
+  if (btn) {
+    if (!btn.dataset.origText) btn.dataset.origText = origText;
+    btn.textContent = "RESETTING...";
+    btn.disabled = true;
+    btn.classList.add("btn-loading");
+  }
   try {
     const res = await fetch("/api/reset", { method: "POST" });
     if (res.ok) {
       const data = await res.json();
       stateCache = data;
       renderDashboard(data);
+      if (btn) {
+        btn.textContent = "RESET COMPLETE";
+        btn.classList.remove("btn-loading");
+        btn.classList.add("btn-queued");
+        setTimeout(() => {
+          btn.textContent = btn.dataset.origText;
+          btn.classList.remove("btn-queued");
+          btn.disabled = false;
+        }, 900);
+      }
+    } else {
+      if (btn) {
+        btn.textContent = btn.dataset.origText;
+        btn.classList.remove("btn-loading");
+        btn.disabled = false;
+      }
     }
   } catch (err) {
     console.error("Reset session error:", err);
+    if (btn) {
+      btn.textContent = btn.dataset.origText;
+      btn.classList.remove("btn-loading");
+      btn.disabled = false;
+    }
   }
 }
 

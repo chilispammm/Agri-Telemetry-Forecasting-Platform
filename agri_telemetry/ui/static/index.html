@@ -51,7 +51,26 @@
       </div>
 
       <div class="state-editorial-grid">
-        <!-- Block 1: Soil Moisture -->
+        <!-- Block 1: Depletion (Dominant Operational Decision Metric) -->
+        <div class="state-block state-block-dominant">
+          <div class="block-label">
+            <span>Root-Zone Depletion (D<sub>r</sub>)</span>
+            <span class="badge" id="depletionBadge">OPTIMAL</span>
+          </div>
+          <div class="block-value-row">
+            <span class="block-num dominant-num" id="currentDepletion">0.0%</span>
+            <span class="block-unit">fraction</span>
+          </div>
+          <div class="depletion-track">
+            <div class="depletion-bar" id="depletionBar" style="width: 0%;"></div>
+            <div class="mad-line-indicator" id="madMarker" style="left: 50%;"></div>
+          </div>
+          <div class="block-submeta">
+            <span>MAD Threshold: <strong id="valMAD">50.0% (θ = --)</strong></span>
+          </div>
+        </div>
+
+        <!-- Block 2: Soil Moisture (Visually Secondary Root-Zone Water Content) -->
         <div class="state-block">
           <div class="block-label">
             <span>Root-Zone Water Content</span>
@@ -65,25 +84,6 @@
             <span>Field Capacity θ<sub>fc</sub>: <strong id="valFC">--</strong></span>
             <span>Wilting Point θ<sub>wp</sub>: <strong id="valWP">--</strong></span>
             <span>Storage: <strong id="valStorage">--</strong> mm</span>
-          </div>
-        </div>
-
-        <!-- Block 2: Depletion -->
-        <div class="state-block">
-          <div class="block-label">
-            <span>Root-Zone Depletion (D<sub>r</sub>)</span>
-            <span class="badge" id="depletionBadge">OPTIMAL</span>
-          </div>
-          <div class="block-value-row">
-            <span class="block-num" id="currentDepletion">0.0%</span>
-            <span class="block-unit">fraction</span>
-          </div>
-          <div class="depletion-track">
-            <div class="depletion-bar" id="depletionBar" style="width: 0%;"></div>
-            <div class="mad-line-indicator" id="madMarker" style="left: 50%;"></div>
-          </div>
-          <div class="block-submeta">
-            <span>MAD Threshold: <strong id="valMAD">50.0% (θ = --)</strong></span>
           </div>
         </div>
 
@@ -210,17 +210,17 @@
           <div class="demo-control-toolbar">
             <div class="toolbar-group">
               <span class="toolbar-label">STEP STREAM:</span>
-              <button class="btn-editorial" onclick="stepStream(1)">+1 Hour</button>
-              <button class="btn-editorial" onclick="stepStream(6)">+6 Hours</button>
-              <button class="btn-editorial" onclick="stepStream(24)">+24h Drydown</button>
+              <button class="btn-editorial" onclick="stepStream(1, this)">+1 Hour</button>
+              <button class="btn-editorial" onclick="stepStream(6, this)">+6 Hours</button>
+              <button class="btn-editorial" onclick="stepStream(24, this)">+24h Drydown</button>
             </div>
             <div class="toolbar-group">
               <span class="toolbar-label">FAULT INJECTION:</span>
-              <button class="btn-editorial btn-fault" onclick="injectFault('spike')" title="Inject unphysical 0.88 m3/m3 spike">Inject Spike (0.88 m³/m³)</button>
-              <button class="btn-editorial btn-fault" onclick="injectFault('duplicate')" title="Replay identical packet">Inject Duplicate Packet</button>
-              <button class="btn-editorial btn-fault" onclick="injectFault('stuck')" title="Simulate 12h frozen sensor flatline">Inject Stuck Sensor</button>
-              <button class="btn-editorial btn-fault" onclick="injectFault('nan')" title="Inject missing/corrupt measurement">Inject Missing Value</button>
-              <button class="btn-editorial btn-reset" onclick="resetSession()" title="Reset session state to baseline">Reset Session</button>
+              <button class="btn-editorial btn-fault" onclick="injectFault('spike', this)" title="Inject unphysical 0.88 m3/m3 spike">Inject Spike (0.88 m³/m³)</button>
+              <button class="btn-editorial btn-fault" onclick="injectFault('duplicate', this)" title="Replay identical packet">Inject Duplicate Packet</button>
+              <button class="btn-editorial btn-fault" onclick="injectFault('stuck', this)" title="Simulate 12h frozen sensor flatline">Inject Stuck Sensor</button>
+              <button class="btn-editorial btn-fault" onclick="injectFault('nan', this)" title="Inject missing/corrupt measurement">Inject Missing Value</button>
+              <button class="btn-editorial btn-reset" onclick="resetSession(this)" title="Reset session state to baseline">Reset Session</button>
             </div>
           </div>
 
