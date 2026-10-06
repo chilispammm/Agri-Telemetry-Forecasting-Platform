@@ -424,6 +424,10 @@ class DashboardSession:
                 "site_name": site_name,
                 "data_class": data_class,
                 "is_simulated": is_sim,
+                "data_mode": "SIMULATED MQTT" if is_sim else "HISTORICAL REPLAY",
+                "source_provenance": "SYNTHETIC EDGE / MQTT" if is_sim else "USCRN / OBSERVED IN-SITU",
+                "replay_step": "+1 HOUR (DISCRETE)",
+                "historical_window": "48H SLIDING TRAJECTORY",
                 "last_timestamp_utc": self.current_time.isoformat().replace("+00:00", "Z"),
             },
             "soil_params": {

@@ -28,22 +28,50 @@ async function fetchStatus() {
 }
 
 function renderDashboard(data) {
-  // 1. Header & Provenance
+  // 1. Header, Data Mode & Provenance
   const site = data.site || {};
   const provBadge = document.getElementById("provenanceBadge");
-  provBadge.textContent = site.data_class || "SIMULATED REPLAY";
-  if (site.is_simulated) {
-    provBadge.className = "badge badge-provenance";
-  } else {
-    provBadge.className = "badge badge-provenance observed";
+  if (provBadge) {
+    provBadge.textContent = site.data_class || "SIMULATED REPLAY";
+    if (site.is_simulated) {
+      provBadge.className = "badge badge-provenance";
+    } else {
+      provBadge.className = "badge badge-provenance observed";
+    }
+  }
+
+  const dataModeBadge = document.getElementById("dataModeBadge");
+  if (dataModeBadge) {
+    const isSim = (site.is_simulated !== false && site.site_key === "SIMULATED_ESP32");
+    dataModeBadge.textContent = isSim ? "SIMULATED MQTT" : "HISTORICAL REPLAY";
+    dataModeBadge.className = "badge badge-datamode" + (isSim ? " mqtt" : "");
+  }
+
+  const stepIntervalEl = document.getElementById("stepInterval");
+  if (stepIntervalEl) {
+    stepIntervalEl.textContent = site.replay_step || "+1 HOUR (Discrete)";
+  }
+
+  const sourceProvEl = document.getElementById("sourceProvenance");
+  if (sourceProvEl) {
+    const isSim = (site.is_simulated !== false && site.site_key === "SIMULATED_ESP32");
+    sourceProvEl.textContent = site.source_provenance || (isSim ? "SYNTHETIC EDGE / MQTT" : "USCRN / OBSERVED IN-SITU");
+  }
+
+  const windowInfoEl = document.getElementById("windowInfo");
+  if (windowInfoEl) {
+    windowInfoEl.textContent = site.historical_window || "48H SLIDING";
   }
 
   const siteSel = document.getElementById("siteSelector");
-  if (siteSel.value !== site.site_key) {
+  if (siteSel && siteSel.value !== site.site_key) {
     siteSel.value = site.site_key;
   }
 
-  document.getElementById("lastTimestamp").textContent = (site.last_timestamp_utc || "--").replace("T", " ");
+  const lastTsEl = document.getElementById("lastTimestamp");
+  if (lastTsEl) {
+    lastTsEl.textContent = (site.last_timestamp_utc || "--").replace("T", " ");
+  }
 
   // 2. Metrics Cards
   const cur = data.current_state || {};
@@ -127,21 +155,26 @@ function renderDashboard(data) {
   });
 
   // 7. Render Trajectory Canvas Chart
-  renderChart(data);
+  renderChart(data, lastHoveredPoint);
 }
 
-function renderChart(data) {
+let chartInteractivePoints = [];
+let lastHoveredPoint = null;
+
+function renderChart(data, hoveredPt = null) {
   const canvas = document.getElementById("trajectoryCanvas");
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
   const width = canvas.width;
   const height = canvas.height;
 
+  chartInteractivePoints = [];
+
   // Clear with warm surface background
   ctx.fillStyle = "#faf8f3";
   ctx.fillRect(0, 0, width, height);
 
-  const padding = { top: 25, right: 40, bottom: 45, left: 65 };
+  const padding = { top: 28, right: 40, bottom: 45, left: 65 };
   const plotW = width - padding.left - padding.right;
   const plotH = height - padding.top - padding.bottom;
 
@@ -249,6 +282,19 @@ function renderChart(data) {
       const y = getY(obs[i].theta_rz);
       if (i === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
+
+      const hoursBefore = -(nObs - 1 - i);
+      const label = (i === nObs - 1) ? "T0 (Latest Ingested State)" : `${hoursBefore}h (Observed In-Situ)`;
+      chartInteractivePoints.push({
+        type: "OBSERVED",
+        x: x,
+        y: y,
+        theta_rz: obs[i].theta_rz,
+        depletion_fraction: obs[i].depletion_fraction,
+        timestamp_utc: obs[i].timestamp_utc,
+        hours_offset: hoursBefore,
+        label: label,
+      });
     }
     ctx.stroke();
 
@@ -271,7 +317,22 @@ function renderChart(data) {
     const points = [{ h: 0, x: t0_x, pt: lastTheta, q10: lastTheta, q90: lastTheta }];
     fcs.forEach(f => {
       const x = t0_x + (width - padding.right - t0_x) * (f.horizon_hours / 168.0);
-      points.push({ h: f.horizon_hours, x: x, pt: f.point_forecast, q10: f.q10, q90: f.q90, is_res: f.is_research_uncertainty });
+      const ptObj = { h: f.horizon_hours, x: x, pt: f.point_forecast, q10: f.q10, q90: f.q90, is_res: f.is_research_uncertainty };
+      points.push(ptObj);
+
+      chartInteractivePoints.push({
+        type: "FORECAST",
+        x: x,
+        y: getY(f.point_forecast),
+        theta_rz: f.point_forecast,
+        q10: f.q10,
+        q90: f.q90,
+        horizon_hours: f.horizon_hours,
+        target_time_utc: f.target_time_utc,
+        uncertainty_label: f.uncertainty_label,
+        is_research: f.is_research_uncertainty || (f.horizon_hours > 48),
+        label: `+${f.horizon_hours}h Forecast Horizon`,
+      });
     });
 
     // 1. Shaded Ribbon Segment 1 (1–48h: 80% Prediction Interval — Partially Supported)
@@ -345,6 +406,222 @@ function renderChart(data) {
       ctx.fill();
     });
   }
+
+  // Draw Hover Inspection Overlay if active
+  if (hoveredPt) {
+    drawHoverInspection(ctx, hoveredPt, soil, padding, width, height, getY);
+    updateInspectorBar(hoveredPt, soil);
+  } else {
+    updateInspectorBar(null, soil);
+  }
+}
+
+function drawHoverInspection(ctx, pt, soil, padding, width, height, getY) {
+  // 1. Vertical Crosshair Line
+  ctx.save();
+  ctx.strokeStyle = "#151515";
+  ctx.lineWidth = 1;
+  ctx.setLineDash([2, 2]);
+  ctx.beginPath();
+  ctx.moveTo(pt.x, padding.top);
+  ctx.lineTo(pt.x, height - padding.bottom);
+  ctx.stroke();
+  ctx.restore();
+
+  // 2. Uncertainty Interval Vertical Bracket (for forecast points)
+  if (pt.type === "FORECAST" && pt.q10 !== undefined && pt.q90 !== undefined) {
+    const yTop = getY(pt.q90);
+    const yBot = getY(pt.q10);
+    ctx.save();
+    ctx.strokeStyle = pt.is_research ? "#62605a" : "#2563eb";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(pt.x, yTop);
+    ctx.lineTo(pt.x, yBot);
+    // Bracket caps
+    ctx.moveTo(pt.x - 4, yTop);
+    ctx.lineTo(pt.x + 4, yTop);
+    ctx.moveTo(pt.x - 4, yBot);
+    ctx.lineTo(pt.x + 4, yBot);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // 3. Highlighted Point Dot & Outer Ring
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(pt.x, pt.y, 6.5, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(250, 248, 243, 0.9)";
+  ctx.fill();
+  ctx.strokeStyle = pt.type === "FORECAST" ? (pt.is_research ? "#62605a" : "#2563eb") : "#151515";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2);
+  ctx.fillStyle = pt.type === "FORECAST" ? (pt.is_research ? "#62605a" : "#2563eb") : "#151515";
+  ctx.fill();
+  ctx.restore();
+
+  // 4. CA-ENG Editorial Floating Tooltip Box
+  const boxW = 245;
+  const isForecast = (pt.type === "FORECAST");
+  const boxH = isForecast ? 122 : 98;
+
+  let boxX = pt.x + 12;
+  if (boxX + boxW > width - padding.right) {
+    boxX = pt.x - boxW - 12;
+  }
+  let boxY = pt.y - boxH / 2;
+  boxY = Math.max(padding.top + 2, Math.min(height - padding.bottom - boxH - 2, boxY));
+
+  ctx.save();
+  // Drop shadow
+  ctx.fillStyle = "rgba(0, 0, 0, 0.10)";
+  ctx.fillRect(boxX + 3, boxY + 3, boxW, boxH);
+
+  // Surface Box
+  ctx.fillStyle = "#faf8f3";
+  ctx.strokeStyle = "#151515";
+  ctx.lineWidth = 1;
+  ctx.fillRect(boxX, boxY, boxW, boxH);
+  ctx.strokeRect(boxX, boxY, boxW, boxH);
+
+  // Top header rule
+  ctx.fillStyle = "#151515";
+  ctx.fillRect(boxX, boxY, boxW, 20);
+
+  // Header Title
+  ctx.fillStyle = "#faf8f3";
+  ctx.font = "700 9.5px IBM Plex Mono, monospace";
+  ctx.textAlign = "left";
+  const headerTag = isForecast ? `[FORECAST +${pt.horizon_hours}h]` : (pt.hours_offset === 0 ? `[CURRENT STATE T0]` : `[OBSERVED ${pt.hours_offset}h]`);
+  ctx.fillText(headerTag, boxX + 8, boxY + 14);
+
+  // Header Timestamp
+  const tsStr = (pt.timestamp_utc || pt.target_time_utc || "--").replace("T", " ").replace("Z", " UTC");
+  ctx.font = "500 8.5px IBM Plex Mono, monospace";
+  ctx.textAlign = "right";
+  ctx.fillText(tsStr.substring(0, 19), boxX + boxW - 8, boxY + 14);
+
+  // Content Lines
+  let lineY = boxY + 36;
+  ctx.textAlign = "left";
+
+  // Volumetric Water Content
+  ctx.fillStyle = "#62605a";
+  ctx.font = "700 9px IBM Plex Mono, monospace";
+  ctx.fillText("VWC θrz:", boxX + 8, lineY);
+  ctx.fillStyle = "#151515";
+  ctx.font = "600 11.5px IBM Plex Mono, monospace";
+  ctx.fillText(`${pt.theta_rz?.toFixed(3)} m³/m³`, boxX + 68, lineY);
+
+  // Depletion Dr
+  const fc = soil.theta_fc || 0.33;
+  const wp = soil.theta_wp || 0.13;
+  const dr = (pt.depletion_fraction !== undefined) ? pt.depletion_fraction : (fc > wp ? (fc - pt.theta_rz) / (fc - wp) : 0.0);
+  const drPct = (dr * 100).toFixed(1);
+  ctx.fillStyle = "#62605a";
+  ctx.font = "700 9px IBM Plex Mono, monospace";
+  ctx.fillText("Dr:", boxX + 165, lineY);
+  ctx.fillStyle = dr >= 0.85 ? "#991b1b" : (dr >= 0.50 ? "#b7791f" : "#151515");
+  ctx.font = "600 11.5px IBM Plex Mono, monospace";
+  ctx.fillText(`${drPct}%`, boxX + 190, lineY);
+
+  lineY += 18;
+
+  if (isForecast) {
+    // Prediction Interval
+    ctx.fillStyle = "#62605a";
+    ctx.font = "700 9px IBM Plex Mono, monospace";
+    ctx.fillText("80% INTERVAL:", boxX + 8, lineY);
+    ctx.fillStyle = pt.is_research ? "#62605a" : "#2563eb";
+    ctx.font = "600 10.5px IBM Plex Mono, monospace";
+    ctx.fillText(`[${pt.q10?.toFixed(3)} – ${pt.q90?.toFixed(3)}] m³/m³`, boxX + 90, lineY);
+
+    lineY += 16;
+
+    // Calibration Status
+    ctx.fillStyle = "#62605a";
+    ctx.font = "700 8.5px IBM Plex Mono, monospace";
+    ctx.fillText("STATUS:", boxX + 8, lineY);
+    ctx.fillStyle = pt.is_research ? "#62605a" : "#1e40af";
+    ctx.font = "600 8.5px Inter, sans-serif";
+    const statText = pt.is_research ? "Empirical (Research Uncertainty)" : "Partially Supported (Calibrated)";
+    ctx.fillText(statText, boxX + 54, lineY);
+
+    lineY += 18;
+  } else {
+    lineY += 10;
+  }
+
+  // Soil reference thresholds
+  ctx.fillStyle = "#8c877b";
+  ctx.font = "8.5px IBM Plex Mono, monospace";
+  ctx.fillText(`Soil Ref: FC ${fc.toFixed(2)} | MAD ${soil.theta_mad?.toFixed(3)} | WP ${wp.toFixed(2)}`, boxX + 8, lineY);
+
+  ctx.restore();
+}
+
+function updateInspectorBar(pt, soil) {
+  const bar = document.getElementById("chartInspectorBar");
+  if (!bar) return;
+
+  if (!pt) {
+    bar.innerHTML = `<span class="inspector-hint">HOVER TRAJECTORY // INSPECT REAL-TIME DATA POINTS, PREDICTIVE HORIZONS &amp; SOIL THRESHOLDS</span>`;
+    return;
+  }
+
+  const isForecast = (pt.type === "FORECAST");
+  const fc = soil.theta_fc || 0.33;
+  const wp = soil.theta_wp || 0.13;
+  const dr = (pt.depletion_fraction !== undefined) ? pt.depletion_fraction : (fc > wp ? (fc - pt.theta_rz) / (fc - wp) : 0.0);
+  const drPct = (dr * 100).toFixed(1);
+  const drClass = dr >= 0.85 ? "crit" : (dr >= 0.50 ? "warn" : "");
+
+  const tsStr = (pt.timestamp_utc || pt.target_time_utc || "--").replace("T", " ").replace("Z", " UTC");
+  const typeTag = isForecast ? `FORECAST +${pt.horizon_hours}h` : (pt.hours_offset === 0 ? `CURRENT T0` : `OBSERVED ${pt.hours_offset}h`);
+
+  let intervalChip = "";
+  if (isForecast) {
+    const calibLabel = pt.is_research ? "Research Uncertainty" : "Partially Supported";
+    intervalChip = `
+      <div class="inspector-item">
+        <span class="inspector-tag">80% Interval:</span>
+        <span class="inspector-val highlight">[${pt.q10?.toFixed(3)} – ${pt.q90?.toFixed(3)}] m³/m³</span>
+      </div>
+      <div class="inspector-item">
+        <span class="inspector-tag">Calibration:</span>
+        <span class="inspector-val">${calibLabel}</span>
+      </div>
+    `;
+  }
+
+  bar.innerHTML = `
+    <div class="inspector-data">
+      <div class="inspector-item">
+        <span class="inspector-tag">POINT:</span>
+        <span class="inspector-val">${typeTag}</span>
+      </div>
+      <div class="inspector-item">
+        <span class="inspector-tag">TIME:</span>
+        <span class="inspector-val">${tsStr.substring(0, 19)}</span>
+      </div>
+      <div class="inspector-item">
+        <span class="inspector-tag">θrz:</span>
+        <span class="inspector-val">${pt.theta_rz?.toFixed(3)} m³/m³</span>
+      </div>
+      <div class="inspector-item">
+        <span class="inspector-tag">Dr:</span>
+        <span class="inspector-val ${drClass}">${drPct}%</span>
+      </div>
+      ${intervalChip}
+      <div class="inspector-item">
+        <span class="inspector-tag">Ref:</span>
+        <span class="inspector-val">FC ${fc.toFixed(2)} | MAD ${soil.theta_mad?.toFixed(3)} | WP ${wp.toFixed(2)}</span>
+      </div>
+    </div>
+  `;
 }
 
 // Interactive API Calls
@@ -516,8 +793,62 @@ async function resetSession(btnEl) {
   }
 }
 
-// Polling Loop
+function setupChartInteractivity() {
+  const canvas = document.getElementById("trajectoryCanvas");
+  if (!canvas) return;
+
+  canvas.addEventListener("mousemove", (evt) => {
+    if (!stateCache) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const mx = (evt.clientX - rect.left) * scaleX;
+    const my = (evt.clientY - rect.top) * scaleY;
+
+    const padding = { top: 28, right: 40, bottom: 45, left: 65 };
+    if (mx < padding.left - 10 || mx > canvas.width - padding.right + 10 || my < padding.top - 15 || my > canvas.height - padding.bottom + 15) {
+      if (lastHoveredPoint !== null) {
+        lastHoveredPoint = null;
+        renderChart(stateCache, null);
+      }
+      return;
+    }
+
+    // Find closest interactive point along x-axis
+    let bestPt = null;
+    let minDx = Infinity;
+    for (const pt of chartInteractivePoints) {
+      const dx = Math.abs(pt.x - mx);
+      if (dx < minDx) {
+        minDx = dx;
+        bestPt = pt;
+      }
+    }
+
+    if (bestPt && minDx <= 40) {
+      if (lastHoveredPoint !== bestPt) {
+        lastHoveredPoint = bestPt;
+        renderChart(stateCache, bestPt);
+      }
+    } else {
+      if (lastHoveredPoint !== null) {
+        lastHoveredPoint = null;
+        renderChart(stateCache, null);
+      }
+    }
+  });
+
+  canvas.addEventListener("mouseleave", () => {
+    if (lastHoveredPoint !== null) {
+      lastHoveredPoint = null;
+      if (stateCache) renderChart(stateCache, null);
+    }
+  });
+}
+
+// Polling & Lifecycle Loop
 window.addEventListener("DOMContentLoaded", () => {
+  setupChartInteractivity();
   fetchStatus();
   setInterval(fetchStatus, 3000);
 });

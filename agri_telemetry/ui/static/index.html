@@ -31,12 +31,22 @@
             </select>
           </div>
           <div class="meta-row">
-            <span class="meta-label">PROVENANCE:</span>
+            <span class="meta-label">DATA MODE:</span>
+            <span class="badge badge-datamode" id="dataModeBadge">SIMULATED MQTT</span>
+            <span class="meta-label" style="margin-left: 0.65rem;">PROVENANCE:</span>
             <span class="badge badge-provenance" id="provenanceBadge">SIMULATED REPLAY</span>
           </div>
           <div class="meta-row">
-            <span class="meta-label">LATEST OBSERVATION:</span>
+            <span class="meta-label">REPLAY POSITION:</span>
             <span class="meta-mono" id="lastTimestamp">--:--:-- UTC</span>
+            <span class="meta-label" style="margin-left: 0.65rem;">STEP:</span>
+            <span class="meta-mono" id="stepInterval">+1 HOUR (Discrete)</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">SOURCE:</span>
+            <span class="meta-mono" id="sourceProvenance">SYNTHETIC EDGE / MQTT</span>
+            <span class="meta-label" style="margin-left: 0.65rem;">WINDOW:</span>
+            <span class="meta-mono" id="windowInfo">48H SLIDING</span>
           </div>
         </div>
       </div>
@@ -136,6 +146,9 @@
             <span class="legend-chip"><span class="legend-swatch swatch-mad-ref"></span> MAD (θ<sub>mad</sub>)</span>
             <span class="legend-chip"><span class="legend-swatch swatch-wp-ref"></span> WP (θ<sub>wp</sub>)</span>
           </div>
+        </div>
+        <div class="chart-inspector-bar" id="chartInspectorBar">
+          <span class="inspector-hint">HOVER TRAJECTORY // INSPECT REAL-TIME DATA POINTS, PREDICTIVE HORIZONS &amp; SOIL THRESHOLDS</span>
         </div>
         <div class="canvas-wrapper">
           <canvas id="trajectoryCanvas" width="1160" height="340"></canvas>
