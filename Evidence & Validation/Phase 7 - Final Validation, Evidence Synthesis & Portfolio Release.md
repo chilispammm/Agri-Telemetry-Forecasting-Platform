@@ -17,11 +17,11 @@ The project addresses the core dilemma faced by commercial farm managers: balanc
 
 Through seven disciplined execution phases, the platform has:
 1. **Established an Empirical Persistence Baseline:** Verified on 8,760 hourly records of NOAA USCRN `NE_Lincoln_11_SW` (2023), confirming that soil capillary inertia makes persistence ($\text{MAE}=0.0007\text{ m}^3/\text{m}^3$ at 1h; $\text{MAE}=0.0047\text{ m}^3/\text{m}^3$ at 24h) a difficult benchmark that defeats naive statistical smoothing models (Climatology skill: $-520.0$, EWMA skill: $-3.29$).
-2. **Validated Horizon-Partitioned Hybrid Forecasting (ADR-006):** Deployed Environmental ARX (`M2`) for short leads ($1\dots 48\text{h}$) to capture infiltration and diurnal evaporative flux (+5.7% root-zone, +26.4% topsoil skill), transitioning to Autoregressive Trend Reversion (`M1`) for extended leads ($72\dots 168\text{h}$) to capture seasonal mean-reversion (+7.8% skill at 7 days).
+2. **Validated Horizon-Partitioned Hybrid Forecasting (ADR-006):** Deployed Environmental ARX (`M2`) for short leads ($1\dots 48\text{h}$) to capture infiltration and diurnal evaporative flux (+5.7% root-zone, +26.4% topsoil skill), transitioning to Autoregressive Statistical Reversion (`M1`) for extended leads ($72\dots 168\text{h}$) to capture statistical mean-reversion (+7.8% skill at 7 days).
 3. **Calibrated Dynamic Regime Uncertainty ($U2$):** Conditioned residual dispersion on antecedent rain and solar demand, resolving wet-regime under-coverage (+4.4% coverage gain at 6h).
-4. **Enforced 3-Tier Anomaly Isolation & Stateful Alert Filtering:** Prevented 100% of data-quality faults from leaking into agronomic advisories, while $k=2$ persistence filtering and $G=6\text{h}$ episode grouping eliminated transient boundary flutter and compressed alert volume by **95.8% to 99.4%**.
+4. **Enforced 3-Tier Anomaly Isolation & Stateful Alert Filtering:** Prevented 100% of data-quality faults from leaking into agronomic advisories, while $k=2$ persistence filtering and $G=6\text{h}$ episode grouping suppressed and grouped transient alert episodes across threshold boundaries, reducing alert volume by **95.8% to 99.4%**.
 5. **Demonstrated "Stream-Capable, Not Stream-Dependent" Architecture:** Maintained identical Draft 2020-12 event contracts across historical USCRN replays, simulated MQTT 5 edge streams, and future field gateways, supported by Dead Letter Queues, SHA-256 deduplication, sliding-window resequencing, and bit-for-bit deterministic reproducibility ($0.0000000000$ MAE discrepancy).
-6. **Mapped Multi-Site Transfer & Failure Boundaries:** Confirmed positive transfer in Midwest, Northern Plains, and Arid Southwest regimes, while discovering an explicit **physical failure boundary in subtropical convective climates (`GA_Watkinsville_5_SSE`)**, where unannounced $50\text{mm}+$ thunderstorms require forward radar and NWP.
+6. **Mapped Multi-Site Transfer & Failure Boundaries:** Demonstrated positive transfer within the tested temperate and arid regimes (not universal geographic generalisation), while discovering an explicit **physical failure boundary in subtropical convective climates (`GA_Watkinsville_5_SSE`)**, where unannounced $50\text{mm}+$ convective storms motivate incorporating forward-looking weather information such as NWP/radar.
 7. **Delivered an Operational Cockpit UI:** Built a zero-dependency local presentation server on port `8080` with hover crosshairs, canvas tooltips, dominant Root-Zone Depletion hierarchy, visible +48h model boundaries, and truthful fault injection feedback.
 
 ---
@@ -143,8 +143,8 @@ $$\text{Skill}_{\text{vs\_persistence}} = 1 - \frac{\text{MSE}_{\text{model}}}{\
 ## 8. Risk & Advisory Intelligence Findings
 
 - **Zero Fault Leakage:** Tier-1 QC quarantine prevented 100% of data-quality anomalies from leaking into agronomic advisories across all test suites.
-- **Flutter Elimination:** Consecutive $k=2$ persistence filtering suppressed 100% of borderline oscillating alerts in synthetic Scenario 8 and filtered 97 real single-hour noise spikes in Lincoln 2023 data.
-- **Actionable Episode Compression:** The $G=6\text{h}$ episode grouper compressed 5,935 raw hourly alerts into **172 distinct multi-day stress episodes (97.10% alert reduction)**.
+- **Flutter Suppression:** Consecutive $k=2$ persistence filtering suppressed transient boundary alert flapping in synthetic Scenario 8 and filtered 97 single-hour noise spikes in Lincoln 2023 data (demonstrating episode suppression rather than agronomic ground-truth false positive reduction).
+- **Actionable Episode Compression:** The $G=6\text{h}$ episode grouper compressed 5,935 raw hourly alerts into **172 distinct multi-day stress episodes (97.10% alert volume reduction)**.
 - **Strict Non-Actuation:** Every emitted advisory explicitly asserts `"is_autonomous_actuation": false` to preserve human control.
 
 ---
@@ -153,10 +153,10 @@ $$\text{Skill}_{\text{vs\_persistence}} = 1 - \frac{\text{MSE}_{\text{model}}}{\
 
 | Station Key | Climate Regime | 1–48h M2 Skill | 72–168h M1 Skill | 6h U2 Coverage | Transfer Finding |
 | :--- | :--- | :---: | :---: | :---: | :--- |
-| **`IL_Champaign_9_SW`** | Midwest Corn Belt | **+11.15%** | **+8.31%** | **81.0%** | **Positive Transfer** |
-| **`SD_Sioux_Falls_14_NNE`** | Northern Great Plains | **+7.36%** | **+6.25%** | **71.9%** | **Positive Transfer** |
-| **`NM_Las_Cruces_20_N`** | Arid Desert Southwest | **+11.96%** | **+2.73%** | **66.4%** | **Positive Transfer** (+35.4% at 6h) |
-| **`NE_Lincoln_11_SW`** | Humid Continental | **+3.57%** | **+4.61%** | **73.7%** | **Positive Transfer** (Baseline) |
+| **`IL_Champaign_9_SW`** | Midwest Corn Belt | **+11.15%** | **+8.31%** | **81.0%** | **Demonstrated Positive Transfer (Tested Site)** |
+| **`SD_Sioux_Falls_14_NNE`** | Northern Great Plains | **+7.36%** | **+6.25%** | **71.9%** | **Demonstrated Positive Transfer (Tested Site)** |
+| **`NM_Las_Cruces_20_N`** | Arid Desert Southwest | **+11.96%** | **+2.73%** | **66.4%** | **Demonstrated Positive Transfer (Tested Site)** (+35.4% at 6h) |
+| **`NE_Lincoln_11_SW`** | Humid Continental | **+3.57%** | **+4.61%** | **73.7%** | **Demonstrated Positive Transfer (Tested Site)** (Baseline) |
 | **`CO_Nunn_7_NNE`** | Semi-Arid High Plains | **-1.89%** | **+2.13%** | **79.1%** | **Marginal Transfer** (Steppe winds) |
 | **`GA_Watkinsville_5_SSE`** | Humid Subtropical | **-18.96%** | **+1.28%** | **48.9%** | **FAILURE BOUNDARY** (-45.1% at 24h) |
 
@@ -187,7 +187,7 @@ $$\text{Skill}_{\text{vs\_persistence}} = 1 - \frac{\text{MSE}_{\text{model}}}{\
 ## 13. Dashboard Findings (Phase 6)
 
 - **Interactive Crosshairs & Canvas Tooltips:** Real-time inspection of observed vs forecast values, dynamic prediction interval bounds, and station-specific MAD lines.
-- **Visible Model Boundary:** Prominent vertical delimiter separating 1–48h Environmental ARX from 72–168h Autoregressive trend models.
+- **Visible Model Boundary:** Prominent vertical delimiter separating 1–48h Environmental ARX from 72–168h Autoregressive statistical models.
 - **Operational Hierarchy:** Root-Zone Depletion ($D_r$) rendered as the dominant primary metric; raw volumetric water content ($\theta_{\text{rz}}$) preserved as secondary.
 - **Truthful Fault Injection Feedback:** Buttons provide immediate feedback (`INJECTING...` $\to$ `QUEUED` $\to$ `INJECTED`) only when accepted by application logic.
 
@@ -196,7 +196,7 @@ $$\text{Skill}_{\text{vs\_persistence}} = 1 - \frac{\text{MSE}_{\text{model}}}{\
 ## 14. Explicit Failure Boundaries
 
 1. **Extended Horizons ($>48\text{h}$):** Prediction interval coverage drops to $\sim 61\%$ at 7 days; long-horizon uncertainty remains **uncalibrated research**.
-2. **Subtropical Convective Climates (`GA_Watkinsville_5_SSE`):** Sudden $50\text{mm}+$ convective storms cannot be predicted from in-situ past weather, causing $-45.1\%$ skill collapse at 24h. **Forward radar and NWP ingestion are mandatory.**
+2. **Subtropical Convective Climates (`GA_Watkinsville_5_SSE`):** Sudden $50\text{mm}+$ convective storms cannot be predicted from in-situ past weather, causing $-45.1\%$ skill collapse at 24h. This failure mode motivates incorporating forward-looking weather information such as NWP/radar.
 3. **Winter Frozen Ground:** Sub-zero soil temperatures freeze liquid water, causing false drydown flatlines in dielectric sensors. Irrigation models must be suspended during winter freeze.
 
 ---
@@ -219,10 +219,10 @@ $$\text{Skill}_{\text{vs\_persistence}} = 1 - \frac{\text{MSE}_{\text{model}}}{\
 | **Long-horizon skill unlocked by future rain** | Lincoln 11 SW 2023 H2 | Controlled oracle ablation with future rain | **ORACLE-VALIDATED** | Demonstrates value of future rain; not operational NWP skill. |
 | **U2 short-horizon uncertainty calibration** | Lincoln & Multi-Site | Antecedent rainfall & solar demand scaling | **PARTIALLY SUPPORTED** | Valid for 1–48h (83% wet coverage); uncalibrated research $>48\text{h}$. |
 | **3-Tier anomaly & fault isolation** | 8 Synthetic Scenarios | Tier-1 QC quarantine vs Tier-3 agronomic risk | **VALIDATED** | 0.0% fault leakage; 100% synthetic scenario detection. |
-| **Stateful risk & advisory logic** | Full-year Lincoln & Flutter | Consecutive $k=2$ filter & $G=6\text{h}$ episode grouper | **TESTED** | 100% flutter suppressed; thresholds require agronomic tuning. |
+| **Stateful risk & advisory logic** | Full-year Lincoln & Flutter | Consecutive $k=2$ filter & $G=6\text{h}$ episode grouper | **TESTED** | Suppresses/groups transient alerts; thresholds require agronomic tuning. |
 | **Operational event streaming pipeline** | In-Memory & Redis Streams | Replay, DLQ, Deduplication, Sequencer | **TESTED & PACKAGED** | Verified in local and containerized environments. |
 | **Deterministic bit-for-bit reproducibility** | Isolated workspaces (seed 42) | End-to-end reproducibility check script | **VALIDATED** | Max MAE discrepancy $0.0000000000$ across 8,760 records. |
-| **Multi-site geographic transfer** | 6 NOAA USCRN Stations | Chronological walk-forward transfer benchmark | **VALIDATED (Bounded)** | Positive in Midwest/Plains/Arid; fails in subtropical convective storms. |
+| **Multi-site geographic transfer** | 6 NOAA USCRN Stations | Chronological walk-forward transfer benchmark | **VALIDATED (Bounded)** | Demonstrated in tested Midwest/Plains/Arid; fails in subtropical convective storms. |
 | **Edge IoT MQTT telemetry ingestion** | ESP32/Wokwi simulator | MQTT 5 Ingest Adapter with DLQ & Deduplication | **TESTED** | Simulated edge telemetry stamped with `is_simulated: true`. |
 | **Interactive operational cockpit UI** | Browser interface on port 8080 | Headless HTTP API suite & 5-step demo runner | **LOCALLY VERIFIED** | Local operational cockpit; not a production cloud SaaS deployment. |
 
@@ -233,7 +233,7 @@ $$\text{Skill}_{\text{vs\_persistence}} = 1 - \frac{\text{MSE}_{\text{model}}}{\
 The system maintains a clean decoupling between the core scientific pipeline and supporting engineering infrastructure:
 - **Data Ingress & Contracts:** Normalizes USCRN files and MQTT 5 streams into Draft 2020-12 `TelemetryEvent` instances.
 - **Quality Control & State Construction:** Quarantines corrupt readings at Tier 1; integrates valid multi-depth readings into a 1-meter root-zone state ($\theta_{\text{rz}}, D_r$).
-- **Forecasting & Uncertainty:** Routes Environmental ARX (M2) for 1–48h and Autoregressive Trend (M1) for 72–168h; applies dynamic regime-conditioned dispersion (U2).
+- **Forecasting & Uncertainty:** Routes Environmental ARX (M2) for 1–48h and Autoregressive Statistical (M1) for 72–168h; applies dynamic regime-conditioned dispersion (U2).
 - **Decision Support & Governance:** Evaluates water risk against MAD ($0.50$) and Wilting ($0.85$); filters transient noise via $k=2$ confirmation; emits non-actuating advisories (`is_autonomous_actuation: false`).
 - **Supporting Engineering:** MQTT 5, Redis Streams, Docker, MLOps manifests, structured JSON logging, and GitHub Actions CI provide enterprise transport, packaging, and reproducibility.
 
@@ -243,15 +243,15 @@ The system maintains a clean decoupling between the core scientific pipeline and
 
 ### Level 1: Explain Like I'm 10 (The Smart Fuel Gauge)
 - **What it does:** It acts like a smart fuel gauge for crop roots, telling a farmer how much water is left in the soil tank and predicting when the plants will get thirsty over the next week.
-- **Why a farmer cares:** It prevents crops from wilting while saving thousands of gallons of water and electricity.
+- **Why a farmer cares:** It helps a farmer avoid watering at the wrong time, protecting crop health and saving energy.
 - **What happens to sensor readings:** Readings are checked for crazy numbers. If a sensor glitches, it gets put into a quarantine time-out box so it doesn't trigger false alarms.
 - **What an advisory means:** It is a gentle recommendation for the human farmer, not an automatic switch that turns on sprinklers.
 
 ### Level 2: Explain to a Non-Technical Professional
 - **Inputs & Processing:** Ingests multi-depth soil moisture (5–100cm) and weather; integrates 1-meter root-zone depletion ($D_r$).
-- **Forecasting & Uncertainty:** Uses real-time weather for short-term forecasts (1–48h) and seasonal trend models for extended forecasts (3–7 days); communicates uncertainty via plain-language certainty labels (**Definitely Not Reached**, **Plausibly Reached**, **Likely Reached**, **Highly Uncertain**).
-- **Alert Fatigue Prevention:** Isolates hardware faults at Tier 1, confirms alarms over 2 consecutive hours ($k=2$), and groups alerts into coherent multi-day drought episodes (**97.1% alert reduction**).
-- **Boundaries:** Transfers well across temperate agricultural soils; requires forward radar in convective storm climates (like Georgia).
+- **Forecasting & Uncertainty:** Uses real-time weather for short-term forecasts (1–48h) and autoregressive statistical models for extended forecasts (3–7 days); communicates uncertainty via plain-language certainty labels (**Definitely Not Reached**, **Plausibly Reached**, **Likely Reached**, **Highly Uncertain**).
+- **Alert Fatigue Prevention:** Isolates hardware faults at Tier 1, confirms alarms over 2 consecutive hours ($k=2$), and groups alerts into coherent multi-day drought episodes (**97.1% alert volume reduction**).
+- **Boundaries:** Demonstrated across tested temperate agricultural soils; convective storm climates (like Georgia) motivate incorporating forward-looking weather information such as NWP/radar.
 
 ### Level 3: Technical Explanation Summary
 - Direct multi-horizon ARX and Ridge AR closed-form models; Draft 2020-12 JSON Schema validation; SHA-256 natural key deduplication; sliding-window out-of-order resequencing; Dead Letter Queue logging; bit-for-bit deterministic reproducibility ($0.0$ MAE diff).
@@ -266,11 +266,11 @@ The system maintains a clean decoupling between the core scientific pipeline and
 | **Root-Zone State** | Integrates 5 depth layers into 0–100cm $\theta_{\text{rz}}$ and $D_r$. | Replaces confusing point readings with crop-available water. | 7,826 valid states constructed on Lincoln 2023. | Assumes fixed 1m root depth. |
 | **Persistence (B0)** | Benchmark asserting $\hat{Y}_{t+h\|t} = Y_t$. | Mandatory performance floor reflecting soil inertia. | 1h MAE: $0.0007\text{ m}^3/\text{m}^3$; Climatology skill is $-520.0$. | Assumes zero future weather flux. |
 | **Environmental (M2)** | Multi-horizon ARX combining target lags and past weather. | Models rapid infiltration and solar evaporative drying. | +5.7% root-zone and +26.4% topsoil skill at 1h. | Weather memory decays $>48\text{h}$. |
-| **Autoregressive (M1)** | Direct Ridge AR on historical target sequences. | Captures multi-day seasonal drying trajectories. | +7.8% MSE skill gain at 168h (7 days). | Lags on short horizons ($-3.75$). |
+| **Autoregressive (M1)** | Direct Ridge AR on historical target sequences. | Captures multi-day statistical drying trajectories. | +7.8% MSE skill gain at 168h (7 days). | Lags on short horizons ($-3.75$). |
 | **Hybrid (ADR-006)** | Routes M2 for 1–48h and M1 for 72–168h. | Prevents long-horizon exogenous model collapse. | Strictly positive skill across all 7 horizons. | 48h boundary is empirical. |
 | **Dynamic U2** | Conditions prediction intervals on weather regimes. | Resolves under-coverage during sudden infiltration. | 83.0% coverage during 6h wet infiltration. | Uncalibrated research $>48\text{h}$. |
 | **Water-Risk Engine** | Evaluates depletion against MAD ($0.50$) and Wilting ($0.85$). | Translates moisture numbers into actionable risk tiers. | Accurately captured 2023 Nebraska drought. | Configured demo thresholds. |
-| **Persistence Filter** | Requires $k=2$ consecutive triggers; bypasses on critical. | Eliminates threshold flapping and alert fatigue. | 100% flutter suppressed in Scenario 8. | 1-hour latency on warnings. |
+| **Persistence Filter** | Requires $k=2$ consecutive triggers; bypasses on critical. | Suppresses transient threshold boundary alert flapping. | Suppressed transient flutter in Scenario 8. | 1-hour latency on warnings. |
 | **Episode Grouper** | Merges alerts separated by $\le 6\text{h}$ into risk episodes. | Reduces human alert burden during chronic drought. | 97.10% alert volume reduction (172 episodes). | Presentation-layer aggregation. |
 | **DLQ & Deduplication** | Quarantines malformed payloads; drops SHA-256 duplicates. | Protects stream workers against network retry storms. | 100% DLQ capture; 100% duplicate suppression. | In-memory LRU cache window. |
 | **Sequencer** | Chronologically sorts packets buffered in sliding window. | Restores time causality under cellular jitter. | 100% chronological restoration across 124 packets. | Introduces small buffer delay. |

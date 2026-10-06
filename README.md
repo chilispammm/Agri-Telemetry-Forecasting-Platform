@@ -125,7 +125,7 @@ flowchart TD
 
 1. **The Tough Persistence Baseline (B0):** Due to high soil capillary inertia, simple persistence achieves an MAE of $0.0007\text{ m}^3/\text{m}^3$ at 1h and $0.0047\text{ m}^3/\text{m}^3$ at 24h. Naive smoothing baselines (Climatology, EWMA) fail completely against persistence.
 2. **Short-Horizon Environmental Exogenous Skill (M2):** Incorporating past rolling precipitation, solar radiation, and temperature improves 1–48h forecasts by up to **+5.7%** on root-zone moisture and **+26.4%** on shallow topsoil ($10\text{cm}$).
-3. **Long-Horizon Autoregressive Mean Reversion (M1):** Exogenous weather memory decays beyond 48 hours, causing past-only weather models to degrade ($-14.0\%$ skill at 7 days). However, pure autoregression (M1) captures multi-day seasonal drying trends, outperforming persistence by **+7.8%** at 168h.
+3. **Long-Horizon Autoregressive Mean Reversion (M1):** Exogenous weather memory decays beyond 48 hours, causing past-only weather models to degrade ($-14.0\%$ skill at 7 days). However, pure autoregression (M1) captures multi-day statistical drying trajectories, outperforming persistence by **+7.8%** at 168h.
 4. **Horizon-Partitioned Hybrid Forecaster (ADR-006):** Routing M2 for 1–48h and M1 for 72–168h achieves a strictly positive out-of-sample skill envelope across all evaluated lead times.
 5. **The NWP Oracle Experiment:** Feeding perfect future cumulative rainfall into the model yields a **+96.4% MSE skill gain at 7 days** ($RMSE=0.0119\text{ vs }0.0283$). This proves that **future precipitation knowledge is the primary bottleneck for multi-day soil forecasting**, but does *not* demonstrate operational NWP forecast skill.
 
@@ -154,7 +154,7 @@ flowchart TD
 
 ### Explicit Known Boundaries & Limitations:
 - **Extended Horizons ($>48\text{h}$):** Dynamic uncertainty calibration degrades from $82\%$ at 6h to $\sim 61\%$ at 7 days because in-situ sensors cannot anticipate future storm timing. Long-horizon uncertainty remains **uncalibrated research**.
-- **Subtropical Convective Storms:** In regions dominated by sudden $50\text{mm}+$ convective thunderstorm cells (`GA_Watkinsville_5_SSE`), in-situ past weather is physically insufficient. **Forward radar and NWP ingestion are mandatory.**
+- **Subtropical Convective Storms:** In regions dominated by sudden $50\text{mm}+$ convective thunderstorm cells (`GA_Watkinsville_5_SSE`), in-situ past weather is physically insufficient. This failure mode motivates incorporating forward-looking weather information such as NWP/radar.
 - **Winter Frozen Ground:** Sub-zero soil temperatures freeze liquid water into ice, lowering soil dielectric permittivity and causing flatline sensor dropouts. Tier-1 QC quarantines these readings, but irrigation models must be suspended during winter freeze.
 - **Demonstration Agronomic Thresholds:** The Management Allowed Depletion ($D_{\text{MAD}}=0.50$) and Wilting ($0.85$) thresholds demonstrate software risk logic and alert suppression; they require site-specific agronomist calibration for production crop management.
 - **Simulated IoT & Historical Data:** Edge telemetry is validated using simulated ESP32/Wokwi microcontroller streams stamped with `"is_simulated": true`. No live field sensors are currently deployed.
@@ -171,10 +171,10 @@ flowchart TD
 | **Long-horizon skill unlocked by future rain** | Lincoln 11 SW 2023 H2 ($N=3,913$) | Controlled oracle ablation with future rainfall | **ORACLE-VALIDATED** | Proves theoretical value of future rain; not operational NWP skill. |
 | **U2 short-horizon uncertainty calibration** | Lincoln & Multi-Site (6h leads) | Antecedent rainfall & solar demand partitioning | **PARTIALLY SUPPORTED** | Valid for 1–48h (83% wet coverage); uncalibrated research $>48\text{h}$. |
 | **3-Tier anomaly & data isolation** | 8 Canonical Synthetic Scenarios | Tier-1 QC quarantine vs Tier-3 agronomic risk | **VALIDATED** | 0.0% fault leakage; 100% synthetic scenario detection. |
-| **Stateful risk & advisory logic** | Full-year Lincoln & Flutter suite | Consecutive $k=2$ filter & $G=6\text{h}$ episode grouper | **TESTED** | 100% flutter suppressed; thresholds require agronomic tuning. |
+| **Stateful risk & advisory logic** | Full-year Lincoln & Flutter suite | Consecutive $k=2$ filter & $G=6\text{h}$ episode grouper | **TESTED** | Suppresses/groups transient alerts; thresholds require agronomic tuning. |
 | **Operational event streaming pipeline** | In-Memory & Redis Streams | Replay, DLQ, Deduplication, Sequencer | **TESTED & PACKAGED** | Verified in local and containerized environments. |
 | **Deterministic bit-for-bit reproducibility** | Isolated workspaces (seed 42) | End-to-end reproducibility check script | **VALIDATED** | Max MAE discrepancy $0.0000000000$ across 8,760 records. |
-| **Multi-site geographic transfer** | 6 Independent NOAA USCRN Stations | Out-of-sample walk-forward transfer benchmark | **VALIDATED (Bounded)** | Positive in Midwest/Plains/Arid; fails in subtropical convective storms. |
+| **Multi-site geographic transfer** | 6 Independent NOAA USCRN Stations | Out-of-sample walk-forward transfer benchmark | **VALIDATED (Bounded)** | Demonstrated in tested Midwest/Plains/Arid; fails in subtropical convective storms. |
 | **Edge IoT MQTT telemetry ingestion** | ESP32/Wokwi simulated edge stream | MQTT 5 Ingest Adapter with DLQ & Deduplication | **TESTED** | Simulated edge telemetry stamped with `is_simulated: true`. |
 | **Interactive operational cockpit UI** | Browser interface on port 8080 | Headless HTTP API suite & 5-step demo runner | **LOCALLY VERIFIED** | Local operational cockpit; not a production cloud SaaS deployment. |
 
