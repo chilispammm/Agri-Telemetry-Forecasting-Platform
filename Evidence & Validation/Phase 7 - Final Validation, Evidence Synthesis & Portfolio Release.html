@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agri Telemetry &amp; Forecasting — Phase 7 Final Validation, Evidence Synthesis & Portfolio Release</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+
+:root {
+    --bg: #f4f1ea;
+    --surface: #faf8f3;
+    --ink: #151515;
+    --muted: #62605a;
+    --border: #d3cec0;
+    --dark: #151515;
+    --dark-border: #333;
+    --blue: #2563eb;
+    --amber: #b7791f;
+    --grey: #777;
+    --green: #34785a;
+    --red: #991b1b;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+body {
+    margin: 0;
+    color: var(--ink);
+    background: var(--bg);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.65;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 270px;
+    height: 100vh;
+    padding: 2.5rem 1.75rem;
+    border-right: 1px solid var(--border);
+    background: var(--bg);
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.brand {
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--ink);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.sidebar-meta {
+    margin-bottom: 2.5rem;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.7;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+}
+
+.nav-item {
+    display: block;
+    margin-bottom: .9rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .45px;
+    text-transform: uppercase;
+    transition: color .2s ease;
+}
+
+.nav-item:hover { color: var(--ink); }
+
+/* Main Content Area */
+.main {
+    width: calc(100% - 270px);
+    max-width: 1200px;
+    margin-left: 270px;
+    padding: 4rem 5rem 7rem;
+}
+
+.top-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-bottom: 1rem;
+    margin-bottom: 4rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.hero { max-width: 900px; margin-bottom: 5rem; }
+
+.eyebrow {
+    margin-bottom: 1rem;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+h1 {
+    max-width: 900px;
+    margin: 0 0 1.5rem;
+    font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+    line-height: 1.05;
+    letter-spacing: -.045em;
+    font-weight: 600;
+}
+
+.hero-description {
+    max-width: 780px;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Principle / Highlight Callout */
+.principle {
+    padding: 2rem 2.25rem;
+    margin: 2rem 0 3rem;
+    background: var(--dark);
+    color: white;
+}
+
+.principle-label {
+    margin-bottom: .75rem;
+    color: #999;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.principle strong {
+    display: block;
+    margin-bottom: 1.25rem;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.workflow {
+    color: #ddd;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: .2px;
+    line-height: 2;
+    overflow-wrap: anywhere;
+}
+
+/* Content Sections */
+.section {
+    margin-top: 5rem;
+    scroll-margin-top: 2rem;
+}
+
+.section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding-top: 1rem;
+    margin-bottom: 2rem;
+    border-top: 1px solid var(--ink);
+}
+
+.section-number {
+    min-width: 30px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+h2 {
+    margin: 0;
+    font-size: 1.65rem;
+    line-height: 1.2;
+    letter-spacing: -.025em;
+    font-weight: 600;
+}
+
+h3 {
+    margin: 2.5rem 0 1rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+h4 {
+    margin: 1.75rem 0 .75rem;
+    font-size: .9rem;
+    font-weight: 700;
+}
+
+p {
+    max-width: 850px;
+    font-size: 14px;
+}
+
+/* Lists */
+ul, ol {
+    max-width: 850px;
+    padding-left: 1.4rem;
+    font-size: 13.5px;
+}
+
+li {
+    margin-bottom: .6rem;
+}
+
+/* Tables */
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    margin: 1.5rem 0 2rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 1px solid var(--ink);
+    font-size: 13px;
+}
+
+th, td {
+    padding: 1.1rem .9rem;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+}
+
+.key {
+    width: 28%;
+    border-right: 1px solid var(--border);
+    font-weight: 600;
+}
+
+/* Callouts & Requirements */
+.callout {
+    padding: 1.5rem 1.75rem;
+    margin: 2rem 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--ink);
+    font-size: 13px;
+}
+.callout.warning { border-left-color: var(--amber); }
+.callout.dark { background: var(--dark); color: white; border-left-color: var(--ink); }
+
+/* Monospace Code & ASCII Blocks */
+code {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    background: #eae5d9;
+    padding: 2px 6px;
+}
+
+pre {
+    background: var(--dark);
+    color: #eee;
+    padding: 1.5rem;
+    overflow-x: auto;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    margin: 1.5rem 0;
+}
+
+pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+}
+
+/* Mermaid Flowcharts */
+.mermaid {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--ink);
+    padding: 2rem 1.5rem;
+    margin: 2rem 0;
+    text-align: center;
+    overflow-x: auto;
+}
+
+/* LaTeX Block Math */
+.math-block {
+    margin: 1.5rem 0;
+    padding: 1.25rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    overflow-x: auto;
+    font-size: 1.05rem;
+}
+
+mjx-container[jax="CHTML"][display="true"] {
+    margin: 0.5rem 0 !important;
+}
+
+/* Restrained Status Badges */
+.badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border: 1px solid currentColor;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background: transparent;
+}
+.badge-decided, .decided, .badge-validated, .validated, .badge-tested, .tested, .defined {
+    color: var(--green);
+    border-color: var(--green);
+}
+.badge-researching, .researching {
+    color: var(--blue);
+    border-color: var(--blue);
+}
+.badge-assumption, .assumption {
+    color: var(--amber);
+    border-color: var(--amber);
+}
+.badge-configurable, .configurable, .badge-open, .open, .not-started {
+    color: var(--grey);
+    border-color: var(--grey);
+}
+.badge-implemented, .implemented {
+    color: var(--blue);
+    border-color: var(--blue);
+}
+.badge-rejected, .rejected {
+    color: var(--red);
+    border-color: var(--red);
+}
+
+/* Document Figures & Responsive Images */
+figure.doc-image {
+    margin: 2.25rem 0;
+    max-width: 100%;
+}
+figure.doc-image img {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    display: block;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+figure.doc-image figcaption {
+    margin-top: 0.65rem;
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.5;
+}
+
+a { color: var(--ink); text-decoration: underline; font-weight: 600; }
+a:hover { opacity: 0.8; }
+
+/* Footer */
+.footer {
+    padding-top: 3rem;
+    margin-top: 7rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    line-height: 2;
+}
+
+/* Responsive & Print */
+@media (max-width: 1100px) {
+    .main { padding: 3rem 3rem 6rem; }
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+        padding: 1.5rem;
+    }
+    .sidebar-meta { margin-bottom: 1.5rem; }
+    .sidebar nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .5rem 1rem;
+    }
+    .nav-item { margin-bottom: .4rem; }
+    .main { width: 100%; margin-left: 0; padding: 3rem 1.5rem 5rem; }
+    .top-meta { flex-direction: column; gap: .5rem; }
+}
+
+@media (max-width: 520px) {
+    .sidebar nav { grid-template-columns: 1fr; }
+    .section-header { gap: .65rem; }
+    h2 { font-size: 1.35rem; }
+}
+
+@media print {
+    @page { size: A4; margin: 18mm; }
+    body { background: white; color: black; font-size: 10pt; }
+    .sidebar { display: none; }
+    .main { width: 100%; max-width: none; margin: 0; padding: 0; }
+    .top-meta { margin-bottom: 2rem; }
+    .section { margin-top: 3rem; }
+    .section-header { break-after: avoid; }
+    .table-wrap, table, pre, .callout, .principle, .mermaid, .math-block, figure.doc-image { break-inside: avoid; }
+    a { color: inherit; text-decoration: none; }
+    .footer { margin-top: 3rem; }
+}
+
+    </style>
+
+    <!-- MathJax for LaTeX mathematical formula rendering -->
+    <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Mermaid for Flowcharts and Diagrams -->
+    <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'neutral',
+        themeVariables: {
+            fontFamily: 'Inter, -apple-system, sans-serif',
+            primaryColor: '#faf8f3',
+            primaryBorderColor: '#151515',
+            primaryTextColor: '#151515',
+            lineColor: '#151515',
+            secondaryColor: '#f4f1ea',
+            tertiaryColor: '#faf8f3',
+            edgeLabelBackground: '#ffffff'
+        }
+    });
+    </script>
+
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand">CA-ENG // Master Record</div>
+        <div class="sidebar-meta">
+            Agri Telemetry &amp; Forecasting<br>
+            11 / Portfolio Release<br>
+            Status: <span class="badge badge-validated">VALIDATED & FORMALLY FROZEN (Phases 1–7 Complete)</span>
+        </div>
+        <nav aria-label="Document navigation">
+            <a href="#executive-summary" class="nav-item">01. Executive Summary</a>
+            <a href="#final-research-question" class="nav-item">02. Final Research Question</a>
+            <a href="#complete-system-architecture" class="nav-item">03. Complete System Architecture</a>
+            <a href="#phase-by-phase-evidence-summary" class="nav-item">04. Phase-by-Phase Evidence Summary</a>
+            <a href="#scientific-findings" class="nav-item">05. Scientific Findings</a>
+            <a href="#forecasting-findings" class="nav-item">06. Forecasting Findings</a>
+            <a href="#uncertainty-findings" class="nav-item">07. Uncertainty Findings</a>
+            <a href="#risk-advisory-intelligence-findings" class="nav-item">08. Risk & Advisory Intelligence Findings</a>
+            <a href="#multi-site-validation-findings-phase-5" class="nav-item">09. Multi-Site Validation Findings (Phase 5)</a>
+            <a href="#mqtt-edge-telemetry-findings" class="nav-item">10. MQTT & Edge Telemetry Findings</a>
+            <a href="#mlops-engineering-findings" class="nav-item">11. MLOps & Engineering Findings</a>
+            <a href="#reproducibility-findings" class="nav-item">12. Reproducibility Findings</a>
+            <a href="#dashboard-findings-phase-6" class="nav-item">13. Dashboard Findings (Phase 6)</a>
+            <a href="#explicit-failure-boundaries" class="nav-item">14. Explicit Failure Boundaries</a>
+            <a href="#explicit-project-limitations" class="nav-item">15. Explicit Project Limitations</a>
+            <a href="#final-master-evidence-matrix" class="nav-item">16. Final Master Evidence Matrix</a>
+            <a href="#final-architecture-explanation" class="nav-item">17. Final Architecture Explanation</a>
+            <a href="#three-level-explanation-pack" class="nav-item">18. Three-Level Explanation Pack</a>
+            <a href="#explain-the-why-summary-table" class="nav-item">19. "Explain the Why" Summary Table</a>
+            <a href="#interview-viva-preparation-compendium" class="nav-item">20. Interview / Viva Preparation Compendium</a>
+            <a href="#portfolio-case-study-summary" class="nav-item">21. Portfolio Case Study Summary</a>
+            <a href="#final-demo-preparation-plan" class="nav-item">22. Final Demo Preparation Plan</a>
+            <a href="#release-hygiene-audit" class="nav-item">23. Release Hygiene Audit</a>
+            <a href="#final-authoritative-test-results" class="nav-item">24. Final Authoritative Test Results</a>
+            <a href="#final-git-commit-reference" class="nav-item">25. Final Git Commit Reference</a>
+            <a href="#precise-status-vocabulary-reference" class="nav-item">26. Precise Status Vocabulary Reference</a>
+            <a href="#final-gate-decision" class="nav-item">27. Final Gate Decision</a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <div class="top-meta">
+            <span>Agri Telemetry &amp; Forecasting Platform</span>
+            <span>Last Edited: September 30, 2026 &nbsp; / &nbsp; Status: VALIDATED & FORMALLY FROZEN (Phases 1–7 Complete)</span>
+        </div>
+
+        <header class="hero">
+            <div class="eyebrow">11 / Portfolio Release</div>
+            <h1>Phase 7 Final Validation, Evidence Synthesis & Portfolio Release</h1>
+            <p class="hero-description">Canonical engineering document for the Agri Telemetry &amp; Forecasting Platform.</p>
+        </header>
+
+<p><strong>Project:</strong> Agri Telemetry & Forecasting Platform</p>
+<p><strong>Document:</strong> <code>Evidence & Validation/Phase 7 - Final Validation, Evidence Synthesis & Portfolio Release.md</code></p>
+<p><strong>Status:</strong> VALIDATED & FORMALLY FROZEN (Phases 1–7 Complete)</p>
+<p><strong>Authoritative Test Suite:</strong> 75 / 75 Passed (100.0%) in 84.49s across 15 test modules</p>
+<p><strong>Canonical End-to-End Pipeline:</strong> PASSED in 23.02s (<code>tests/test_end_to_end.py</code>)</p>
+<p><strong>Active Release Commit:</strong> <code>318a122</code> (and subsequent portfolio packaging release commit) on branch <code>main</code></p>
+
+        <section id="executive-summary" class="section">
+            <div class="section-header">
+                <div class="section-number">01</div>
+                <h2>Executive Summary</h2>
+            </div>
+<p>The <strong>Agri Telemetry & Forecasting Platform</strong> is an operational, evidence-first time-series intelligence platform designed for root-zone soil water state estimation, horizon-partitioned forecasting, uncertainty calibration, and stateful agronomic decision support.</p>
+<p>The project addresses the core dilemma faced by commercial farm managers: balancing crop yield protection against resource over-application. While raw in-situ capacitance probes provide volatile single-depth soil readings, they suffer from transient sensor spikes, winter frozen-ground flatlines, and severe alert fatigue during borderline threshold crossings.</p>
+<p>Through seven disciplined execution phases, the platform has:</p>
+<ol><li><strong>Established an Empirical Persistence Baseline:</strong> Verified on 8,760 hourly records of NOAA USCRN <code>NE_Lincoln_11_SW</code> (2023), confirming that soil capillary inertia makes persistence ($\text{MAE}=0.0007\text{ m}^3/\text{m}^3$ at 1h; $\text{MAE}=0.0047\text{ m}^3/\text{m}^3$ at 24h) a difficult benchmark that defeats naive statistical smoothing models (Climatology skill: $-520.0$, EWMA skill: $-3.29$).</li><li><strong>Validated Horizon-Partitioned Hybrid Forecasting (ADR-006):</strong> Deployed Environmental ARX (<code>M2</code>) for short leads ($1\dots 48\text{h}$) to capture infiltration and diurnal evaporative flux (+5.7% root-zone, +26.4% topsoil skill), transitioning to Autoregressive Statistical Reversion (<code>M1</code>) for extended leads ($72\dots 168\text{h}$) to capture statistical mean-reversion (+7.8% skill at 7 days).</li><li><strong>Calibrated Dynamic Regime Uncertainty ($U2$):</strong> Conditioned residual dispersion on antecedent rain and solar demand, resolving wet-regime under-coverage (+4.4% coverage gain at 6h).</li><li><strong>Enforced 3-Tier Anomaly Isolation & Stateful Alert Filtering:</strong> Prevented 100% of data-quality faults from leaking into agronomic advisories, while $k=2$ persistence filtering and $G=6\text{h}$ episode grouping suppressed and grouped transient alert episodes across threshold boundaries, reducing alert volume by <strong>95.8% to 99.4%</strong>.</li><li><strong>Demonstrated "Stream-Capable, Not Stream-Dependent" Architecture:</strong> Maintained identical Draft 2020-12 event contracts across historical USCRN replays, simulated MQTT 5 edge streams, and future field gateways, supported by Dead Letter Queues, SHA-256 deduplication, sliding-window resequencing, and bit-for-bit deterministic reproducibility ($0.0000000000$ MAE discrepancy).</li><li><strong>Mapped Multi-Site Transfer & Failure Boundaries:</strong> Demonstrated positive transfer within the tested temperate and arid regimes (not universal geographic generalisation), while discovering an explicit <strong>physical failure boundary in subtropical convective climates (<code>GA_Watkinsville_5_SSE</code>)</strong>, where unannounced $50\text{mm}+$ convective storms motivate incorporating forward-looking weather information such as NWP/radar.</li><li><strong>Delivered an Operational Cockpit UI:</strong> Built a zero-dependency local presentation server on port <code>8080</code> with hover crosshairs, canvas tooltips, dominant Root-Zone Depletion hierarchy, visible +48h model boundaries, and truthful fault injection feedback.</li></ol>
+</section>
+
+        <section id="final-research-question" class="section">
+            <div class="section-header">
+                <div class="section-number">02</div>
+                <h2>Final Research Question</h2>
+            </div>
+<div class="principle"><strong><strong>Can in-situ multi-depth soil moisture and meteorological telemetry produce horizon-partitioned forecasts and uncertainty-calibrated, stateful decision-support advisories that materially outperform persistence baselines without data leakage, and where do the physical and statistical boundaries of in-situ telemetry break down?</strong></strong></div>
+</section>
+
+        <section id="complete-system-architecture" class="section">
+            <div class="section-header">
+                <div class="section-number">03</div>
+                <h2>Complete System Architecture</h2>
+            </div>
+<div class="mermaid">
+flowchart TD
+    subgraph Data Sources
+        S1["Historical USCRN Fixed-Width Archives"]
+        S2["Simulated Edge ESP32 / Wokwi MQTT 5"]
+        S3["Future Live Field IoT Telemetry"]
+    end
+
+    subgraph Operational Ingress Infrastructure
+        Contract["Draft 2020-12 TelemetryEvent Contract"]
+        DLQ["Dead Letter Queue (dead_letter_queue.jsonl)"]
+        Dedup["Idempotent Deduplicator (SHA-256 natural key)"]
+        Seq["OutOfOrderSequencer (Sliding Window Buffer)"]
+    end
+
+    subgraph Core Scientific Pipeline
+        QC["Tier 1: Quality Control & Quarantine"]
+        State["State Builder: 0–100cm Profile Integration (θrz, Dr)"]
+        FC["Forecasting: Horizon-Partitioned Hybrid (M2 + M1)"]
+        Uncertainty["Uncertainty: Regime-Conditioned Dispersion (U2)"]
+        PhysDev["Tier 2: Physical Deviation Intelligence"]
+        WaterRisk["Tier 3: Water Risk Evaluation (MAD & Wilting)"]
+        Filter["Stateful Persistence Filter (k=2, Critical Bypass)"]
+        Advisory["Advisory Engine (is_autonomous_actuation: false)"]
+    end
+
+    subgraph Supporting Infrastructure & Presentation
+        Ledger["SQLite / Parquet Audit Persistence"]
+        MLOps["MLOps Tracker + manifest.json + Git SHA Lineage"]
+        Logs["Structured JSON Logs + Stage Tracing (trace_stage)"]
+        UI["Zero-Dependency Operational Cockpit (Port 8080)"]
+    end
+
+    S1 --> Contract
+    S2 --> Contract
+    S3 --> Contract
+
+    Contract -->|Corrupt Payload| DLQ
+    Contract -->|Valid Payload| Dedup
+    Dedup -->|Duplicate| Drop["Drop Idempotently"]
+    Dedup -->|Unique| Seq
+    Seq --> QC
+
+    QC -->|Quarantine Fault| DLQ
+    QC -->|Valid Stream| State
+    State --> FC
+    State --> PhysDev
+    FC --> Uncertainty
+    Uncertainty --> WaterRisk
+    PhysDev --> Filter
+    WaterRisk --> Filter
+    Filter --> Advisory
+
+    Advisory --> Ledger
+    Advisory --> UI
+    State --> Logs
+    FC --> MLOps
+</div>
+</section>
+
+        <section id="phase-by-phase-evidence-summary" class="section">
+            <div class="section-header">
+                <div class="section-number">04</div>
+                <h2>Phase-by-Phase Evidence Summary</h2>
+            </div>
+<div class="table-wrap">
+<table>
+    <thead>
+        <tr><th>Phase</th><th>Milestone Name</th><th>Core Deliverables</th><th>Evaluated Artifacts</th><th>Authoritative Outcome</th></tr>
+    </thead>
+    <tbody>
+<tr><td><strong>1</strong></td><td><strong>Vertical Slice & Baseline</strong></td><td>USCRN parser, Draft 2020-12 schema, Tier-1 QC, State Builder, Persistence Forecaster (B0), SQLite ledger.</td><td><code>RUN-20261001-152227-10fc74</code> (8,760h)</td><td><strong>VALIDATED</strong></td></tr>
+<tr><td><strong>2</strong></td><td><strong>Forecasting & Calibration</strong></td><td>Baseline ladder (B1, B2), Direct Ridge AR (M1), Environmental ARX (M2), NWP Oracle ablation, Dynamic U2 dispersion.</td><td>Lincoln 2023 H2 ($N=3,913$ walk-forward)</td><td><strong>VALIDATED & SUPPORTED</strong></td></tr>
+<tr><td><strong>3</strong></td><td><strong>Decision Intelligence</strong></td><td>3-Tier anomaly taxonomy, Physical deviation, Stateful persistence filter ($k=2$), Episode grouper ($G=6\text{h}$).</td><td>8 Synthetic Scenarios + Full-Year 2023 Series</td><td><strong>VALIDATED & TESTED</strong></td></tr>
+<tr><td><strong>4</strong></td><td><strong>MLOps & Engineering</strong></td><td>Docker, Compose, Redis Streams, Dead Letter Queue, Deduplication, Sequencer, Structured Logging, MLOps manifest.</td><td>Full-year reproducibility check (<code>0.0</code> MAE diff)</td><td><strong>TESTED & PACKAGED</strong></td></tr>
+<tr><td><strong>5</strong></td><td><strong>Multi-Site Generalisation</strong></td><td>6-site USCRN validation, ESP32/Wokwi MQTT 5 adapter, packet loss stress tests, failure boundary identification.</td><td>6 NOAA USCRN Stations (52,560 hourly records)</td><td><strong>VALIDATED (Bounded)</strong></td></tr>
+<tr><td><strong>6</strong></td><td><strong>Operational Cockpit UI</strong></td><td>HTML5/Canvas UI on port 8080, hover crosshairs, canvas tooltips, dominant depletion hierarchy, fault feedback.</td><td>Headless REST API suite + 5-step demo runner</td><td><strong>LOCALLY VERIFIED</strong></td></tr>
+<tr><td><strong>7</strong></td><td><strong>Synthesis & Freeze</strong></td><td>Portfolio case study, 3-level explanation pack, master evidence matrix, viva guide, release hygiene sign-off.</td><td>Complete 75-test authoritative test suite</td><td><strong>FREEZE & RELEASED</strong></td></tr>
+    </tbody>
+</table>
+</div>
+</section>
+
+        <section id="scientific-findings" class="section">
+            <div class="section-header">
+                <div class="section-number">05</div>
+                <h2>Scientific Findings</h2>
+            </div>
+<ol><li><strong>Capillary Inertia Governs Short Leads:</strong> Soil moisture changes slowly over hours, making persistence a tough baseline ($\text{MAE}=0.0007\text{ m}^3/\text{m}^3$ at 1h) that instantly exposes naive smoothing models.</li><li><strong>Topsoil vs. Root-Zone Separation:</strong> Topsoil ($10\text{cm}$) responds rapidly to rainfall and solar forcing (+26.4% 1h skill), but skill vanishes after 24 hours. The integrated 1-meter root zone retains memory up to 48 hours (+5.7% skill).</li><li><strong>Decay of Historical Weather Memory:</strong> Past weather signals lose predictive value beyond 48 hours, causing past-only weather models to degrade ($-14.0\%$ skill at 7 days).</li></ol>
+</section>
+
+        <section id="forecasting-findings" class="section">
+            <div class="section-header">
+                <div class="section-number">06</div>
+                <h2>Forecasting Findings</h2>
+            </div>
+<div class="math-block">$$\text{Skill}_{\text{vs\_persistence}} = 1 - \frac{\text{MSE}_{\text{model}}}{\text{MSE}_{\text{persistence}}}$$</div>
+<div class="table-wrap">
+<table>
+    <thead>
+        <tr><th>Horizon ($h$)</th><th>Persistence MAE ($\text{m}^3/\text{m}^3$)</th><th>M2 Skill (MSE)</th><th>M1 Skill (MSE)</th><th>Hybrid Skill (ADR-006)</th><th>Oracle Skill (Future Rain)</th></tr>
+    </thead>
+    <tbody>
+<tr><td><strong>1h</strong></td><td><strong>0.0007</strong></td><td><strong>+5.7%</strong></td><td>-375.4%</td><td><strong>+5.7%</strong></td><td><strong>+5.7%</strong></td></tr>
+<tr><td><strong>6h</strong></td><td><strong>0.0018</strong></td><td><strong>+5.6%</strong></td><td>-89.0%</td><td><strong>+5.6%</strong></td><td><strong>+56.3%</strong> (+50.7% gain)</td></tr>
+<tr><td><strong>12h</strong></td><td><strong>0.0028</strong></td><td><strong>+2.5%</strong></td><td>-35.0%</td><td><strong>+2.5%</strong></td><td><strong>+64.5%</strong> (+61.9% gain)</td></tr>
+<tr><td><strong>24h</strong></td><td><strong>0.0047</strong></td><td><strong>+3.1%</strong></td><td>-8.9%</td><td><strong>+3.1%</strong></td><td><strong>+74.4%</strong> (+71.3% gain)</td></tr>
+<tr><td><strong>48h</strong></td><td><strong>0.0079</strong></td><td><strong>+1.0%</strong></td><td>+0.5%</td><td><strong>+1.0%</strong></td><td><strong>+77.4%</strong> (+76.4% gain)</td></tr>
+<tr><td><strong>72h</strong></td><td><strong>0.0109</strong></td><td>-0.2%</td><td><strong>+1.4%</strong></td><td><strong>+1.4%</strong></td><td><strong>+79.8%</strong> (+80.0% gain)</td></tr>
+<tr><td><strong>168h (7d)</strong></td><td><strong>0.0192</strong></td><td>-14.0%</td><td><strong>+7.8%</strong></td><td><strong>+7.8%</strong></td><td><strong>+82.4%</strong> (+96.4% gain)</td></tr>
+    </tbody>
+</table>
+</div>
+</section>
+
+        <section id="uncertainty-findings" class="section">
+            <div class="section-header">
+                <div class="section-number">07</div>
+                <h2>Uncertainty Findings</h2>
+            </div>
+<ul><li><strong>Short Horizons ($1\dots 48\text{h}$):</strong> Dynamic regime-conditioned uncertainty ($U2$) widens interval width during rain infiltration ($W=0.0064$) and narrows during drydown, achieving <strong>$83.0\%$ empirical coverage</strong> at 6h. Validated as <strong>Partially Supported</strong>.</li><li><strong>Extended Horizons ($72\dots 168\text{h}$):</strong> Empirical coverage drops to $\sim 61\%$ at 7 days across all sites because in-situ sensors cannot anticipate future storm timing. Classified as <strong>Uncalibrated Research Uncertainty</strong>.</li></ul>
+</section>
+
+        <section id="risk-advisory-intelligence-findings" class="section">
+            <div class="section-header">
+                <div class="section-number">08</div>
+                <h2>Risk & Advisory Intelligence Findings</h2>
+            </div>
+<ul><li><strong>Zero Fault Leakage:</strong> Tier-1 QC quarantine prevented 100% of data-quality anomalies from leaking into agronomic advisories across all test suites.</li><li><strong>Flutter Suppression:</strong> Consecutive $k=2$ persistence filtering suppressed transient boundary alert flapping in synthetic Scenario 8 and filtered 97 single-hour noise spikes in Lincoln 2023 data (demonstrating episode suppression rather than agronomic ground-truth false positive reduction).</li><li><strong>Actionable Episode Compression:</strong> The $G=6\text{h}$ episode grouper compressed 5,935 raw hourly alerts into <strong>172 distinct multi-day stress episodes (97.10% alert volume reduction)</strong>.</li><li><strong>Strict Non-Actuation:</strong> Every emitted advisory explicitly asserts <code>"is_autonomous_actuation": false</code> to preserve human control.</li></ul>
+<figure class="doc-image">
+    <img src="../docs/assets/screenshots/04_fault_injection_button.png" alt="Figure 8.1 — Interactive Fault-Injection Workflow in Cockpit" loading="lazy">
+    <figcaption>Figure 8.1 — Interactive Fault-Injection Workflow in Cockpit</figcaption>
+</figure>
+<figure class="doc-image">
+    <img src="../docs/assets/screenshots/05_quarantine_decision_support.png" alt="Figure 8.2 — Tier-1 QC Quarantine Isolation and Zero Agronomic Leakage Decision Support" loading="lazy">
+    <figcaption>Figure 8.2 — Tier-1 QC Quarantine Isolation and Zero Agronomic Leakage Decision Support</figcaption>
+</figure>
+</section>
+
+        <section id="multi-site-validation-findings-phase-5" class="section">
+            <div class="section-header">
+                <div class="section-number">09</div>
+                <h2>Multi-Site Validation Findings (Phase 5)</h2>
+            </div>
+<div class="table-wrap">
+<table>
+    <thead>
+        <tr><th>Station Key</th><th>Climate Regime</th><th>1–48h M2 Skill</th><th>72–168h M1 Skill</th><th>6h U2 Coverage</th><th>Transfer Finding</th></tr>
+    </thead>
+    <tbody>
+<tr><td><strong><code>IL_Champaign_9_SW</code></strong></td><td>Midwest Corn Belt</td><td><strong>+11.15%</strong></td><td><strong>+8.31%</strong></td><td><strong>81.0%</strong></td><td><strong>Demonstrated Positive Transfer (Tested Site)</strong></td></tr>
+<tr><td><strong><code>SD_Sioux_Falls_14_NNE</code></strong></td><td>Northern Great Plains</td><td><strong>+7.36%</strong></td><td><strong>+6.25%</strong></td><td><strong>71.9%</strong></td><td><strong>Demonstrated Positive Transfer (Tested Site)</strong></td></tr>
+<tr><td><strong><code>NM_Las_Cruces_20_N</code></strong></td><td>Arid Desert Southwest</td><td><strong>+11.96%</strong></td><td><strong>+2.73%</strong></td><td><strong>66.4%</strong></td><td><strong>Demonstrated Positive Transfer (Tested Site)</strong> (+35.4% at 6h)</td></tr>
+<tr><td><strong><code>NE_Lincoln_11_SW</code></strong></td><td>Humid Continental</td><td><strong>+3.57%</strong></td><td><strong>+4.61%</strong></td><td><strong>73.7%</strong></td><td><strong>Demonstrated Positive Transfer (Tested Site)</strong> (Baseline)</td></tr>
+<tr><td><strong><code>CO_Nunn_7_NNE</code></strong></td><td>Semi-Arid High Plains</td><td><strong>-1.89%</strong></td><td><strong>+2.13%</strong></td><td><strong>79.1%</strong></td><td><strong>Marginal Transfer</strong> (Steppe winds)</td></tr>
+<tr><td><strong><code>GA_Watkinsville_5_SSE</code></strong></td><td>Humid Subtropical</td><td><strong>-18.96%</strong></td><td><strong>+1.28%</strong></td><td><strong>48.9%</strong></td><td><strong>FAILURE BOUNDARY</strong> (-45.1% at 24h)</td></tr>
+    </tbody>
+</table>
+</div>
+</section>
+
+        <section id="mqtt-edge-telemetry-findings" class="section">
+            <div class="section-header">
+                <div class="section-number">10</div>
+                <h2>MQTT & Edge Telemetry Findings</h2>
+            </div>
+<ul><li><strong>Simulation Provenance Preserved:</strong> All edge microcontroller packets carry explicit <code>"is_simulated": true</code> and <code>SIMULATED_REPLAY</code> tags.</li><li><strong>Lossless Ingestion:</strong> Dead Letter Queue quarantined 100% of malformed JSON strings; SHA-256 deduplication dropped 100% of duplicate retries; sliding-window sequencer restored 100% of network jitter disorder.</li></ul>
+</section>
+
+        <section id="mlops-engineering-findings" class="section">
+            <div class="section-header">
+                <div class="section-number">11</div>
+                <h2>MLOps & Engineering Findings</h2>
+            </div>
+<ul><li><strong>"Stream-Capable, Not Stream-Dependent":</strong> Unified Draft 2020-12 event contracts execute seamlessly across batch files, MQTT brokers, and Redis Streams.</li><li><strong>Fail-Safe Fallback:</strong> <code>ResilientForecastRouter</code> gracefully falls back to deterministic Persistence (B0) upon ML inference exceptions, guaranteeing unbroken advisory generation.</li><li><strong>Observability:</strong> Structured JSON logging with correlation IDs and sub-millisecond stage profiling (<code>trace_stage</code>).</li></ul>
+</section>
+
+        <section id="reproducibility-findings" class="section">
+            <div class="section-header">
+                <div class="section-number">12</div>
+                <h2>Reproducibility Findings</h2>
+            </div>
+<ul><li><strong>Deterministic Equivalence:</strong> Two independent runs on 8,760 hourly records in isolated workspaces yielded <strong>$0.0000000000$ max MAE discrepancy</strong> and <strong>$0.0000000000$ max RMSE discrepancy</strong> (<code>is_reproducible: true</code>).</li><li><strong>Complete Lineage:</strong> Every execution exports <code>manifest.json</code> locking Git commit SHA (<code>f6c46d6</code> / <code>318a122</code> release lineage), dataset SHA, seeds ($42$), and hyperparameter dictionaries.</li></ul>
+</section>
+
+        <section id="dashboard-findings-phase-6" class="section">
+            <div class="section-header">
+                <div class="section-number">13</div>
+                <h2>Dashboard Findings (Phase 6)</h2>
+            </div>
+<ul><li><strong>Interactive Crosshairs & Canvas Tooltips:</strong> Real-time inspection of observed vs forecast values, dynamic prediction interval bounds, and station-specific MAD lines.</li><li><strong>Visible Model Boundary:</strong> Prominent vertical delimiter separating 1–48h Environmental ARX from 72–168h Autoregressive statistical models.</li><li><strong>Operational Hierarchy:</strong> Root-Zone Depletion ($D_r$) rendered as the dominant primary metric; raw volumetric water content ($\theta_{\text{rz}}$) preserved as secondary.</li><li><strong>Truthful Fault Injection Feedback:</strong> Buttons provide immediate feedback (<code>INJECTING...</code> $\to$ <code>QUEUED</code> $\to$ <code>INJECTED</code>) only when accepted by application logic.</li></ul>
+<figure class="doc-image">
+    <img src="../docs/assets/screenshots/01_dashboard_overview.png" alt="Figure 13.1 — Operational Cockpit Overview" loading="lazy">
+    <figcaption>Figure 13.1 — Operational Cockpit Overview</figcaption>
+</figure>
+<figure class="doc-image">
+    <img src="../docs/assets/screenshots/02_forecast_24h.png" alt="Figure 13.2 — Short-Horizon Forecast Trajectory (+24h)" loading="lazy">
+    <figcaption>Figure 13.2 — Short-Horizon Forecast Trajectory (+24h)</figcaption>
+</figure>
+<figure class="doc-image">
+    <img src="../docs/assets/screenshots/03_forecast_72h_boundary.png" alt="Figure 13.3 — Multi-Horizon Trajectory with Visible +48h Model Transition Boundary" loading="lazy">
+    <figcaption>Figure 13.3 — Multi-Horizon Trajectory with Visible +48h Model Transition Boundary</figcaption>
+</figure>
+</section>
+
+        <section id="explicit-failure-boundaries" class="section">
+            <div class="section-header">
+                <div class="section-number">14</div>
+                <h2>Explicit Failure Boundaries</h2>
+            </div>
+<ol><li><strong>Extended Horizons ($>48\text{h}$):</strong> Prediction interval coverage drops to $\sim 61\%$ at 7 days; long-horizon uncertainty remains <strong>uncalibrated research</strong>.</li><li><strong>Subtropical Convective Climates (<code>GA_Watkinsville_5_SSE</code>):</strong> Sudden $50\text{mm}+$ convective storms cannot be predicted from in-situ past weather, causing $-45.1\%$ skill collapse at 24h. This failure mode motivates incorporating forward-looking weather information such as NWP/radar.</li><li><strong>Winter Frozen Ground:</strong> Sub-zero soil temperatures freeze liquid water, causing false drydown flatlines in dielectric sensors. Irrigation models must be suspended during winter freeze.</li></ol>
+</section>
+
+        <section id="explicit-project-limitations" class="section">
+            <div class="section-header">
+                <div class="section-number">15</div>
+                <h2>Explicit Project Limitations</h2>
+            </div>
+<ol><li><strong>Demonstration Agronomic Thresholds:</strong> $D_{\text{MAD}}=0.50$ and Wilting=$0.85$ demonstrate software risk logic and alert suppression; production deployment requires site-specific agronomist calibration.</li><li><strong>Simulated IoT Stream:</strong> Edge telemetry is validated via simulated ESP32/Wokwi microcontrollers (<code>is_simulated: true</code>); physical radio propagation and battery drain remain outside the evidence base.</li><li><strong>Historical vs Live Deployment:</strong> The platform operates against historical USCRN archives and edge simulators; <strong>no live field sensors are currently connected</strong>.</li></ol>
+</section>
+
+        <section id="final-master-evidence-matrix" class="section">
+            <div class="section-header">
+                <div class="section-number">16</div>
+                <h2>Final Master Evidence Matrix</h2>
+            </div>
+<div class="table-wrap">
+<table>
+    <thead>
+        <tr><th>Claim / Hypothesis</th><th>Evaluated Scope</th><th>Method</th><th>Authoritative Status</th><th>Known Limitations & Epistemic Boundary</th></tr>
+    </thead>
+    <tbody>
+<tr><td><strong>Pipeline processes real telemetry</strong></td><td>USCRN Lincoln 11 SW 2023</td><td>Fixed-width parser & Draft 2020-12 schema</td><td><strong>VALIDATED</strong></td><td>Historical USCRN archives; un-interpolated point sensors.</td></tr>
+<tr><td><strong>Persistence provides tough baseline</strong></td><td>Lincoln 11 SW 2023 H2</td><td>Chronological walk-forward ($1\dots 168\text{h}$)</td><td><strong>VALIDATED</strong></td><td>Silt loam soil column inertia; site-specific dataset.</td></tr>
+<tr><td><strong>Environmental ARX improves short leads</strong></td><td>Lincoln 11 SW 2023 H2</td><td>Multi-horizon direct ARX with past weather</td><td><strong>VALIDATED</strong></td><td>Positive for 1–48h (+5.7% root-zone, +26.4% topsoil); degrades $>48\text{h}$.</td></tr>
+<tr><td><strong>Long-horizon skill unlocked by future rain</strong></td><td>Lincoln 11 SW 2023 H2</td><td>Controlled oracle ablation with future rain</td><td><strong>ORACLE-VALIDATED</strong></td><td>Demonstrates value of future rain; not operational NWP skill.</td></tr>
+<tr><td><strong>U2 short-horizon uncertainty calibration</strong></td><td>Lincoln & Multi-Site</td><td>Antecedent rainfall & solar demand scaling</td><td><strong>PARTIALLY SUPPORTED</strong></td><td>Valid for 1–48h (83% wet coverage); uncalibrated research $>48\text{h}$.</td></tr>
+<tr><td><strong>3-Tier anomaly & fault isolation</strong></td><td>8 Synthetic Scenarios</td><td>Tier-1 QC quarantine vs Tier-3 agronomic risk</td><td><strong>VALIDATED</strong></td><td>0.0% fault leakage; 100% synthetic scenario detection.</td></tr>
+<tr><td><strong>Stateful risk & advisory logic</strong></td><td>Full-year Lincoln & Flutter</td><td>Consecutive $k=2$ filter & $G=6\text{h}$ episode grouper</td><td><strong>TESTED</strong></td><td>Suppresses/groups transient alerts; thresholds require agronomic tuning.</td></tr>
+<tr><td><strong>Operational event streaming pipeline</strong></td><td>In-Memory & Redis Streams</td><td>Replay, DLQ, Deduplication, Sequencer</td><td><strong>TESTED & PACKAGED</strong></td><td>Verified in local and containerized environments.</td></tr>
+<tr><td><strong>Deterministic bit-for-bit reproducibility</strong></td><td>Isolated workspaces (seed 42)</td><td>End-to-end reproducibility check script</td><td><strong>VALIDATED</strong></td><td>Max MAE discrepancy $0.0000000000$ across 8,760 records.</td></tr>
+<tr><td><strong>Multi-site geographic transfer</strong></td><td>6 NOAA USCRN Stations</td><td>Chronological walk-forward transfer benchmark</td><td><strong>VALIDATED (Bounded)</strong></td><td>Demonstrated in tested Midwest/Plains/Arid; fails in subtropical convective storms.</td></tr>
+<tr><td><strong>Edge IoT MQTT telemetry ingestion</strong></td><td>ESP32/Wokwi simulator</td><td>MQTT 5 Ingest Adapter with DLQ & Deduplication</td><td><strong>TESTED</strong></td><td>Simulated edge telemetry stamped with <code>is_simulated: true</code>.</td></tr>
+<tr><td><strong>Interactive operational cockpit UI</strong></td><td>Browser interface on port 8080</td><td>Headless HTTP API suite & 5-step demo runner</td><td><strong>LOCALLY VERIFIED</strong></td><td>Local operational cockpit; not a production cloud SaaS deployment.</td></tr>
+    </tbody>
+</table>
+</div>
+</section>
+
+        <section id="final-architecture-explanation" class="section">
+            <div class="section-header">
+                <div class="section-number">17</div>
+                <h2>Final Architecture Explanation</h2>
+            </div>
+<p>The system maintains a clean decoupling between the core scientific pipeline and supporting engineering infrastructure:</p>
+<ul><li><strong>Data Ingress & Contracts:</strong> Normalizes USCRN files and MQTT 5 streams into Draft 2020-12 <code>TelemetryEvent</code> instances.</li><li><strong>Quality Control & State Construction:</strong> Quarantines corrupt readings at Tier 1; integrates valid multi-depth readings into a 1-meter root-zone state ($\theta_{\text{rz}}, D_r$).</li><li><strong>Forecasting & Uncertainty:</strong> Routes Environmental ARX (M2) for 1–48h and Autoregressive Statistical (M1) for 72–168h; applies dynamic regime-conditioned dispersion (U2).</li><li><strong>Decision Support & Governance:</strong> Evaluates water risk against MAD ($0.50$) and Wilting ($0.85$); filters transient noise via $k=2$ confirmation; emits non-actuating advisories (<code>is_autonomous_actuation: false</code>).</li><li><strong>Supporting Engineering:</strong> MQTT 5, Redis Streams, Docker, MLOps manifests, structured JSON logging, and GitHub Actions CI provide enterprise transport, packaging, and reproducibility.</li></ul>
+</section>
+
+        <section id="three-level-explanation-pack" class="section">
+            <div class="section-header">
+                <div class="section-number">18</div>
+                <h2>Three-Level Explanation Pack</h2>
+            </div>
+<h3>Level 1: Explain Like I'm 10 (The Smart Fuel Gauge)</h3>
+<ul><li><strong>What it does:</strong> It acts like a smart fuel gauge for crop roots, telling a farmer how much water is left in the soil tank and predicting when the plants will get thirsty over the next week.</li><li><strong>Why a farmer cares:</strong> It helps a farmer avoid watering at the wrong time, protecting crop health and saving energy.</li><li><strong>What happens to sensor readings:</strong> Readings are checked for crazy numbers. If a sensor glitches, it gets put into a quarantine time-out box so it doesn't trigger false alarms.</li><li><strong>What an advisory means:</strong> It is a gentle recommendation for the human farmer, not an automatic switch that turns on sprinklers.</li></ul>
+<h3>Level 2: Explain to a Non-Technical Professional</h3>
+<ul><li><strong>Inputs & Processing:</strong> Ingests multi-depth soil moisture (5–100cm) and weather; integrates 1-meter root-zone depletion ($D_r$).</li><li><strong>Forecasting & Uncertainty:</strong> Uses real-time weather for short-term forecasts (1–48h) and autoregressive statistical models for extended forecasts (3–7 days); communicates uncertainty via plain-language certainty labels (<strong>Definitely Not Reached</strong>, <strong>Plausibly Reached</strong>, <strong>Likely Reached</strong>, <strong>Highly Uncertain</strong>).</li><li><strong>Alert Fatigue Prevention:</strong> Isolates hardware faults at Tier 1, confirms alarms over 2 consecutive hours ($k=2$), and groups alerts into coherent multi-day drought episodes (<strong>97.1% alert volume reduction</strong>).</li><li><strong>Boundaries:</strong> Demonstrated across tested temperate agricultural soils; convective storm climates (like Georgia) motivate incorporating forward-looking weather information such as NWP/radar.</li></ul>
+<h3>Level 3: Technical Explanation Summary</h3>
+<ul><li>Direct multi-horizon ARX and Ridge AR closed-form models; Draft 2020-12 JSON Schema validation; SHA-256 natural key deduplication; sliding-window out-of-order resequencing; Dead Letter Queue logging; bit-for-bit deterministic reproducibility ($0.0$ MAE diff).</li></ul>
+</section>
+
+        <section id="explain-the-why-summary-table" class="section">
+            <div class="section-header">
+                <div class="section-number">19</div>
+                <h2>"Explain the Why" Summary Table</h2>
+            </div>
+<div class="table-wrap">
+<table>
+    <thead>
+        <tr><th>Component</th><th>What it does</th><th>Why it exists</th><th>Empirical Evidence</th><th>Explicit Limitations</th></tr>
+    </thead>
+    <tbody>
+<tr><td><strong>Tier-1 QC</strong></td><td>Quarantines unphysical spikes, flatlines, and bounds errors.</td><td>Prevents bad sensor data from polluting state builder.</td><td>0.0% fault leakage across all benchmark scenarios.</td><td>Single-point heuristics only.</td></tr>
+<tr><td><strong>Root-Zone State</strong></td><td>Integrates 5 depth layers into 0–100cm $\theta_{\text{rz}}$ and $D_r$.</td><td>Replaces confusing point readings with crop-available water.</td><td>7,826 valid states constructed on Lincoln 2023.</td><td>Assumes fixed 1m root depth.</td></tr>
+<tr><td><strong>Persistence (B0)</strong></td><td>Benchmark asserting $\hat{Y}_{t+h\</td><td>t} = Y_t$.</td><td>Mandatory performance floor reflecting soil inertia.</td><td>1h MAE: $0.0007\text{ m}^3/\text{m}^3$; Climatology skill is $-520.0$.</td><td>Assumes zero future weather flux.</td></tr>
+<tr><td><strong>Environmental (M2)</strong></td><td>Multi-horizon ARX combining target lags and past weather.</td><td>Models rapid infiltration and solar evaporative drying.</td><td>+5.7% root-zone and +26.4% topsoil skill at 1h.</td><td>Weather memory decays $>48\text{h}$.</td></tr>
+<tr><td><strong>Autoregressive (M1)</strong></td><td>Direct Ridge AR on historical target sequences.</td><td>Captures multi-day statistical drying trajectories.</td><td>+7.8% MSE skill gain at 168h (7 days).</td><td>Lags on short horizons ($-3.75$).</td></tr>
+<tr><td><strong>Hybrid (ADR-006)</strong></td><td>Routes M2 for 1–48h and M1 for 72–168h.</td><td>Prevents long-horizon exogenous model collapse.</td><td>Strictly positive skill across all 7 horizons.</td><td>48h boundary is empirical.</td></tr>
+<tr><td><strong>Dynamic U2</strong></td><td>Conditions prediction intervals on weather regimes.</td><td>Resolves under-coverage during sudden infiltration.</td><td>83.0% coverage during 6h wet infiltration.</td><td>Uncalibrated research $>48\text{h}$.</td></tr>
+<tr><td><strong>Water-Risk Engine</strong></td><td>Evaluates depletion against MAD ($0.50$) and Wilting ($0.85$).</td><td>Translates moisture numbers into actionable risk tiers.</td><td>Accurately captured 2023 Nebraska drought.</td><td>Configured demo thresholds.</td></tr>
+<tr><td><strong>Persistence Filter</strong></td><td>Requires $k=2$ consecutive triggers; bypasses on critical.</td><td>Suppresses transient threshold boundary alert flapping.</td><td>Suppressed transient flutter in Scenario 8.</td><td>1-hour latency on warnings.</td></tr>
+<tr><td><strong>Episode Grouper</strong></td><td>Merges alerts separated by $\le 6\text{h}$ into risk episodes.</td><td>Reduces human alert burden during chronic drought.</td><td>97.10% alert volume reduction (172 episodes).</td><td>Presentation-layer aggregation.</td></tr>
+<tr><td><strong>DLQ & Deduplication</strong></td><td>Quarantines malformed payloads; drops SHA-256 duplicates.</td><td>Protects stream workers against network retry storms.</td><td>100% DLQ capture; 100% duplicate suppression.</td><td>In-memory LRU cache window.</td></tr>
+<tr><td><strong>Sequencer</strong></td><td>Chronologically sorts packets buffered in sliding window.</td><td>Restores time causality under cellular jitter.</td><td>100% chronological restoration across 124 packets.</td><td>Introduces small buffer delay.</td></tr>
+<tr><td><strong>MQTT 5 Adapter</strong></td><td>Ingests edge telemetry with simulation provenance tags.</td><td>Validates decoupled edge IoT ingestion.</td><td>Lossless ingestion with <code>is_simulated: true</code> tags.</td><td>Simulated microcontroller firmware.</td></tr>
+<tr><td><strong>Docker & Compose</strong></td><td>Multi-stage Python 3.11-slim container (<code>appuser:10001</code>).</td><td>Eliminates "works on my machine" deployment discrepancies.</td><td>Validated multi-stage container build and compose.</td><td>Encapsulates Python runtime only.</td></tr>
+<tr><td><strong>MLOps Tracker</strong></td><td>Exports <code>manifest.json</code> locking Git SHA, seeds, and metrics.</td><td>Guarantees complete auditability and model lineage.</td><td>Verified $0.0000000000$ MAE diff across workspaces.</td><td>Local JSON manifest by default.</td></tr>
+<tr><td><strong>Dashboard UI</strong></td><td>Local HTTP cockpit with canvas tooltips and fault feedback.</td><td>Human interface for operational demonstration.</td><td>100% headless REST API pass rate (7/7 endpoints).</td><td>Local presentation cockpit.</td></tr>
+    </tbody>
+</table>
+</div>
+</section>
+
+        <section id="interview-viva-preparation-compendium" class="section">
+            <div class="section-header">
+                <div class="section-number">20</div>
+                <h2>Interview / Viva Preparation Compendium</h2>
+            </div>
+<ul><li><strong>Scientific Defense:</strong> Detailed answers defending persistence inertia, M2 short-lead gains, M1 long-lead mean reversion, NWP oracle limits, $U2$ uncertainty boundaries, and Watkinsville failure mechanics.</li><li><strong>Data Engineering Defense:</strong> Detailed answers defending Draft 2020-12 event contracts, Dead Letter Queue isolation, SHA-256 deduplication, sliding-window resequencing, MQTT 5 suitability, and Redis Streams vs Kafka trade-offs.</li><li><strong>MLOps & Product Defense:</strong> Detailed answers defending Docker parity, MLOps manifest lineage, bit-for-bit reproducibility ($0.0$ MAE diff), fail-safe persistence fallback, non-actuating advisory governance (<code>is_autonomous_actuation: false</code>), and pre-deployment real-farm prerequisites.</li></ul>
+</section>
+
+        <section id="portfolio-case-study-summary" class="section">
+            <div class="section-header">
+                <div class="section-number">21</div>
+                <h2>Portfolio Case Study Summary</h2>
+            </div>
+<p>Updated canonical <a href="../README.md"><code>README.md</code></a> into a comprehensive portfolio case study covering Problem Context, Scientific Progression, System Architecture, Measured Results, Failure Boundaries, Master Evidence Matrix, and Quickstart instructions.</p>
+</section>
+
+        <section id="final-demo-preparation-plan" class="section">
+            <div class="section-header">
+                <div class="section-number">22</div>
+                <h2>Final Demo Preparation Plan</h2>
+            </div>
+<ul><li><strong>Initial State:</strong> <code>simulated_esp32_field_node</code> displaying $D_r = 18.1\%$, Normal Risk, and visible +48h model boundary.</li><li><strong>Sequence:</strong> Step (+1h) twice $\to$ Inject Sensor Spike ($0.88$) $\to$ Verify immediate button feedback (<code>INJECTING...</code> $\to$ <code>QUEUED</code> $\to$ <code>INJECTED</code>) $\to$ Verify Tier-1 quarantine and <strong>0 false agronomic advisories</strong> $\to$ Clear Fault $\to$ Switch site to <code>IL_Champaign_9_SW</code> (Midwest Corn Belt).</li><li><strong>60-Second Narration:</strong> Clear, non-technical walkthrough highlighting dominant depletion, horizon partitioning, fault isolation, and dynamic multi-site adaptation.</li></ul>
+<figure class="doc-image">
+    <img src="../docs/assets/screenshots/06_phase6_operational_demo.png" alt="Figure 22.1 — Phase 6 Automated 5-Step Operational Demonstration Runner Execution" loading="lazy">
+    <figcaption>Figure 22.1 — Phase 6 Automated 5-Step Operational Demonstration Runner Execution</figcaption>
+</figure>
+</section>
+
+        <section id="release-hygiene-audit" class="section">
+            <div class="section-header">
+                <div class="section-number">23</div>
+                <h2>Release Hygiene Audit</h2>
+            </div>
+<ul><li><strong>Git Working Tree:</strong> Clean (<code>nothing to commit, working tree clean</code>).</li><li><strong>Secrets & Credentials:</strong> Zero unencrypted credentials, passwords, or API keys present across codebase.</li><li><strong>File Paths:</strong> All documentation links verified as relative repository paths.</li></ul>
+</section>
+
+        <section id="final-authoritative-test-results" class="section">
+            <div class="section-header">
+                <div class="section-number">24</div>
+                <h2>Final Authoritative Test Results</h2>
+            </div>
+<pre><code>============================= test session starts =============================
+platform win32 -- Python 3.11.0, pytest-8.4.0, pluggy-1.6.0
+rootdir: /workspace/Agri_Telemetry_&_Forecasting_Platform
+plugins: anyio-4.12.1, cov-6.2.1, mock-3.14.1
+collected 75 items
+
+tests\test_contracts.py ....                                             [  5%]
+tests\test_end_to_end.py .                                               [  6%]
+tests\test_idempotency.py .                                              [  8%]
+tests\test_leakage.py .                                                  [  9%]
+tests\test_operational_phase4.py ............                            [ 25%]
+tests\test_persistence.py ....                                           [ 30%]
+tests\test_phase2_experiments.py ......                                  [ 38%]
+tests\test_phase3_decision_advisory.py .........                         [ 50%]
+tests\test_phase5_multisite_and_mqtt.py .......                          [ 60%]
+tests\test_phase6_dashboard_and_demo.py .......                          [ 69%]
+tests\test_risk_evaluation.py .....                                      [ 76%]
+tests\test_state_builder.py ....                                         [ 81%]
+tests\test_tier1_qc.py ....                                              [ 86%]
+tests\test_uncertainty_calibration.py ......                             [ 94%]
+tests\test_uscrn_ingestion.py ....                                       [100%]
+
+======================== 75 passed in 84.49s (0:01:24) ========================</code></pre>
+</section>
+
+        <section id="final-git-commit-reference" class="section">
+            <div class="section-header">
+                <div class="section-number">25</div>
+                <h2>Final Git Commit Reference</h2>
+            </div>
+<ul><li><strong>Latest Commit SHA:</strong> <code>318a122</code> (and subsequent portfolio packaging release commit)</li><li><strong>Branch:</strong> <code>main</code></li><li><strong>Working Tree:</strong> Clean</li></ul>
+</section>
+
+        <section id="precise-status-vocabulary-reference" class="section">
+            <div class="section-header">
+                <div class="section-number">26</div>
+                <h2>Precise Status Vocabulary Reference</h2>
+            </div>
+<ul><li><strong><code>VALIDATED</code>:</strong> Supported by out-of-sample empirical evidence within tested conditions (e.g. Persistence B0, M2 1–48h skill, 3-Tier QC isolation, bit-for-bit reproducibility).</li><li><strong><code>TESTED</code>:</strong> Programmatic implementation behavior verified via test suites (e.g. MQTT adapter, stateful persistence filter, Draft 2020-12 schemas).</li><li><strong><code>PARTIALLY SUPPORTED</code>:</strong> Supported under specific regimes but bounded (e.g. $U2$ dynamic uncertainty for 1–48h; fails $>48\text{h}$).</li><li><strong><code>ORACLE-VALIDATED</code>:</strong> Controlled oracle experiment proving theoretical value of an information source, not operational NWP forecast skill.</li><li><strong><code>RESEARCHING</code>:</strong> Long-horizon ($>48\text{h}$) uncertainty calibration pending forward weather radar/NWP ingress.</li><li><strong><code>DEFERRED</code>:</strong> Live in-process NWP scraping intentionally deferred to external adapter contracts (ADR-006).</li><li><strong><code>REJECTED</code>:</strong> Climatological mean (B1) and EWMA (B2) baselines discarded due to severe negative skill relative to persistence.</li><li><strong><code>LOCALLY VERIFIED</code>:</strong> Zero-dependency presentation cockpit verified on local HTTP port 8080 and headless API suites.</li></ul>
+</section>
+
+        <section id="final-gate-decision" class="section">
+            <div class="section-header">
+                <div class="section-number">27</div>
+                <h2>Final Gate Decision</h2>
+            </div>
+<p>Every release criterion has been rigorously evaluated:</p>
+<ul><li>All phases are internally consistent.</li><li>Scientific claims match out-of-sample empirical data.</li><li>Engineering claims match software test evidence.</li><li>Physical failure boundaries (<code>GA_Watkinsville_5_SSE</code>, $>48\text{h}$ uncertainty, winter freezing) are explicitly documented.</li><li>Simulation provenance (<code>is_simulated: true</code>, <code>SIMULATED_REPLAY</code>) is preserved.</li><li>Authoritative test suite passes 100% (<strong>75 / 75 tests</strong>).</li><li>No known critical regressions exist.</li><li>Repository working tree is clean.</li><li>Three-level explanation pack and interview guides are complete.</li></ul>
+<h3><strong>FINAL GATE DECISION: FREEZE</strong></h3>
+<p><strong>Phase 7 complete. Project ready for presentation and release.</strong></p>
+</section>
+
+        <footer class="footer">
+            CA-ENG // Agri Telemetry &amp; Forecasting Platform<br>
+            Phase 7 Final Validation, Evidence Synthesis & Portfolio Release &nbsp;&bull;&nbsp; Last Edited: September 30, 2026 &nbsp;&bull;&nbsp; Status: VALIDATED & FORMALLY FROZEN (Phases 1–7 Complete)
+        </footer>
+    </main>
+</body>
+</html>

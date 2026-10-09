@@ -1221,6 +1221,10 @@ flowchart LR
 - `POST /api/inject-fault`: Verified real-time telemetry fault injection (unphysical spike, stuck sensor, duplicate packet, packet drop).
 - `POST /api/select-site`: Verified dynamic station reconfiguration without pipeline restart.
 
+![Figure 14.1 — Operational Cockpit Overview (`simulated_esp32_field_node`) displaying dominant Root-Zone Soil Water Depletion (Dr = 18.1%), multi-depth sensor telemetry (5–100cm), normal water risk status, and pipeline operational counters.](../docs/assets/screenshots/01_dashboard_overview.png)
+
+The cockpit visual hierarchy establishes **Root-Zone Soil Water Depletion ($D_r = 18.1\%$)** as the primary operational metric, while secondary telemetry displays profile moisture across 5 depth sensors (10 to 100 cm), dynamic hydraulic limits ($\theta_{\text{fc}}=0.330, \theta_{\text{wp}}=0.130, \theta_{\text{mad}}=0.230$), operational counters (ingested records, dropped duplicates, quarantined faults), and active non-actuating risk advisories.
+
 ---
 
 ### 14.2 5-Step Operational Demonstration Execution (`EVD-030`)
@@ -1234,6 +1238,10 @@ The automated demonstration runner (`agri_telemetry.simulation.demo_runner.Phase
 | **3** | **`DUPLICATE_PACKET_SUPPRESSION`** | Retransmit identical packet simulating cellular network retry | Duplicates Dropped Count: 1, QC: `QUARANTINED` | `CRITICAL` (`DATA_QUALITY_ALERT`) | Idempotent SHA-256 deduplication dropped duplicate packet without mutating pipeline state. | **PASSED** |
 | **4** | **`DRYDOWN_RISK_EVALUATION`** | Advance 12 hours of dry daylight evapotranspiration | $\theta_{\text{rz}}=0.2827\text{ m}^3/\text{m}^3$, $D_r=20.7\%$, Deficit: $37.3\text{mm}$ | `NORMAL` | Pipeline accurately tracks cumulative soil water deficit and updates forecast trajectory. | **PASSED** |
 | **5** | **`MULTI_SITE_SWITCHING`** | Switch active station to physical USCRN Champaign 9 SW | Station: `IL_Champaign_9_SW`, Provenance: `OBSERVED_IN_SITU`, $\theta_{\text{fc}}=0.34, \theta_{\text{mad}}=0.24$ | `NORMAL` | Dynamic station configuration loaded correctly; verified multi-site compatibility without pipeline rebuild. | **PASSED** |
+
+![Figure 14.2 — Automated 5-Step Operational Demonstration Runner execution summary in CLI and cockpit log showing 5/5 passed scenario steps (`runs/phase6_demo_summary.json`).](../docs/assets/screenshots/06_phase6_operational_demo.png)
+
+Execution of the automated 5-step scenario verifies end-to-end operational resilience across healthy baseline ingestion, unphysical spike quarantine, cellular duplicate packet suppression, multi-hour daylight drydown depletion progression, and dynamic multi-site reconfiguration to the physical USCRN Champaign 9 SW station (`IL_Champaign_9_SW`). All 5 steps completed with zero failures (`is_successful: true`).
 
 ---
 
@@ -1253,6 +1261,12 @@ xychart-beta
     line [0.287, 0.287, 0.287, 0.287, 0.287, 0.287, 0.287, 0.287]
 ```
 
+![Figure 14.3 — Short-Horizon Forecast Trajectory (+24h) showing Environmental ARX (M2) volumetric soil water prediction, diurnal evaporative flux tracking, and 80% prediction interval (Partially Supported).](../docs/assets/screenshots/02_forecast_24h.png)
+
+![Figure 14.4 — Multi-Horizon Trajectory with Visible +48h Model Transition Boundary, demarcating validated short-horizon ARX (+1 to +48h, solid teal ribbon) from extended-horizon statistical autoregression (+72 to +168h, dashed outline empirical research uncertainty).](../docs/assets/screenshots/03_forecast_72h_boundary.png)
+
+Figure 14.3 demonstrates the 24-hour lead forecast where Environmental ARX (M2) captures immediate capillary inertia and diurnal evaporative flux, bounded by the dynamic regime-conditioned 80% prediction interval. Figure 14.4 illustrates the critical visual and epistemic distinction enforced at the 48-hour boundary. A prominent vertical dashed delimiter separates the validated short-horizon Environmental ARX model (1–48h, solid teal envelope labeled `80% Prediction Interval (Partially Supported)`) from the extended-horizon Autoregressive Statistical model (72–168h, dashed envelope labeled `Empirical Uncertainty Interval (Research)`), ensuring operators cannot mistake uncalibrated long-horizon statistical trajectories for validated short-horizon weather-driven forecasts.
+
 ---
 
 ### 14.4 Demonstration Fault Isolation Verification
@@ -1262,6 +1276,12 @@ During Step 2 of the demonstration:
 - Tier-1 QC flagged `OUT_OF_RANGE` and immediately routed the payload to the quarantine buffer.
 - `OperationalAdvisoryEngine` emitted a `DATA_QUALITY_ALERT` informing the operator of the faulty telemetry.
 - The downstream agronomic water risk evaluator was completely isolated from the corrupt reading: **No agronomic advisory generated from the quarantined synthetic spike**.
+
+![Figure 14.5 — Interactive Fault-Injection Workflow demonstrating verified operator feedback sequence (INJECTING... → QUEUED → INJECTED) on the live cockpit interface.](../docs/assets/screenshots/04_fault_injection_button.png)
+
+![Figure 14.6 — Tier-1 QC Quarantine Isolation and Decision Support: Synthetic 0.88 m³/m³ spike routed to Dead Letter Queue (DATA_QUALITY_ALERT) with strict suppression of agronomic advice (0 false advisories leaked).](../docs/assets/screenshots/05_quarantine_decision_support.png)
+
+Figure 14.5 captures the interactive operator feedback loop: upon clicking "Inject Sensor Spike (0.88)", the UI transitions through `INJECTING...` $\to$ `QUEUED` $\to$ `INJECTED` only once confirmed by the server's headless ingestion API. Figure 14.6 confirms the central safety property of the platform: when the unphysical $0.88\text{ m}^3/\text{m}^3$ spike arrives at the ingest adapter, Tier-1 QC quarantines the reading immediately into `dead_letter_queue.jsonl` and emits a high-priority `DATA_QUALITY_ALERT`. Crucially, **zero false agronomic water-stress advisories are generated**, completely isolating the farm manager from false alarms caused by hardware sensor faults.
 
 ---
 

@@ -355,6 +355,28 @@ mjx-container[jax="CHTML"][display="true"] {
     border-color: var(--red);
 }
 
+/* Document Figures & Responsive Images */
+figure.doc-image {
+    margin: 2.25rem 0;
+    max-width: 100%;
+}
+figure.doc-image img {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    display: block;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+figure.doc-image figcaption {
+    margin-top: 0.65rem;
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.5;
+}
+
 a { color: var(--ink); text-decoration: underline; font-weight: 600; }
 a:hover { opacity: 0.8; }
 
@@ -409,7 +431,7 @@ a:hover { opacity: 0.8; }
     .top-meta { margin-bottom: 2rem; }
     .section { margin-top: 3rem; }
     .section-header { break-after: avoid; }
-    .table-wrap, table, pre, .callout, .principle, .mermaid, .math-block { break-inside: avoid; }
+    .table-wrap, table, pre, .callout, .principle, .mermaid, .math-block, figure.doc-image { break-inside: avoid; }
     a { color: inherit; text-decoration: none; }
     .footer { margin-top: 3rem; }
 }
@@ -1683,6 +1705,11 @@ flowchart LR
 </div>
 <h4>Headless API Verification:</h4>
 <ul><li><code>GET /api/status</code>: Verified schema validity for <code>current_state</code>, <code>forecast</code> (7 lead times), <code>advisory</code>, and <code>counters</code>.</li><li><code>GET /api/sites</code>: Verified presence of 6 stations (simulated ESP32 edge node + 5 physical NOAA USCRN stations).</li><li><code>POST /api/step</code>: Verified stream advancement and soil water deficit progression.</li><li><code>POST /api/inject-fault</code>: Verified real-time telemetry fault injection (unphysical spike, stuck sensor, duplicate packet, packet drop).</li><li><code>POST /api/select-site</code>: Verified dynamic station reconfiguration without pipeline restart.</li></ul>
+<figure class="doc-image">
+    <img src="../docs/assets/screenshots/01_dashboard_overview.png" alt="Figure 14.1 — Operational Cockpit Overview (`simulated_esp32_field_node`) displaying dominant Root-Zone Soil Water Depletion (Dr = 18.1%), multi-depth sensor telemetry (5–100cm), normal water risk status, and pipeline operational counters." loading="lazy">
+    <figcaption>Figure 14.1 — Operational Cockpit Overview (<code>simulated_esp32_field_node</code>) displaying dominant Root-Zone Soil Water Depletion (Dr = 18.1%), multi-depth sensor telemetry (5–100cm), normal water risk status, and pipeline operational counters.</figcaption>
+</figure>
+<p>The cockpit visual hierarchy establishes <strong>Root-Zone Soil Water Depletion ($D_r = 18.1\%$)</strong> as the primary operational metric, while secondary telemetry displays profile moisture across 5 depth sensors (10 to 100 cm), dynamic hydraulic limits ($\theta_{\text{fc}}=0.330, \theta_{\text{wp}}=0.130, \theta_{\text{mad}}=0.230$), operational counters (ingested records, dropped duplicates, quarantined faults), and active non-actuating risk advisories.</p>
 <h3>14.2 5-Step Operational Demonstration Execution (<code>EVD-030</code>)</h3>
 <p>The automated demonstration runner (<code>agri_telemetry.simulation.demo_runner.Phase6DemoRunner</code>) executes a 5-step operational lifecycle scenario and records structured results in <code>runs/phase6_demo_summary.json</code>:</p>
 <div class="table-wrap">
@@ -1699,6 +1726,11 @@ flowchart LR
     </tbody>
 </table>
 </div>
+<figure class="doc-image">
+    <img src="../docs/assets/screenshots/06_phase6_operational_demo.png" alt="Figure 14.2 — Automated 5-Step Operational Demonstration Runner execution summary in CLI and cockpit log showing 5/5 passed scenario steps (`runs/phase6_demo_summary.json`)." loading="lazy">
+    <figcaption>Figure 14.2 — Automated 5-Step Operational Demonstration Runner execution summary in CLI and cockpit log showing 5/5 passed scenario steps (<code>runs/phase6_demo_summary.json</code>).</figcaption>
+</figure>
+<p>Execution of the automated 5-step scenario verifies end-to-end operational resilience across healthy baseline ingestion, unphysical spike quarantine, cellular duplicate packet suppression, multi-hour daylight drydown depletion progression, and dynamic multi-site reconfiguration to the physical USCRN Champaign 9 SW station (<code>IL_Champaign_9_SW</code>). All 5 steps completed with zero failures (<code>is_successful: true</code>).</p>
 <h3>14.3 Dynamic Soil Parameter & Horizon-Distinguished Uncertainty Rendering</h3>
 <p>To ensure scientific honesty and prevent over-generalisation:</p>
 <ol><li><strong>Dynamic Agronomic Thresholds</strong>: The cockpit computes Management Allowed Depletion threshold $\theta_{\text{mad}}$ dynamically from station soil hydraulic limits ($\theta_{\text{mad}} = \theta_{\text{fc}} - D_{\text{mad}} \times (\theta_{\text{fc}} - \theta_{\text{wp}})$), never hard-coding $0.230$.</li><li><strong>Horizon-Distinguished Uncertainty Intervals</strong>:</li></ol>
@@ -1710,9 +1742,27 @@ xychart-beta
     y-axis "Volumetric Water Content (m3/m3)" 0.15 --> 0.35
     line [0.287, 0.287, 0.287, 0.287, 0.287, 0.287, 0.287, 0.287]
 </div>
+<figure class="doc-image">
+    <img src="../docs/assets/screenshots/02_forecast_24h.png" alt="Figure 14.3 — Short-Horizon Forecast Trajectory (+24h) showing Environmental ARX (M2) volumetric soil water prediction, diurnal evaporative flux tracking, and 80% prediction interval (Partially Supported)." loading="lazy">
+    <figcaption>Figure 14.3 — Short-Horizon Forecast Trajectory (+24h) showing Environmental ARX (M2) volumetric soil water prediction, diurnal evaporative flux tracking, and 80% prediction interval (Partially Supported).</figcaption>
+</figure>
+<figure class="doc-image">
+    <img src="../docs/assets/screenshots/03_forecast_72h_boundary.png" alt="Figure 14.4 — Multi-Horizon Trajectory with Visible +48h Model Transition Boundary, demarcating validated short-horizon ARX (+1 to +48h, solid teal ribbon) from extended-horizon statistical autoregression (+72 to +168h, dashed outline empirical research uncertainty)." loading="lazy">
+    <figcaption>Figure 14.4 — Multi-Horizon Trajectory with Visible +48h Model Transition Boundary, demarcating validated short-horizon ARX (+1 to +48h, solid teal ribbon) from extended-horizon statistical autoregression (+72 to +168h, dashed outline empirical research uncertainty).</figcaption>
+</figure>
+<p>Figure 14.3 demonstrates the 24-hour lead forecast where Environmental ARX (M2) captures immediate capillary inertia and diurnal evaporative flux, bounded by the dynamic regime-conditioned 80% prediction interval. Figure 14.4 illustrates the critical visual and epistemic distinction enforced at the 48-hour boundary. A prominent vertical dashed delimiter separates the validated short-horizon Environmental ARX model (1–48h, solid teal envelope labeled <code>80% Prediction Interval (Partially Supported)</code>) from the extended-horizon Autoregressive Statistical model (72–168h, dashed envelope labeled <code>Empirical Uncertainty Interval (Research)</code>), ensuring operators cannot mistake uncalibrated long-horizon statistical trajectories for validated short-horizon weather-driven forecasts.</p>
 <h3>14.4 Demonstration Fault Isolation Verification</h3>
 <p>During Step 2 of the demonstration:</p>
 <ul><li>An unphysical $0.88\text{ m}^3/\text{m}^3$ spike was injected into the 10 cm soil moisture channel.</li><li>Tier-1 QC flagged <code>OUT_OF_RANGE</code> and immediately routed the payload to the quarantine buffer.</li><li><code>OperationalAdvisoryEngine</code> emitted a <code>DATA_QUALITY_ALERT</code> informing the operator of the faulty telemetry.</li><li>The downstream agronomic water risk evaluator was completely isolated from the corrupt reading: <strong>No agronomic advisory generated from the quarantined synthetic spike</strong>.</li></ul>
+<figure class="doc-image">
+    <img src="../docs/assets/screenshots/04_fault_injection_button.png" alt="Figure 14.5 — Interactive Fault-Injection Workflow demonstrating verified operator feedback sequence (INJECTING... → QUEUED → INJECTED) on the live cockpit interface." loading="lazy">
+    <figcaption>Figure 14.5 — Interactive Fault-Injection Workflow demonstrating verified operator feedback sequence (INJECTING... → QUEUED → INJECTED) on the live cockpit interface.</figcaption>
+</figure>
+<figure class="doc-image">
+    <img src="../docs/assets/screenshots/05_quarantine_decision_support.png" alt="Figure 14.6 — Tier-1 QC Quarantine Isolation and Decision Support: Synthetic 0.88 m³/m³ spike routed to Dead Letter Queue (DATA_QUALITY_ALERT) with strict suppression of agronomic advice (0 false advisories leaked)." loading="lazy">
+    <figcaption>Figure 14.6 — Tier-1 QC Quarantine Isolation and Decision Support: Synthetic 0.88 m³/m³ spike routed to Dead Letter Queue (DATA_QUALITY_ALERT) with strict suppression of agronomic advice (0 false advisories leaked).</figcaption>
+</figure>
+<p>Figure 14.5 captures the interactive operator feedback loop: upon clicking "Inject Sensor Spike (0.88)", the UI transitions through <code>INJECTING...</code> $\to$ <code>QUEUED</code> $\to$ <code>INJECTED</code> only once confirmed by the server's headless ingestion API. Figure 14.6 confirms the central safety property of the platform: when the unphysical $0.88\text{ m}^3/\text{m}^3$ spike arrives at the ingest adapter, Tier-1 QC quarantines the reading immediately into <code>dead_letter_queue.jsonl</code> and emits a high-priority <code>DATA_QUALITY_ALERT</code>. Crucially, <strong>zero false agronomic water-stress advisories are generated</strong>, completely isolating the farm manager from false alarms caused by hardware sensor faults.</p>
 <h3>14.5 Phase 6 Review & Final Gate Decision</h3>
 <div class="table-wrap">
 <table>

@@ -352,6 +352,28 @@ mjx-container[jax="CHTML"][display="true"] {
     border-color: var(--red);
 }
 
+/* Document Figures & Responsive Images */
+figure.doc-image {
+    margin: 2.25rem 0;
+    max-width: 100%;
+}
+figure.doc-image img {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    display: block;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+figure.doc-image figcaption {
+    margin-top: 0.65rem;
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.5;
+}
+
 a { color: var(--ink); text-decoration: underline; font-weight: 600; }
 a:hover { opacity: 0.8; }
 
@@ -406,7 +428,7 @@ a:hover { opacity: 0.8; }
     .top-meta { margin-bottom: 2rem; }
     .section { margin-top: 3rem; }
     .section-header { break-after: avoid; }
-    .table-wrap, table, pre, .callout, .principle, .mermaid, .math-block { break-inside: avoid; }
+    .table-wrap, table, pre, .callout, .principle, .mermaid, .math-block, figure.doc-image { break-inside: avoid; }
     a { color: inherit; text-decoration: none; }
     .footer { margin-top: 3rem; }
 }
@@ -470,10 +492,11 @@ def get_badge_html(status_text: str) -> str:
     return f'<span class="badge {cls}">{status_text}</span>'
 
 def format_inline(text: str) -> str:
-    """Format markdown bold, code, math, badges, and links."""
+    """Format markdown bold, code, math, badges, images, and links."""
     # Escape HTML special chars inside inline code first
     text = re.sub(r"`([^`]+)`", lambda m: f"<code>{m.group(1).replace('<', '&lt;').replace('>', '&gt;')}</code>", text)
     text = re.sub(r"\*\*([^\*]+)\*\*", r"<strong>\1</strong>", text)
+    text = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", r'<img src="\2" alt="\1" loading="lazy">', text)
     text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', text)
     for status in ["DECIDED", "RESEARCHING", "ASSUMPTION", "CONFIGURABLE", "IMPLEMENTED", "TESTED", "VALIDATED", "REJECTED", "OPEN"]:
         badge_html = get_badge_html(status)
@@ -672,8 +695,25 @@ def render_markdown_to_ca_eng(md_text: str, doc_number: str, doc_title: str, doc
             body_html_parts.append(f'<div class="principle"><strong>{format_inline(quote_text)}</strong></div>')
             continue
 
-        # Unordered Lists
         clean_line = line.strip()
+
+        # Standalone Images: ![caption](path)
+        img_match = re.match(r"^!\[([^\]]*)\]\(([^)]+)\)$", clean_line)
+        if img_match:
+            flush_list()
+            flush_table()
+            alt_text = img_match.group(1)
+            img_src = img_match.group(2)
+            caption_html = f'    <figcaption>{format_inline(alt_text)}</figcaption>\n' if alt_text else ''
+            body_html_parts.append(
+                f'<figure class="doc-image">\n'
+                f'    <img src="{img_src}" alt="{alt_text}" loading="lazy">\n'
+                f'{caption_html}'
+                f'</figure>'
+            )
+            continue
+
+        # Unordered Lists
         if clean_line.startswith("- ") or clean_line.startswith("* "):
             if in_ol:
                 flush_list()
@@ -795,20 +835,23 @@ def run():
     print(f"[generate_html] Scanning workspace at {base_dir} (mode: {'ALL' if args.all else 'NEW DOCS ONLY, BESPOKE PROTECTED'})...")
     
     doc_registry = [
-        ("01", "Project Charter", "Project Charter", "Charter", True),
-        ("02", "Research Feasibility", "Research Feasibility", "Research", True),
-        ("03", "Product Requirements Doc", "Product Requirements Document", "Product", True),
-        ("04", "Data & Scientific Spec", "Data & Scientific Specification", "Scientific Spec", True),
-        ("05", "Data Forecast Design", "Data & Forecast Design", "Forecasting", True),
-        ("06", "Technical Spec", "System Architecture & Technical Specification", "Architecture", False),
-        ("07", "ADRs", "Architecture Decision Records", "Decisions", False),
-        ("08", "Event & Telemetry Contract", "Event & Telemetry Interface Contract", "Contracts", False),
-        ("09", "Implementation Plan", "Implementation Plan", "Implementation", False),
-        ("10", "Evidence & Validation", "Evidence & Validation Framework", "Evidence", False),
+        ("01", "Project Charter", "Project Charter", "Charter", True, None),
+        ("02", "Research Feasibility", "Research Feasibility", "Research", True, None),
+        ("03", "Product Requirements Doc", "Product Requirements Document", "Product", True, None),
+        ("04", "Data & Scientific Spec", "Data & Scientific Specification", "Scientific Spec", True, None),
+        ("05", "Data Forecast Design", "Data & Forecast Design", "Forecasting", True, None),
+        ("06", "Technical Spec", "System Architecture & Technical Specification", "Architecture", False, None),
+        ("07", "ADRs", "Architecture Decision Records", "Decisions", False, None),
+        ("08", "Event & Telemetry Contract", "Event & Telemetry Interface Contract", "Contracts", False, None),
+        ("09", "Implementation Plan", "Implementation Plan", "Implementation", False, None),
+        ("10", "Evidence & Validation", "Evidence & Validation Framework", "Evidence", False, "Evidence & Validation - Agri Telemetry & Forecasting Platform.md"),
+        ("11", "Evidence & Validation", "Phase 7 Final Validation, Evidence Synthesis & Portfolio Release", "Portfolio Release", False, "Phase 7 - Final Validation, Evidence Synthesis & Portfolio Release.md"),
     ]
 
     generated_count = 0
-    for doc_num, folder_name, doc_title, doc_category, is_bespoke in doc_registry:
+    for entry in doc_registry:
+        doc_num, folder_name, doc_title, doc_category, is_bespoke = entry[:5]
+        target_filename = entry[5] if len(entry) > 5 else None
         folder_path = base_dir / folder_name
         if not folder_path.exists():
             continue
@@ -828,16 +871,22 @@ def run():
             generated_count += 1
             continue
 
-        md_files = list(folder_path.glob("*.md"))
-        if not md_files:
-            print(f"[SKIP] No .md found in {folder_name}")
-            continue
+        if target_filename:
+            primary_md = folder_path / target_filename
+            if not primary_md.exists():
+                print(f"[SKIP] Target file {target_filename} not found in {folder_name}")
+                continue
+        else:
+            md_files = list(folder_path.glob("*.md"))
+            if not md_files:
+                print(f"[SKIP] No .md found in {folder_name}")
+                continue
 
-        primary_md = md_files[0]
-        for f in md_files:
-            if "INDEX" in f.name.upper() or folder_name.lower() in f.name.lower():
-                primary_md = f
-                break
+            primary_md = md_files[0]
+            for f in md_files:
+                if "INDEX" in f.name.upper() or folder_name.lower() in f.name.lower():
+                    primary_md = f
+                    break
 
         html_name = primary_md.stem + ".html"
         html_path = folder_path / html_name

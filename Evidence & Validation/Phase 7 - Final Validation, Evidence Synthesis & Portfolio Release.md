@@ -5,7 +5,7 @@
 **Status:** VALIDATED & FORMALLY FROZEN (Phases 1–7 Complete)  
 **Authoritative Test Suite:** 75 / 75 Passed (100.0%) in 84.49s across 15 test modules  
 **Canonical End-to-End Pipeline:** PASSED in 23.02s (`tests/test_end_to_end.py`)  
-**Active Release Commit:** `f6c46d6` on branch `main`
+**Active Release Commit:** `318a122` (and subsequent portfolio packaging release commit) on branch `main`
 
 ---
 
@@ -147,6 +147,10 @@ $$\text{Skill}_{\text{vs\_persistence}} = 1 - \frac{\text{MSE}_{\text{model}}}{\
 - **Actionable Episode Compression:** The $G=6\text{h}$ episode grouper compressed 5,935 raw hourly alerts into **172 distinct multi-day stress episodes (97.10% alert volume reduction)**.
 - **Strict Non-Actuation:** Every emitted advisory explicitly asserts `"is_autonomous_actuation": false` to preserve human control.
 
+![Figure 8.1 — Interactive Fault-Injection Workflow in Cockpit](../docs/assets/screenshots/04_fault_injection_button.png)
+
+![Figure 8.2 — Tier-1 QC Quarantine Isolation and Zero Agronomic Leakage Decision Support](../docs/assets/screenshots/05_quarantine_decision_support.png)
+
 ---
 
 ## 9. Multi-Site Validation Findings (Phase 5)
@@ -180,7 +184,7 @@ $$\text{Skill}_{\text{vs\_persistence}} = 1 - \frac{\text{MSE}_{\text{model}}}{\
 ## 12. Reproducibility Findings
 
 - **Deterministic Equivalence:** Two independent runs on 8,760 hourly records in isolated workspaces yielded **$0.0000000000$ max MAE discrepancy** and **$0.0000000000$ max RMSE discrepancy** (`is_reproducible: true`).
-- **Complete Lineage:** Every execution exports `manifest.json` locking Git commit SHA (`f6c46d6`), dataset SHA, seeds ($42$), and hyperparameter dictionaries.
+- **Complete Lineage:** Every execution exports `manifest.json` locking Git commit SHA (`f6c46d6` / `318a122` release lineage), dataset SHA, seeds ($42$), and hyperparameter dictionaries.
 
 ---
 
@@ -190,6 +194,12 @@ $$\text{Skill}_{\text{vs\_persistence}} = 1 - \frac{\text{MSE}_{\text{model}}}{\
 - **Visible Model Boundary:** Prominent vertical delimiter separating 1–48h Environmental ARX from 72–168h Autoregressive statistical models.
 - **Operational Hierarchy:** Root-Zone Depletion ($D_r$) rendered as the dominant primary metric; raw volumetric water content ($\theta_{\text{rz}}$) preserved as secondary.
 - **Truthful Fault Injection Feedback:** Buttons provide immediate feedback (`INJECTING...` $\to$ `QUEUED` $\to$ `INJECTED`) only when accepted by application logic.
+
+![Figure 13.1 — Operational Cockpit Overview](../docs/assets/screenshots/01_dashboard_overview.png)
+
+![Figure 13.2 — Short-Horizon Forecast Trajectory (+24h)](../docs/assets/screenshots/02_forecast_24h.png)
+
+![Figure 13.3 — Multi-Horizon Trajectory with Visible +48h Model Transition Boundary](../docs/assets/screenshots/03_forecast_72h_boundary.png)
 
 ---
 
@@ -291,7 +301,7 @@ The system maintains a clean decoupling between the core scientific pipeline and
 
 ## 21. Portfolio Case Study Summary
 
-Updated canonical [`README.md`](file:///C:/Users/Admin/Agri_Telemetry_&_Forecasting_Platform/README.md) into a comprehensive portfolio case study covering Problem Context, Scientific Progression, System Architecture, Measured Results, Failure Boundaries, Master Evidence Matrix, and Quickstart instructions.
+Updated canonical [`README.md`](../README.md) into a comprehensive portfolio case study covering Problem Context, Scientific Progression, System Architecture, Measured Results, Failure Boundaries, Master Evidence Matrix, and Quickstart instructions.
 
 ---
 
@@ -300,6 +310,8 @@ Updated canonical [`README.md`](file:///C:/Users/Admin/Agri_Telemetry_&_Forecast
 - **Initial State:** `simulated_esp32_field_node` displaying $D_r = 18.1\%$, Normal Risk, and visible +48h model boundary.
 - **Sequence:** Step (+1h) twice $\to$ Inject Sensor Spike ($0.88$) $\to$ Verify immediate button feedback (`INJECTING...` $\to$ `QUEUED` $\to$ `INJECTED`) $\to$ Verify Tier-1 quarantine and **0 false agronomic advisories** $\to$ Clear Fault $\to$ Switch site to `IL_Champaign_9_SW` (Midwest Corn Belt).
 - **60-Second Narration:** Clear, non-technical walkthrough highlighting dominant depletion, horizon partitioning, fault isolation, and dynamic multi-site adaptation.
+
+![Figure 22.1 — Phase 6 Automated 5-Step Operational Demonstration Runner Execution](../docs/assets/screenshots/06_phase6_operational_demo.png)
 
 ---
 
@@ -316,7 +328,7 @@ Updated canonical [`README.md`](file:///C:/Users/Admin/Agri_Telemetry_&_Forecast
 ```bash
 ============================= test session starts =============================
 platform win32 -- Python 3.11.0, pytest-8.4.0, pluggy-1.6.0
-rootdir: C:\Users\Admin\Agri_Telemetry_&_Forecasting_Platform
+rootdir: /workspace/Agri_Telemetry_&_Forecasting_Platform
 plugins: anyio-4.12.1, cov-6.2.1, mock-3.14.1
 collected 75 items
 
@@ -343,7 +355,7 @@ tests\test_uscrn_ingestion.py ....                                       [100%]
 
 ## 25. Final Git Commit Reference
 
-- **Latest Commit SHA:** `f6c46d6` (and subsequent Phase 7 release commit)
+- **Latest Commit SHA:** `318a122` (and subsequent portfolio packaging release commit)
 - **Branch:** `main`
 - **Working Tree:** Clean
 

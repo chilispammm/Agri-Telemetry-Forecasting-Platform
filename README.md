@@ -180,7 +180,28 @@ flowchart TD
 
 ---
 
-## 7. Quick Start & Execution
+## 7. Interactive Operational Cockpit & Visual Evidence
+
+The platform provides a zero-dependency local presentation cockpit (`agri_telemetry.ui.server` on port `8080`) featuring interactive canvas inspection, dynamic soil hydraulic reference lines, and verifiable fault injection:
+
+![Figure 1 — Operational Cockpit Overview](docs/assets/screenshots/01_dashboard_overview.png)
+
+- **Root-Zone Soil Water Depletion Hierarchy:** Depletion ($D_r = 18.1\%$) is the dominant operational metric; profile volumetric water content ($\theta_{\text{rz}}$) remains secondary.
+- **Horizon-Partitioned Trajectory & Model Boundaries:** A prominent vertical boundary separates validated short-horizon Environmental ARX (1–48h, solid teal envelope) from extended-horizon statistical autoregression (72–168h, dashed envelope labeled research uncertainty):
+
+![Figure 2 — Horizon-Partitioned Trajectory with Visible +48h Model Transition Boundary](docs/assets/screenshots/03_forecast_72h_boundary.png)
+
+- **Tier-1 QC Quarantine & Zero Agronomic Leakage:** Synthetic sensor spikes ($0.88\text{ m}^3/\text{m}^3$) are routed to the Dead Letter Queue (`dead_letter_queue.jsonl`), emitting a `DATA_QUALITY_ALERT` while leaking 0 false advisories to the farm manager:
+
+![Figure 3 — Tier-1 QC Quarantine Isolation and Decision Support](docs/assets/screenshots/05_quarantine_decision_support.png)
+
+- **Automated Operational Demonstration:** The 5-step scenario runner validates baseline streaming, spike quarantine, duplicate suppression, drydown tracking, and dynamic station switching:
+
+![Figure 4 — Automated 5-Step Operational Demo Runner](docs/assets/screenshots/06_phase6_operational_demo.png)
+
+---
+
+## 8. Quick Start & Execution
 
 ### 1. Run the Authoritative Test Suite
 ```bash
