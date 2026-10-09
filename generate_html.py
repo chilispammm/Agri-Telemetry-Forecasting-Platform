@@ -503,17 +503,51 @@ def format_inline(text: str) -> str:
         text = text.replace(f"[{status}]", badge_html)
     return text
 
+def split_table_row(line: str) -> list[str]:
+    """Splits a markdown table row by unescaped pipe characters not inside math."""
+    line = line.strip()
+    if line.startswith("|"):
+        line = line[1:]
+    if line.endswith("|"):
+        line = line[:-1]
+    
+    cells = []
+    current = []
+    in_math = False
+    escaped = False
+    
+    for ch in line:
+        if escaped:
+            current.append(ch)
+            escaped = False
+            continue
+        if ch == "\\":
+            current.append(ch)
+            escaped = True
+            continue
+        if ch == "$":
+            in_math = not in_math
+            current.append(ch)
+            continue
+        if ch == "|" and not in_math:
+            cells.append("".join(current).strip().replace(r"\|", "|"))
+            current = []
+            continue
+        current.append(ch)
+    cells.append("".join(current).strip().replace(r"\|", "|"))
+    return cells
+
 def render_table(lines: list[str]) -> str:
     """Converts markdown table lines to HTML with table-wrap."""
     if len(lines) < 2:
         return ""
     
-    headers = [c.strip() for c in lines[0].strip("|").split("|")]
+    headers = split_table_row(lines[0])
     rows = []
     for l in lines[2:]:
         if not l.strip():
             continue
-        cols = [c.strip() for c in l.strip("|").split("|")]
+        cols = split_table_row(l)
         rows.append(cols)
 
     th_html = "".join(f"<th>{format_inline(h)}</th>" for h in headers)

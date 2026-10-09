@@ -5,7 +5,7 @@
 **Status:** VALIDATED & FORMALLY FROZEN (Phases 1–7 Complete)  
 **Authoritative Test Suite:** 75 / 75 Passed (100.0%) in 84.49s across 15 test modules  
 **Canonical End-to-End Pipeline:** PASSED in 23.02s (`tests/test_end_to_end.py`)  
-**Active Release Commit:** `318a122` (and subsequent portfolio packaging release commit) on branch `main`
+**Active Release Commit:** `ec70de2` on branch `main`
 
 ---
 
@@ -20,7 +20,7 @@ Through seven disciplined execution phases, the platform has:
 2. **Validated Horizon-Partitioned Hybrid Forecasting (ADR-006):** Deployed Environmental ARX (`M2`) for short leads ($1\dots 48\text{h}$) to capture infiltration and diurnal evaporative flux (+5.7% root-zone, +26.4% topsoil skill), transitioning to Autoregressive Statistical Reversion (`M1`) for extended leads ($72\dots 168\text{h}$) to capture statistical mean-reversion (+7.8% skill at 7 days).
 3. **Calibrated Dynamic Regime Uncertainty ($U2$):** Conditioned residual dispersion on antecedent rain and solar demand, resolving wet-regime under-coverage (+4.4% coverage gain at 6h).
 4. **Enforced 3-Tier Anomaly Isolation & Stateful Alert Filtering:** Prevented 100% of data-quality faults from leaking into agronomic advisories, while $k=2$ persistence filtering and $G=6\text{h}$ episode grouping suppressed and grouped transient alert episodes across threshold boundaries, reducing alert volume by **95.8% to 99.4%**.
-5. **Demonstrated "Stream-Capable, Not Stream-Dependent" Architecture:** Maintained identical Draft 2020-12 event contracts across historical USCRN replays, simulated MQTT 5 edge streams, and future field gateways, supported by Dead Letter Queues, SHA-256 deduplication, sliding-window resequencing, and bit-for-bit deterministic reproducibility ($0.0000000000$ MAE discrepancy).
+5. **Demonstrated "Stream-Capable, Not Stream-Dependent" Architecture:** Maintained identical Draft 2020-12 event contracts across historical USCRN replays, simulated MQTT 5 edge streams, and future field gateways, supported by Dead Letter Queues, SHA-256 deduplication, sliding-window resequencing, and deterministic metric equivalence ($0.0000000000$ MAE discrepancy).
 6. **Mapped Multi-Site Transfer & Failure Boundaries:** Demonstrated positive transfer within the tested temperate and arid regimes (not universal geographic generalisation), while discovering an explicit **physical failure boundary in subtropical convective climates (`GA_Watkinsville_5_SSE`)**, where unannounced $50\text{mm}+$ convective storms motivate incorporating forward-looking weather information such as NWP/radar.
 7. **Delivered an Operational Cockpit UI:** Built a zero-dependency local presentation server on port `8080` with hover crosshairs, canvas tooltips, dominant Root-Zone Depletion hierarchy, visible +48h model boundaries, and truthful fault injection feedback.
 
@@ -169,14 +169,14 @@ $$\text{Skill}_{\text{vs\_persistence}} = 1 - \frac{\text{MSE}_{\text{model}}}{\
 ## 10. MQTT & Edge Telemetry Findings
 
 - **Simulation Provenance Preserved:** All edge microcontroller packets carry explicit `"is_simulated": true` and `SIMULATED_REPLAY` tags.
-- **Lossless Ingestion:** Dead Letter Queue quarantined 100% of malformed JSON strings; SHA-256 deduplication dropped 100% of duplicate retries; sliding-window sequencer restored 100% of network jitter disorder.
+- **Fault-Tolerant Ingestion (Tested Scope):** Under tested synthetic network conditions, the Dead Letter Queue quarantined 100% of malformed JSON strings, SHA-256 deduplication dropped duplicate retries, and the sliding-window sequencer restored simulated jitter disorder.
 
 ---
 
 ## 11. MLOps & Engineering Findings
 
 - **"Stream-Capable, Not Stream-Dependent":** Unified Draft 2020-12 event contracts execute seamlessly across batch files, MQTT brokers, and Redis Streams.
-- **Fail-Safe Fallback:** `ResilientForecastRouter` gracefully falls back to deterministic Persistence (B0) upon ML inference exceptions, guaranteeing unbroken advisory generation.
+- **Fail-Safe Fallback:** `ResilientForecastRouter` gracefully falls back to deterministic Persistence (B0) upon ML inference exceptions, maintaining advisory pipeline continuity under tested failure conditions.
 - **Observability:** Structured JSON logging with correlation IDs and sub-millisecond stage profiling (`trace_stage`).
 
 ---
@@ -184,7 +184,7 @@ $$\text{Skill}_{\text{vs\_persistence}} = 1 - \frac{\text{MSE}_{\text{model}}}{\
 ## 12. Reproducibility Findings
 
 - **Deterministic Equivalence:** Two independent runs on 8,760 hourly records in isolated workspaces yielded **$0.0000000000$ max MAE discrepancy** and **$0.0000000000$ max RMSE discrepancy** (`is_reproducible: true`).
-- **Complete Lineage:** Every execution exports `manifest.json` locking Git commit SHA (`f6c46d6` / `318a122` release lineage), dataset SHA, seeds ($42$), and hyperparameter dictionaries.
+- **Complete Lineage:** Every execution exports `manifest.json` locking Git commit SHA (`ec70de2` release commit), dataset SHA, seeds ($42$), and hyperparameter dictionaries.
 
 ---
 
@@ -231,7 +231,7 @@ $$\text{Skill}_{\text{vs\_persistence}} = 1 - \frac{\text{MSE}_{\text{model}}}{\
 | **3-Tier anomaly & fault isolation** | 8 Synthetic Scenarios | Tier-1 QC quarantine vs Tier-3 agronomic risk | **VALIDATED** | 0.0% fault leakage; 100% synthetic scenario detection. |
 | **Stateful risk & advisory logic** | Full-year Lincoln & Flutter | Consecutive $k=2$ filter & $G=6\text{h}$ episode grouper | **TESTED** | Suppresses/groups transient alerts; thresholds require agronomic tuning. |
 | **Operational event streaming pipeline** | In-Memory & Redis Streams | Replay, DLQ, Deduplication, Sequencer | **TESTED & PACKAGED** | Verified in local and containerized environments. |
-| **Deterministic bit-for-bit reproducibility** | Isolated workspaces (seed 42) | End-to-end reproducibility check script | **VALIDATED** | Max MAE discrepancy $0.0000000000$ across 8,760 records. |
+| **Deterministic metric reproducibility** | Isolated workspaces (seed 42) | End-to-end reproducibility check script | **VALIDATED** | Deterministic metric equivalence ($0.0$ MAE / RMSE discrepancy) across 8,760 records. |
 | **Multi-site geographic transfer** | 6 NOAA USCRN Stations | Chronological walk-forward transfer benchmark | **VALIDATED (Bounded)** | Demonstrated in tested Midwest/Plains/Arid; fails in subtropical convective storms. |
 | **Edge IoT MQTT telemetry ingestion** | ESP32/Wokwi simulator | MQTT 5 Ingest Adapter with DLQ & Deduplication | **TESTED** | Simulated edge telemetry stamped with `is_simulated: true`. |
 | **Interactive operational cockpit UI** | Browser interface on port 8080 | Headless HTTP API suite & 5-step demo runner | **LOCALLY VERIFIED** | Local operational cockpit; not a production cloud SaaS deployment. |
@@ -259,12 +259,12 @@ The system maintains a clean decoupling between the core scientific pipeline and
 
 ### Level 2: Explain to a Non-Technical Professional
 - **Inputs & Processing:** Ingests multi-depth soil moisture (5–100cm) and weather; integrates 1-meter root-zone depletion ($D_r$).
-- **Forecasting & Uncertainty:** Uses real-time weather for short-term forecasts (1–48h) and autoregressive statistical models for extended forecasts (3–7 days); communicates uncertainty via plain-language certainty labels (**Definitely Not Reached**, **Plausibly Reached**, **Likely Reached**, **Highly Uncertain**).
+- **Forecasting & Uncertainty:** Uses observed antecedent meteorological telemetry for short-term forecasts (1–48h) and autoregressive statistical models for extended forecasts (3–7 days); communicates uncertainty via plain-language certainty labels (**Definitely Not Reached**, **Plausibly Reached**, **Likely Reached**, **Highly Uncertain**).
 - **Alert Fatigue Prevention:** Isolates hardware faults at Tier 1, confirms alarms over 2 consecutive hours ($k=2$), and groups alerts into coherent multi-day drought episodes (**97.1% alert volume reduction**).
 - **Boundaries:** Demonstrated across tested temperate agricultural soils; convective storm climates (like Georgia) motivate incorporating forward-looking weather information such as NWP/radar.
 
 ### Level 3: Technical Explanation Summary
-- Direct multi-horizon ARX and Ridge AR closed-form models; Draft 2020-12 JSON Schema validation; SHA-256 natural key deduplication; sliding-window out-of-order resequencing; Dead Letter Queue logging; bit-for-bit deterministic reproducibility ($0.0$ MAE diff).
+- Direct multi-horizon ARX and Ridge AR closed-form models; Draft 2020-12 JSON Schema validation; SHA-256 natural key deduplication; sliding-window out-of-order resequencing; Dead Letter Queue logging; deterministic metric reproducibility ($0.0$ MAE diff).
 
 ---
 
@@ -274,17 +274,17 @@ The system maintains a clean decoupling between the core scientific pipeline and
 | :--- | :--- | :--- | :--- | :--- |
 | **Tier-1 QC** | Quarantines unphysical spikes, flatlines, and bounds errors. | Prevents bad sensor data from polluting state builder. | 0.0% fault leakage across all benchmark scenarios. | Single-point heuristics only. |
 | **Root-Zone State** | Integrates 5 depth layers into 0–100cm $\theta_{\text{rz}}$ and $D_r$. | Replaces confusing point readings with crop-available water. | 7,826 valid states constructed on Lincoln 2023. | Assumes fixed 1m root depth. |
-| **Persistence (B0)** | Benchmark asserting $\hat{Y}_{t+h\|t} = Y_t$. | Mandatory performance floor reflecting soil inertia. | 1h MAE: $0.0007\text{ m}^3/\text{m}^3$; Climatology skill is $-520.0$. | Assumes zero future weather flux. |
+| **Persistence (B0)** | Benchmark asserting $\hat{Y}_{t+h \mid t} = Y_t$. | Mandatory performance floor reflecting soil inertia. | 1h MAE: $0.0007\text{ m}^3/\text{m}^3$; Climatology skill is $-520.0$. | Assumes zero future weather flux. |
 | **Environmental (M2)** | Multi-horizon ARX combining target lags and past weather. | Models rapid infiltration and solar evaporative drying. | +5.7% root-zone and +26.4% topsoil skill at 1h. | Weather memory decays $>48\text{h}$. |
 | **Autoregressive (M1)** | Direct Ridge AR on historical target sequences. | Captures multi-day statistical drying trajectories. | +7.8% MSE skill gain at 168h (7 days). | Lags on short horizons ($-3.75$). |
-| **Hybrid (ADR-006)** | Routes M2 for 1–48h and M1 for 72–168h. | Prevents long-horizon exogenous model collapse. | Strictly positive skill across all 7 horizons. | 48h boundary is empirical. |
+| **Hybrid (ADR-006)** | Routes M2 for 1–48h and M1 for 72–168h. | Prevents long-horizon exogenous model collapse. | Positive out-of-sample skill across tested horizons on baseline dataset (+1.0% to +7.8%). | 48h boundary is empirical. |
 | **Dynamic U2** | Conditions prediction intervals on weather regimes. | Resolves under-coverage during sudden infiltration. | 83.0% coverage during 6h wet infiltration. | Uncalibrated research $>48\text{h}$. |
 | **Water-Risk Engine** | Evaluates depletion against MAD ($0.50$) and Wilting ($0.85$). | Translates moisture numbers into actionable risk tiers. | Accurately captured 2023 Nebraska drought. | Configured demo thresholds. |
 | **Persistence Filter** | Requires $k=2$ consecutive triggers; bypasses on critical. | Suppresses transient threshold boundary alert flapping. | Suppressed transient flutter in Scenario 8. | 1-hour latency on warnings. |
 | **Episode Grouper** | Merges alerts separated by $\le 6\text{h}$ into risk episodes. | Reduces human alert burden during chronic drought. | 97.10% alert volume reduction (172 episodes). | Presentation-layer aggregation. |
 | **DLQ & Deduplication** | Quarantines malformed payloads; drops SHA-256 duplicates. | Protects stream workers against network retry storms. | 100% DLQ capture; 100% duplicate suppression. | In-memory LRU cache window. |
 | **Sequencer** | Chronologically sorts packets buffered in sliding window. | Restores time causality under cellular jitter. | 100% chronological restoration across 124 packets. | Introduces small buffer delay. |
-| **MQTT 5 Adapter** | Ingests edge telemetry with simulation provenance tags. | Validates decoupled edge IoT ingestion. | Lossless ingestion with `is_simulated: true` tags. | Simulated microcontroller firmware. |
+| **MQTT 5 Adapter** | Ingests edge telemetry with simulation provenance tags. | Validates decoupled edge IoT ingestion. | Fault-tolerant ingestion under tested scenarios with `is_simulated: true` tags. | Simulated microcontroller firmware. |
 | **Docker & Compose** | Multi-stage Python 3.11-slim container (`appuser:10001`). | Eliminates "works on my machine" deployment discrepancies. | Validated multi-stage container build and compose. | Encapsulates Python runtime only. |
 | **MLOps Tracker** | Exports `manifest.json` locking Git SHA, seeds, and metrics. | Guarantees complete auditability and model lineage. | Verified $0.0000000000$ MAE diff across workspaces. | Local JSON manifest by default. |
 | **Dashboard UI** | Local HTTP cockpit with canvas tooltips and fault feedback. | Human interface for operational demonstration. | 100% headless REST API pass rate (7/7 endpoints). | Local presentation cockpit. |
@@ -295,7 +295,7 @@ The system maintains a clean decoupling between the core scientific pipeline and
 
 - **Scientific Defense:** Detailed answers defending persistence inertia, M2 short-lead gains, M1 long-lead mean reversion, NWP oracle limits, $U2$ uncertainty boundaries, and Watkinsville failure mechanics.
 - **Data Engineering Defense:** Detailed answers defending Draft 2020-12 event contracts, Dead Letter Queue isolation, SHA-256 deduplication, sliding-window resequencing, MQTT 5 suitability, and Redis Streams vs Kafka trade-offs.
-- **MLOps & Product Defense:** Detailed answers defending Docker parity, MLOps manifest lineage, bit-for-bit reproducibility ($0.0$ MAE diff), fail-safe persistence fallback, non-actuating advisory governance (`is_autonomous_actuation: false`), and pre-deployment real-farm prerequisites.
+- **MLOps & Product Defense:** Detailed answers defending Docker parity, MLOps manifest lineage, deterministic metric equivalence ($0.0$ MAE diff), fail-safe persistence fallback, non-actuating advisory governance (`is_autonomous_actuation: false`), and pre-deployment real-farm prerequisites.
 
 ---
 
@@ -355,7 +355,7 @@ tests\test_uscrn_ingestion.py ....                                       [100%]
 
 ## 25. Final Git Commit Reference
 
-- **Latest Commit SHA:** `318a122` (and subsequent portfolio packaging release commit)
+- **Latest Commit SHA:** `ec70de2` (packaged release commit)
 - **Branch:** `main`
 - **Working Tree:** Clean
 
@@ -363,7 +363,7 @@ tests\test_uscrn_ingestion.py ....                                       [100%]
 
 ## 26. Precise Status Vocabulary Reference
 
-- **`VALIDATED`:** Supported by out-of-sample empirical evidence within tested conditions (e.g. Persistence B0, M2 1–48h skill, 3-Tier QC isolation, bit-for-bit reproducibility).
+- **`VALIDATED`:** Supported by out-of-sample empirical evidence within tested conditions (e.g. Persistence B0, M2 1–48h skill, 3-Tier QC isolation, deterministic metric equivalence).
 - **`TESTED`:** Programmatic implementation behavior verified via test suites (e.g. MQTT adapter, stateful persistence filter, Draft 2020-12 schemas).
 - **`PARTIALLY SUPPORTED`:** Supported under specific regimes but bounded (e.g. $U2$ dynamic uncertainty for 1–48h; fails $>48\text{h}$).
 - **`ORACLE-VALIDATED`:** Controlled oracle experiment proving theoretical value of an information source, not operational NWP forecast skill.

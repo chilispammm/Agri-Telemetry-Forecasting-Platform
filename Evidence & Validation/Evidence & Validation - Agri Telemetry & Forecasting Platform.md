@@ -74,7 +74,7 @@ Authoritative pytest execution report (`python -m pytest -v`): **75 passed in 81
 | `tests/test_operational_phase4.py` | `test_resilient_forecast_router_fallback` | Graceful fallback to deterministic Persistence Baseline (B0) upon model error | **PASSED** |
 | `tests/test_operational_phase4.py` | `test_streaming_worker_pipeline_execution` | Decoupled worker processing pipeline with stream consumption and emission | **PASSED** |
 | `tests/test_operational_phase4.py` | `test_operational_pipeline_on_real_uscrn` | End-to-end operational pipeline execution on historical USCRN sample | **PASSED** |
-| `tests/test_persistence.py` | `test_persistence_model_predictions` | Point forecast correctness: $\hat{Y}_{t+h\|t} = Y_t$ for all horizons | **PASSED** |
+| `tests/test_persistence.py` | `test_persistence_model_predictions` | Point forecast correctness: $\hat{Y}_{t+h \mid t} = Y_t$ for all horizons | **PASSED** |
 | `tests/test_persistence.py` | `test_uncertainty_calibrator_quantiles` | Empirical residual quantiles $q_{10} < q_{50} < q_{90}$ and bounded intervals | **PASSED** |
 | `tests/test_persistence.py` | `test_walk_forward_evaluator` | Chronological backtest metrics (MAE, RMSE, MBE, Coverage, Skill) | **PASSED** |
 | `tests/test_persistence.py` | `test_forecasting_engine_and_contract_validation` | `ForecastingEngine` emits contract-compliant `ForecastEvent` instances | **PASSED** |
@@ -117,7 +117,7 @@ Authoritative pytest execution report (`python -m pytest -v`): **75 passed in 81
 | `tests/test_state_builder.py` | `test_depletion_and_storage_metrics` | Formulations for $D_r$, $FAW$, storage (mm), and deficit (mm) | **PASSED** |
 | `tests/test_state_builder.py` | `test_state_builder_from_telemetry_event` | End-to-end `SoilWaterState` object creation from valid `TelemetryEvent` | **PASSED** |
 | `tests/test_tier1_qc.py` | `test_physical_range_bounds` | Rejection of values outside physical boundaries (e.g. VWC $> 0.60$) | **PASSED** |
-| `tests/test_tier1_qc.py` | `test_vwc_spike_detection` | Rate-of-change filter: $|\Delta VWC| > 0.15\text{ /hr}$ without rain flagged as spike | **PASSED** |
+| `tests/test_tier1_qc.py` | `test_vwc_spike_detection` | Rate-of-change filter: $\lvert \Delta VWC \rvert > 0.15\text{ /hr}$ without rain flagged as spike | **PASSED** |
 | `tests/test_tier1_qc.py` | `test_stuck_sensor_detection` | Flatline filter: $\ge 12\text{h}$ invariant value on dynamic channels flagged | **PASSED** |
 | `tests/test_tier1_qc.py` | `test_qc_engine_processing_and_quarantine` | Quarantine buffer captures corrupt payloads and emits `DATA_QUALITY_ALERT` | **PASSED** |
 | `tests/test_uncertainty_calibration.py` | `test_static_quantile_calibrator_fitting` | Static residual quantiles fit on H1 and emit bounded interval predictions | **PASSED** |
@@ -164,7 +164,7 @@ Authoritative pytest execution report (`python -m pytest -v`): **75 passed in 81
 | **EVD-024** | Subtropical high-precipitation convective storm regime marks an explicit failure boundary for in-situ-only forecasting. | USCRN Watkinsville 5 SSE | 2023 | Chronological 50/50 split transfer benchmark ($h=1\dots 168\text{h}$) | M2 MSE Skill vs Persistence | Boundary identification | **Watkinsville 1–48h M2 Skill: -18.96% (-45.1% at 24h); 6h U2 Coverage: 48.9%** | Severe convective storm spikes cannot be anticipated without forward radar/NWP | **VALIDATED (Failure Boundary Discovered)** | `agri_telemetry/experiments/multisite_evaluation.py` | High-energy convective storms |
 | **EVD-025** | Dynamic regime-conditioned uncertainty (U2) partially transfers across temperate and arid regimes but under-covers in tropical storm climates. | 6 Independent USCRN Stations | 2023 | 6h prediction interval empirical coverage (80% nominal) | Empirical coverage (PICP) | $\approx 80\%$ nominal coverage | **Champaign: 81.0%, Lincoln: 73.7%, Sioux Falls: 71.9%, Nunn: 79.1%, Las Cruces: 66.4%, Watkinsville: 48.9%** | U2 partially supported for 1–48h; long horizons (>48h) uncalibrated research across all sites | **PARTIALLY SUPPORTED** | `agri_telemetry/experiments/multisite_evaluation.py` | Requires forward NWP |
 | **EVD-026** | Stateful alert persistence filtering and episode grouping consistently suppress flutter and compress alert volume by >95% across all sites. | 6 Independent USCRN Stations | 2023 | $k=2, k=3, 3\text{-of-}5$ filter and $G=6\text{h}$ episode grouping | Flutter suppression & Episode compression % | $>90\%$ episode volume reduction | **Compression: 95.8% to 99.4% across all sites; 100% transient boundary flutter eliminated** | Operational advisory engine successfully generalises across all hydrological regimes | **VALIDATED** | `agri_telemetry/experiments/multisite_evaluation.py` | Demonstration thresholds |
-| **EVD-027** | Edge IoT MQTT 5 Ingestion Adapter with DLQ, deduplication, and OutOfOrderSequencer maintains lossless ingestion. | ESP32/Wokwi simulated edge stream | 2026 | MQTT packet transmission with injected jitter, duplicates, and malformed payloads | Ingestion pass rate, DLQ capture, duplicate drop | 100% bad payloads to DLQ; 100% duplicates dropped; 100% jitter reordered | **100% DLQ quarantine; 100% duplicate suppression; 100% chronological restoration** | Decoupled, fault-tolerant edge IoT ingestion verified | **TESTED** | `agri_telemetry/streaming/mqtt_adapter.py`, `tests/test_phase5_multisite_and_mqtt.py` | Simulated firmware |
+| **EVD-027** | Edge IoT MQTT 5 Ingestion Adapter with DLQ, deduplication, and OutOfOrderSequencer maintains fault-tolerant ingestion under tested scenarios. | ESP32/Wokwi simulated edge stream | 2026 | MQTT packet transmission with injected jitter, duplicates, and malformed payloads | Ingestion pass rate, DLQ capture, duplicate drop | 100% bad payloads to DLQ; 100% duplicates dropped; 100% jitter reordered | **100% DLQ quarantine; 100% duplicate suppression; 100% chronological restoration** | Decoupled, fault-tolerant edge IoT ingestion verified | **TESTED** | `agri_telemetry/streaming/mqtt_adapter.py`, `tests/test_phase5_multisite_and_mqtt.py` | Simulated firmware |
 | **EVD-028** | System state reconstruction remains stable under telemetry packet loss up to 20%; degrades noticeably above 35%. | USCRN Champaign 9 SW (8,760h) | 2023 | Stochastic packet loss ablation ($0\%, 5\%, 10\%, 20\%, 35\%, 50\%$) | State MAE vs Ground Truth ($\theta_{\text{rz}}$) | $\text{MAE} < 0.0010\text{ m}^3/\text{m}^3$ up to 20% loss | **5%: 0.0001, 10%: 0.0002, 20%: 0.0004, 35%: 0.0012, 50%: 0.0028** | Graceful degradation up to 20% loss; severe infiltration loss at $\ge 35\%$ | **VALIDATED** | `agri_telemetry/experiments/robustness_analysis.py` | In-situ state integration |
 | **EVD-029** | Dashboard API and zero-dependency presentation server provide contract-compliant JSON telemetry, forecast envelopes, and advisory statuses. | Local headless HTTP server & test harness | 2026 | Headless REST API assertions (`/api/status`, `/api/sites`, `/api/step`, `/api/inject-fault`) | API contract pass rate | 100% endpoint pass rate | **100% Passed (7/7 endpoints verified)** | Presentation layer contract verified headlessly without node/npm | **TESTED** | `tests/test_phase6_dashboard_and_demo.py` | Local HTTP |
 | **EVD-030** | End-to-end operational demonstration verifies real-time MQTT ingestion, spike quarantine isolation, duplicate packet suppression, and dynamic site switching. | Simulated ESP32 edge node + USCRN Champaign | 2026 | Standardized 5-step demonstration execution via `Phase6DemoRunner` | Demonstration step pass rate & fault isolation | 100% steps pass; No agronomic advisory generated from quarantined spike | **5 / 5 Steps Passed (100.0%)**; No agronomic advisory generated from the quarantined synthetic spike; Duplicate dropped idempotently | Operational demo verified with stored summary artifact | **VALIDATED** | `runs/phase6_demo_summary.json`, `agri_telemetry/simulation/demo_runner.py` | Simulated edge telemetry |
@@ -627,8 +627,8 @@ flowchart LR
 
 | Anomaly Category | Defining Characteristic | System Response | Agronomic Risk Leakage Rate | Evaluation Status |
 | :--- | :--- | :--- | :---: | :--- |
-| **Tier 1: Data Quality Anomaly** | Sensor spikes ($|\Delta| > 0.15$), stuck flatlines ($\ge 12\text{h}$), physical bounds breaches ($>0.60$), missing packets. | Event quarantined; downstream state construction halted for step; `DATA_QUALITY_ALERT` emitted. | **0.0% (Zero Leaks)** | **VALIDATED** |
-| **Tier 2: Physical Deviation** | Forecast residual breach ($|e_1| > 0.020$), unphysical drying rate ($>0.025\text{ /hr}$), wetting without rain ($P=0\text{mm}$), hydraulic inversions. | State processed; flagged for hydrological audit; `PHYSICAL_DEVIATION` emitted; no crop stress assumed without depletion trigger. | **0.0% (Zero Leaks)** | **VALIDATED** |
+| **Tier 1: Data Quality Anomaly** | Sensor spikes ($\lvert \Delta \rvert > 0.15$), stuck flatlines ($\ge 12\text{h}$), physical bounds breaches ($>0.60$), missing packets. | Event quarantined; downstream state construction halted for step; `DATA_QUALITY_ALERT` emitted. | **0.0% (Zero Leaks)** | **VALIDATED** |
+| **Tier 2: Physical Deviation** | Forecast residual breach ($\lvert e_1 \rvert > 0.020$), unphysical drying rate ($>0.025\text{ /hr}$), wetting without rain ($P=0\text{mm}$), hydraulic inversions. | State processed; flagged for hydrological audit; `PHYSICAL_DEVIATION` emitted; no crop stress assumed without depletion trigger. | **0.0% (Zero Leaks)** | **VALIDATED** |
 | **Tier 3: Operational Water Risk** | Root-zone depletion $D_r(t) \ge D_{\text{MAD}}$ ($0.50$), Wilting Proximity $D_r \ge 0.85$, or forward probabilistic crossing $P(D_r \ge 0.50) \ge 0.70$. | Uncertainty-calibrated non-actuating advisory emitted with explicit certainty labels (`DEFINITELY_NOT_REACHED`, `PLAUSIBLY_REACHED`, `LIKELY_REACHED`, `HIGHLY_UNCERTAIN`). | **N/A (True Risk Domain)** | **VALIDATED** |
 
 ---
@@ -863,7 +863,7 @@ flowchart LR
 | **Dead Letter Queue (`DeadLetterQueue`)** | Poison message / corrupted JSON schema / unparseable payload. | Quarantines payload to `runs/dead_letter_queue.jsonl` with full diagnostic exception trace; pipeline continues without stalling. | **VERIFIED** |
 | **Idempotency Filter (`EventDeduplicator`)** | Duplicate network transmissions from field cellular gateways. | Computes natural hash composite; rejects duplicates idempotently without state mutation. | **VERIFIED** |
 | **Out-of-Order Sequencer (`OutOfOrderSequencer`)** | Delayed cellular telemetry packet arrival inversions. | Buffers sliding window and flushes in strict chronological `event_time` order. | **VERIFIED** |
-| **Resilient Forecast Router (`ResilientForecastRouter`)** | Advanced ML inference crash / GPU failure / remote service timeout. | Catches downstream model exception, logs warning, and gracefully falls back to deterministic Persistence Baseline (B0), guaranteeing advisory continuity. | **VERIFIED** |
+| **Resilient Forecast Router (`ResilientForecastRouter`)** | Advanced ML inference crash / GPU failure / remote service timeout. | Catches downstream model exception, logs warning, and gracefully falls back to deterministic Persistence Baseline (B0), maintaining advisory pipeline continuity under tested failure conditions. | **VERIFIED** |
 
 ---
 
@@ -896,7 +896,7 @@ The reproducibility verification experiment (`agri_telemetry/experiments/reprodu
 ```
 
 > [!IMPORTANT]
-> **Deterministic Bit-for-Bit Equivalence:** Across all 8,760 historical observations and 3,913 out-of-sample forecast origins, maximum MAE discrepancy is **$0.0000000000$** and maximum RMSE discrepancy is **$0.0000000000$**.
+> **Deterministic Metric Equivalence:** Across all 8,760 historical observations and 3,913 out-of-sample forecast origins, maximum MAE discrepancy is **$0.0000000000$** and maximum RMSE discrepancy is **$0.0000000000$**.
 
 ---
 
@@ -921,7 +921,7 @@ The reproducibility verification experiment (`agri_telemetry/experiments/reprodu
 | **MLOps Lifecycle Tracking** | Full lineage (Git SHA, data version, hyperparams, artifacts) | `manifest.json` exported per run with complete provenance | **VERIFIED** |
 | **Event Streaming Architecture** | Decoupled broker & worker pipeline with Draft 2020-12 schema validation | In-memory and Redis Streams brokers with schema validation | **VERIFIED** |
 | **Reliability & Resilience** | DLQ, deduplication, resequencing, fail-safe persistence fallback | All resilience mechanisms implemented and verified | **VERIFIED** |
-| **Reproducibility Verification** | Exact bit-for-bit equivalence across clean workspaces | `is_reproducible: true`, `max_mae_discrepancy: 0.0` across 8,760 records | **VERIFIED** |
+| **Reproducibility Verification** | Deterministic metric equivalence across clean workspaces | `is_reproducible: true`, `max_mae_discrepancy: 0.0` across 8,760 records | **VERIFIED** |
 | **Containerisation & CI/CD** | Container packaging artifacts and automated CI workflow | `Dockerfile`, `docker-compose.yml`, `ci.yml` complete | **VERIFIED** |
 | **Authoritative Test Suite** | Authoritative pytest suite passing | **61 passed in 70.13s** across 13 test modules | **VERIFIED** |
 
@@ -1141,7 +1141,7 @@ flowchart TD
 
     subgraph Level 2: Implementation Transfer
         L2["Pydantic Schemas, MQTT Ingest, DLQ, SQLite Deduplication"]
-        L2 -->|Verified 100%| R2["Runs bit-for-bit without crashes on 6 USCRN stations"]
+        L2 -->|Verified 100%| R2["Executes deterministically without crashes on 6 USCRN stations"]
     end
 
     subgraph Level 3: Empirical Generalisation

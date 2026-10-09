@@ -36,7 +36,7 @@ flowchart TD
 
     subgraph P4["Phase 4: Operationalisation & MLOps"]
         P4_1["Stream-Capable Architecture"] --> P4_2["DLQ, Deduplication & Sequencer"]
-        P4_2 --> P4_3["MLOps Tracker & Bit-for-Bit Reproducibility"]
+        P4_2 --> P4_3["MLOps Tracker & Deterministic Reproducibility"]
     end
 
     subgraph P5["Phase 5: Multi-Site Generalisation"]
@@ -173,7 +173,7 @@ flowchart TD
 | **3-Tier anomaly & data isolation** | 8 Canonical Synthetic Scenarios | Tier-1 QC quarantine vs Tier-3 agronomic risk | **VALIDATED** | 0.0% fault leakage; 100% synthetic scenario detection. |
 | **Stateful risk & advisory logic** | Full-year Lincoln & Flutter suite | Consecutive $k=2$ filter & $G=6\text{h}$ episode grouper | **TESTED** | Suppresses/groups transient alerts; thresholds require agronomic tuning. |
 | **Operational event streaming pipeline** | In-Memory & Redis Streams | Replay, DLQ, Deduplication, Sequencer | **TESTED & PACKAGED** | Verified in local and containerized environments. |
-| **Deterministic bit-for-bit reproducibility** | Isolated workspaces (seed 42) | End-to-end reproducibility check script | **VALIDATED** | Max MAE discrepancy $0.0000000000$ across 8,760 records. |
+| **Deterministic metric reproducibility** | Isolated workspaces (seed 42) | End-to-end reproducibility check script | **VALIDATED** | Deterministic metric equivalence ($0.0$ MAE / RMSE discrepancy) across 8,760 records. |
 | **Multi-site geographic transfer** | 6 Independent NOAA USCRN Stations | Out-of-sample walk-forward transfer benchmark | **VALIDATED (Bounded)** | Demonstrated in tested Midwest/Plains/Arid; fails in subtropical convective storms. |
 | **Edge IoT MQTT telemetry ingestion** | ESP32/Wokwi simulated edge stream | MQTT 5 Ingest Adapter with DLQ & Deduplication | **TESTED** | Simulated edge telemetry stamped with `is_simulated: true`. |
 | **Interactive operational cockpit UI** | Browser interface on port 8080 | Headless HTTP API suite & 5-step demo runner | **LOCALLY VERIFIED** | Local operational cockpit; not a production cloud SaaS deployment. |
@@ -225,4 +225,4 @@ python -m agri_telemetry.cli demo
 ```bash
 python -m agri_telemetry.cli reproducibility-check
 ```
-*Runs two independent pipeline executions in isolated scratch workspaces and asserts bit-for-bit metric equivalence.*
+*Runs two independent pipeline executions in isolated scratch workspaces and asserts deterministic metric equivalence ($0.0$ MAE / RMSE discrepancy).*
